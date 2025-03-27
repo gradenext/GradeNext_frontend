@@ -14,6 +14,7 @@ import {
 	Puzzle,
 } from "lucide-react";
 import useStore from "../store/store";
+import { generateQuestion } from "../services/quiz";
 
 const Dashboard = () => {
 	const [isLoading, setIsLoading] = useState(false);
@@ -24,9 +25,12 @@ const Dashboard = () => {
 		setSelectedSubject,
 		selectedMode,
 		setSelectedMode,
+		getSelectedMode,
+		getSelectedSubject,
+		getGrade,
+		session_id,
+		setQuizQuestion,
 	} = useStore();
-
-	console.log(selectedSubject, selectedMode);
 
 	// Color palette designed for kids
 	const colors = {
@@ -39,7 +43,7 @@ const Dashboard = () => {
 
 	const subjects = [
 		{
-			id: "mathmetics",
+			id: "mathematics",
 			label: "Math Adventure",
 			icon: <Calculator className="w-12 h-12" />,
 			color: colors.primary,
@@ -85,10 +89,22 @@ const Dashboard = () => {
 		{ label: "Achievements", value: "🏆 8/15", progress: 53 },
 	];
 
-	const handleStart = () => {
+	const handleStart = async () => {
 		if (!selectedSubject || !selectedMode) return;
 		setIsLoading(true);
-		setTimeout(() => setIsLoading(false), 1000);
+		try {
+			const response = await generateQuestion(
+				session_id,
+				getGrade(),
+				getSelectedSubject()
+			);
+
+			setQuizQuestion(response?.data);
+		} catch (error) {
+			console.log(error);
+		} finally {
+			setIsLoading(false);
+		}
 	};
 
 	const handleLogout = () => logout();
