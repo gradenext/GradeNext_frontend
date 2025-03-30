@@ -14,22 +14,21 @@ import {
 	Puzzle,
 } from "lucide-react";
 import useStore from "../store/store";
-import { generateQuestion } from "../services/quiz";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
-	const [isLoading, setIsLoading] = useState(false);
+	const navigate = useNavigate();
+
+	const session_id = useStore((state) => state.session_id);
+	const selectedMode = useStore((state) => state.selectedMode);
+	const selectedSubject = useStore((state) => state.selectedSubject);
+	const loading = useStore((state) => state.loading);
 
 	const {
 		logout,
-		selectedSubject,
 		setSelectedSubject,
-		selectedMode,
 		setSelectedMode,
-		getSelectedMode,
-		getSelectedSubject,
-		getGrade,
-		session_id,
-		setQuizQuestion,
+		generatePracticeQuestion,
 	} = useStore();
 
 	// Color palette designed for kids
@@ -91,19 +90,11 @@ const Dashboard = () => {
 
 	const handleStart = async () => {
 		if (!selectedSubject || !selectedMode) return;
-		setIsLoading(true);
 		try {
-			const response = await generateQuestion(
-				session_id,
-				getGrade(),
-				getSelectedSubject()
-			);
-
-			setQuizQuestion(response?.data);
+			await generatePracticeQuestion();
+			navigate(`/practice/${session_id}`);
 		} catch (error) {
-			console.log(error);
-		} finally {
-			setIsLoading(false);
+			console.log("Error Occured", error);
 		}
 	};
 
@@ -371,25 +362,21 @@ const Dashboard = () => {
 						>
 							<button
 								onClick={handleStart}
-								disabled={
-									!selectedSubject ||
-									!selectedMode ||
-									isLoading
-								}
+								disabled={!selectedSubject || !selectedMode}
 								className={`w-full py-5 text-xl font-bold rounded-2xl transition-all 
                   ${
 						selectedSubject && selectedMode
 							? "hover:scale-105 shadow-xl"
 							: "opacity-50 cursor-not-allowed"
 					}
-                  relative overflow-hidden`}
+                  relative cursor-pointer overflow-hidden`}
 								style={{
 									backgroundColor: colors.primary,
 									color: "white",
 									fontFamily: "'Bubblegum Sans', cursive",
 								}}
 							>
-								{isLoading ? (
+								{loading ? (
 									<div className="flex items-center justify-center gap-2">
 										<motion.div
 											animate={{ rotate: 360 }}

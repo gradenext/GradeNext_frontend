@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { logout } from "../services/auth";
+import { generateQuestion, submitAnswer } from "../services/quiz";
 
 const useStore = create(
 	persist(
@@ -9,9 +10,19 @@ const useStore = create(
 			session_id: null,
 			account_id: null,
 			user: null,
-			quizQuestion: null,
 			selectedSubject: null,
 			selectedMode: null,
+			quizQuestion: null,
+			userAnswer: null,
+			analytics: null,
+			usedHints: null,
+			avgTimeTaken: null,
+			timeTaken: [],
+			loading: false,
+			question_id: null,
+			feedback: null,
+			isCorrect: false,
+			isSubmitting: false,
 
 			// Login function
 			login: (token, session_id, account_id, user) => {
@@ -45,24 +56,95 @@ const useStore = create(
 				set({ selectedMode: actionId });
 			},
 
-			getGrade: () => {
-				return get().user.grade;
+			generatePracticeQuestion: async () => {
+				try {
+					set((state) => ({ ...state, loading: true }));
+
+					const { session_id, user, selectedSubject } = get();
+
+					const response = await generateQuestion(
+						session_id,
+						user.grade,
+						selectedSubject
+					);
+
+					set((state) => ({
+						...state,
+						quizQuestion: response.data,
+						question_id: response?.data?.question_id,
+						loading: false,
+					}));
+				} catch (error) {
+					set((state) => ({ ...state, loading: false }));
+					throw error;
+				}
 			},
 
-			getSelectedSubject: () => {
-				return get().selectedSubject;
+			submitAnswer: async () => {
+				try {
+					set((state) => ({ ...state, isSubmitting: true }));
+
+					const {
+						question_id,
+						userAnswer,
+						generatePracticeQuestion,
+					} = get();
+
+					const response = await submitAnswer(
+						question_id,
+						userAnswer
+					);
+
+					set((state) => ({
+						...state,
+						userAnswer: null,
+						isSubmitting: false,
+					}));
+
+					await generatePracticeQuestion();
+				} catch (error) {
+					set((state) => ({ ...state, isSubmitting: false }));
+
+					const err = error.response?.data || error;
+					console.error("Submission failed:", err);
+					throw new Error(err.message || "Failed to submit answer");
+				}
 			},
 
-			getselectedMode: () => {
-				return get().selectedMode;
+			setUserAnswer: (userAnswer) => {
+				set({ userAnswer });
 			},
 
-			setQuizQuestion: (quizQuestion) => {
-				set({ quizQuestion });
+			clearUserAnswer: () => {
+				set((state) => ({ ...state, userAnswer: null }));
 			},
 
-			getQuizQuestion: () => {
-				return get().quizQuestion;
+			setUsedHints: () => {
+				set((state) => ({
+					usedHints: state.usedHints + 1,
+				}));
+			},
+
+			setAnalytics: (analytics) => {
+				set({ analytics });
+			},
+
+			setAvgTimeTaken: (time) => {
+				set((state) => ({
+					timeTaken: [...state.timeTaken, time],
+				}));
+			},
+
+			setLoading: () => {
+				set((state) => ({ ...state, loading: !state.loading }));
+			},
+
+			setFeedBack: (value) => {
+				set({ feedback: value });
+			},
+
+			setIsCorrect: () => {
+				set((state) => ({ ...state, isCorrect: !state.isCorrect }));
 			},
 		}),
 		{
