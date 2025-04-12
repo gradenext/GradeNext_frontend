@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Lightbulb, Loader } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import useStore from "../../store/store";
+import { QuestionFooter } from "./QuizFooter";
 
 export const QuestionCard = () => {
 	const [hoverOption, setHoverOption] = useState(null);
 	const [showTooltip, setShowTooltip] = useState(false);
+	const showHint = useRef(false);
 
 	const question = useStore((state) => state.quizQuestion);
 	const userAnswer = useStore((state) => state.userAnswer);
@@ -15,8 +17,13 @@ export const QuestionCard = () => {
 	const showExplanation = useStore((state) => state.showExplanation);
 	// const loading = useStore((state) => state.loading);
 
-	const { setUserAnswer, clearUserAnswer, submitAnswer, moveToNext } =
-		useStore();
+	const {
+		setUserAnswer,
+		clearUserAnswer,
+		submitAnswer,
+		moveToNext,
+		setUsedHints,
+	} = useStore();
 
 	const onSelectAnswer = (value) => setUserAnswer(value);
 	const onClearSelection = () => clearUserAnswer();
@@ -96,22 +103,6 @@ export const QuestionCard = () => {
 						animate={{ scale: 1 }}
 						transition={{ duration: 0.5 }}
 					/>
-
-					{/* <div className="">
-						<button
-							onMouseEnter={() => setShowTooltip(true)}
-							onMouseLeave={() => setShowTooltip(false)}
-							className="absolute z-20 top-2 right-2 bg-yellow-100 hover:bg-yellow-200 text-yellow-700 rounded-full h-10 w-10 flex items-center justify-center"
-						>
-							<Lightbulb className="h-5 w-5" />
-						</button>
-
-						{showTooltip && (
-							<div className="absolute right-0 top-12 bg-yellow-100 border-2 border-yellow-300 text-yellow-800 font-medium p-2 rounded-lg z-10">
-								Correct Answer: {question.correctAnswer}
-							</div>
-						)}
-					</div> */}
 				</div>
 
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
@@ -224,12 +215,26 @@ export const QuestionCard = () => {
 						transition={{ duration: 0.3 }}
 					>
 						<button
+							onMouseEnter={() => setShowTooltip(true)}
+							onMouseLeave={() => setShowTooltip(false)}
+							onClick={() => {
+								showHint.current = true;
+								setUsedHints();
+							}}
+							className=" relative bg-yellow-100 hover:bg-yellow-200 text-yellow-700 rounded-full h-10 w-10 flex items-center justify-center cursor-pointer"
+						>
+							<Lightbulb className="h-5 w-5" />
+							{showTooltip && (
+								<div className="absolute w-40 right-1/2 translate-x-[50%] bottom-[120%] bg-yellow-100 border-2 border-yellow-300 text-yellow-800 font-medium p-2 rounded-lg z-50">
+									Click to show hint
+								</div>
+							)}
+						</button>
+						<button
 							disabled={!userAnswer}
 							onClick={onClearSelection}
 							className={`text-purple-600 hover:text-purple-800 bg-purple-100 rounded-full px-4 py-2 transition-colors ${
-								userAnswer
-									? "cursor-pointer"
-									: "cursor-not-allowed"
+								userAnswer ? "" : "cursor-not-allowed"
 							}`}
 						>
 							Clear Response
@@ -255,16 +260,15 @@ export const QuestionCard = () => {
 						</button>
 					</motion.div>
 				)}
-				{showExplanation && (
-					<button
-						onClick={() => {
-							moveToNext();
-						}}
-						className="p-4 bg-black text-white"
-					>
-						Continue
-					</button>
-				)}
+
+				<QuestionFooter
+					showHint={showHint?.current}
+					showExplanation={showExplanation}
+					onContinue={() => {
+						showHint.current = false;
+						moveToNext();
+					}}
+				/>
 			</div>
 		</motion.div>
 	);

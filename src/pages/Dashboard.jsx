@@ -405,7 +405,7 @@ const Dashboard = () => {
 			</div>
 
 			{/* Global Styles */}
-			<style jsx global>{`
+			<style>{`
 				@import url("https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Comic+Neue:wght@400;700&display=swap");
 
 				body {

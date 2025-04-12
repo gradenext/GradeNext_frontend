@@ -57,9 +57,9 @@ const useStore = create(
 			showExplanation: false,
 			isSubmitting: false,
 			userAnswer: null,
-			analytics: null,
+			analytics: { session_stats: 0, max_streak: 0 },
 			correctAnswer: false,
-			usedHints: null,
+			usedHints: 0,
 			avgTimeTaken: null,
 			timeTaken: [],
 			feedback: null,
@@ -163,6 +163,7 @@ const useStore = create(
 						loading: false,
 						isNextQuestionLoading: false,
 					}));
+
 					throw error;
 				}
 			},
@@ -172,6 +173,7 @@ const useStore = create(
 					set((state) => ({
 						...state,
 						isSubmitting: true,
+						showExplanation: true,
 					}));
 
 					const { question_id, userAnswer } = get();
@@ -248,8 +250,18 @@ const useStore = create(
 						showExplanation: false,
 						isSubmitting: false,
 						userAnswer: null,
-						analytics: null,
+						analytics: {
+							session_stats: {
+								correct: 0,
+								incorrect: 0,
+							},
+							max_streak: 0,
+						},
 						isCorrect: false,
+						correctAnswer: false,
+						usedHints: 0,
+						avgTimeTaken: null,
+						timeTaken: [],
 					});
 				};
 
@@ -257,26 +269,28 @@ const useStore = create(
 				window.location.href = "/dashboard";
 			},
 
-			storeReset: () => {
-				set((state) => ({
-					...state,
-					quizQuestion: null,
-					selectedSubject: null,
-					selectedMode: null,
+			reset: () =>
+				set({
+					loading: false,
 					question_id: null,
+					quizQuestion: null,
 					nextQuizQuestion: null,
 					isNextQuestionLoading: false,
 					showExplanation: false,
 					isSubmitting: false,
 					userAnswer: null,
-					analytics: null,
+					analytics: {
+						session_stats: {
+							correct: 0,
+							incorrect: 0,
+						},
+						max_streak: 0,
+					},
 					correctAnswer: false,
 					usedHints: null,
 					avgTimeTaken: null,
 					timeTaken: [],
-					feedback: null,
-				}));
-			},
+				}),
 		}),
 		{
 			name: "store", // Name for localStorage
