@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-	baseURL: "http://localhost:8000/api/", // Your Django backend URL
+	baseURL: "https://gradenext-backend.onrender.com/api/", // Your Django backend URL
 	headers: {
 		"Content-Type": "application/json",
 	},

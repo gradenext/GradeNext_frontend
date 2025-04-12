@@ -1,6 +1,6 @@
 import api from "./api";
 
-export const generateQuestion = async (session_id, grade, subject) => {
+export const generatePracticeQuestion = async (session_id, grade, subject) => {
 	try {
 		const response = await api.post("/questions/", {
 			grade,
@@ -14,7 +14,7 @@ export const generateQuestion = async (session_id, grade, subject) => {
 	}
 };
 
-export const generateRevision = async (session_id, grade, subject) => {
+export const generateRevisionQuestion = async (session_id, grade, subject) => {
 	try {
 		const response = await api.post("/revision-questions/", {
 			grade,

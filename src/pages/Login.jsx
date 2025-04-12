@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Mail, Lock, Loader2, LogIn } from "lucide-react";
-import axios from "axios";
+import { signIn } from "../services/auth";
 import useStore from "../store/store";
 
 const Login = () => {
@@ -21,26 +21,21 @@ const Login = () => {
 		setError("");
 
 		try {
-			const response = await axios.post(
-				"http://localhost:8000/api/auth/login/",
-				{
-					email,
-					password,
-				}
-			);
+			const response = await signIn(email, password);
 
 			login(
 				response?.data?.token,
-				response.data.session_id,
-				response.data.account_id,
-				response.data.user
+				response?.data?.session_id,
+				response?.data?.account_id,
+				response?.data.user
 			);
 
-			localStorage.setItem("token", response.data.token);
-			localStorage.setItem("account_id", response.data.account_id);
-			localStorage.setItem("session_id", response.data.session_id);
+			localStorage.setItem("token", response?.data.token);
+			localStorage.setItem("account_id", response?.data?.account_id);
+			localStorage.setItem("session_id", response?.data?.session_id);
 			navigate("/dashboard");
 		} catch (err) {
+			console.log(err);
 			setError(err.response?.data?.error || "Invalid email or password");
 		} finally {
 			setIsLoading(false);

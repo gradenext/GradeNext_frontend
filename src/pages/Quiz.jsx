@@ -138,7 +138,7 @@ const Quiz = () => {
 			</div>
 
 			<div className="max-w-7xl mx-auto p-6 relative z-10">
-				<QuizNavbar type={"Practice"} />
+				<QuizNavbar  />
 				<div className="flex ">
 					<div className=" w-[60%] mx-auto px-4">
 						<QuizHeader />

@@ -1,28 +1,20 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import { logout } from "../services/auth";
-import { generateQuestion, submitAnswer } from "../services/quiz";
+import {
+	generatePracticeQuestion,
+	generateRevisionQuestion,
+	submitAnswer,
+} from "../services/quiz";
+import { useNavigate } from "react-router-dom";
 
 const useStore = create(
 	persist(
 		(set, get) => ({
+			// auth
 			token: null,
 			session_id: null,
 			account_id: null,
 			user: null,
-			selectedSubject: null,
-			selectedMode: null,
-			quizQuestion: null,
-			userAnswer: null,
-			analytics: null,
-			usedHints: null,
-			avgTimeTaken: null,
-			timeTaken: [],
-			loading: false,
-			question_id: null,
-			feedback: null,
-			isCorrect: false,
-			isSubmitting: false,
 
 			// Login function
 			login: (token, session_id, account_id, user) => {
@@ -31,8 +23,6 @@ const useStore = create(
 
 			// Logout function
 			logout: async () => {
-				// await logout();
-
 				set({
 					token: null,
 					session_id: null,
@@ -48,6 +38,9 @@ const useStore = create(
 				window.location.href = "/login";
 			},
 
+			selectedSubject: null,
+			selectedMode: null,
+
 			setSelectedSubject: (subjectId) => {
 				set({ selectedSubject: subjectId });
 			},
@@ -56,39 +49,132 @@ const useStore = create(
 				set({ selectedMode: actionId });
 			},
 
-			generatePracticeQuestion: async () => {
+			loading: false,
+			question_id: null,
+			quizQuestion: null,
+			nextQuizQuestion: null,
+			isNextQuestionLoading: false,
+			showExplanation: false,
+			isSubmitting: false,
+			userAnswer: null,
+			analytics: null,
+			correctAnswer: false,
+			usedHints: null,
+			avgTimeTaken: null,
+			timeTaken: [],
+			feedback: null,
+
+			generateQuestion: async () => {
+				set((state) => ({
+					...state,
+					loading: true,
+				}));
 				try {
-					set((state) => ({ ...state, loading: true }));
-
-					const { session_id, user, selectedSubject } = get();
-
-					const response = await generateQuestion(
+					const {
 						session_id,
-						user.grade,
-						selectedSubject
-					);
+						user,
+						selectedSubject,
+						quizQuestion,
+						nextQuizQuestion,
+						selectedMode,
+					} = get();
 
+					// Determine which API function to use based on mode
+					const generateFunction =
+						selectedMode === "practice"
+							? generatePracticeQuestion
+							: generateRevisionQuestion;
+
+					// Case 1: No current question - fetch both initial and next question
+					if (!quizQuestion) {
+						// Fetch initial question
+						const initialResponse = await generateFunction(
+							session_id,
+							user.grade,
+							selectedSubject
+						);
+
+						// Fetch next question in parallel for efficiency
+						const nextResponse = await generateFunction(
+							session_id,
+							user.grade,
+							selectedSubject
+						);
+
+						set((state) => ({
+							...state,
+							quizQuestion: initialResponse.data,
+							question_id: initialResponse.data?.question_id,
+							nextQuizQuestion: nextResponse.data,
+							loading: false,
+							isNextQuestionLoading: false,
+						}));
+					}
+					// Case 2: Current question exists but no next question - fetch next question
+					else if (!nextQuizQuestion) {
+						set((state) => ({
+							...state,
+							isNextQuestionLoading: true,
+						}));
+
+						const response = await generateFunction(
+							session_id,
+							user.grade,
+							selectedSubject
+						);
+
+						set((state) => ({
+							...state,
+							nextQuizQuestion: response.data,
+							isNextQuestionLoading: false,
+						}));
+					}
+					// Case 3: Both questions exist - move next to current and fetch new next question
+					else {
+						set((state) => ({
+							...state,
+							isNextQuestionLoading: true,
+						}));
+
+						// First move next question to current
+						set((state) => ({
+							...state,
+							quizQuestion: state.nextQuizQuestion,
+							question_id: state.nextQuizQuestion?.question_id,
+							nextQuizQuestion: null,
+						}));
+
+						// Then fetch new next question
+						const response = await generateFunction(
+							session_id,
+							user.grade,
+							selectedSubject
+						);
+
+						set((state) => ({
+							...state,
+							nextQuizQuestion: response.data,
+							isNextQuestionLoading: false,
+						}));
+					}
+				} catch (error) {
 					set((state) => ({
 						...state,
-						quizQuestion: response.data,
-						question_id: response?.data?.question_id,
 						loading: false,
+						isNextQuestionLoading: false,
 					}));
-				} catch (error) {
-					set((state) => ({ ...state, loading: false }));
 					throw error;
 				}
 			},
 
 			submitAnswer: async () => {
 				try {
-					set((state) => ({ ...state, isSubmitting: true }));
+					set((state) => ({
+						...state,
+						isSubmitting: true,
+					}));
 
-					const {
-						question_id,
-						userAnswer,
-						generatePracticeQuestion,
-					} = get();
+					const { question_id, userAnswer } = get();
 
 					const response = await submitAnswer(
 						question_id,
@@ -97,11 +183,15 @@ const useStore = create(
 
 					set((state) => ({
 						...state,
-						userAnswer: null,
 						isSubmitting: false,
+						showExplanation: true,
+						analytics: response?.data,
 					}));
 
-					await generatePracticeQuestion();
+					set((state) => ({
+						...state,
+						correctAnswer: response?.data?.correct_answer,
+					}));
 				} catch (error) {
 					set((state) => ({ ...state, isSubmitting: false }));
 
@@ -109,6 +199,17 @@ const useStore = create(
 					console.error("Submission failed:", err);
 					throw new Error(err.message || "Failed to submit answer");
 				}
+			},
+
+			moveToNext: () => {
+				const { generateQuestion } = get();
+				set((state) => ({
+					...state,
+					userAnswer: null,
+					correctAnswer: null,
+					showExplanation: false,
+				}));
+				generateQuestion();
 			},
 
 			setUserAnswer: (userAnswer) => {
@@ -125,26 +226,56 @@ const useStore = create(
 				}));
 			},
 
-			setAnalytics: (analytics) => {
-				set({ analytics });
-			},
-
 			setAvgTimeTaken: (time) => {
 				set((state) => ({
 					timeTaken: [...state.timeTaken, time],
 				}));
 			},
 
-			setLoading: () => {
-				set((state) => ({ ...state, loading: !state.loading }));
-			},
-
 			setFeedBack: (value) => {
 				set({ feedback: value });
 			},
 
-			setIsCorrect: () => {
-				set((state) => ({ ...state, isCorrect: !state.isCorrect }));
+			exitQuiz: () => {
+				// Store the reset function to run after navigation
+				const resetState = () => {
+					set({
+						loading: false,
+						question_id: null,
+						quizQuestion: null,
+						nextQuizQuestion: null,
+						isNextQuestionLoading: false,
+						showExplanation: false,
+						isSubmitting: false,
+						userAnswer: null,
+						analytics: null,
+						isCorrect: false,
+					});
+				};
+
+				window.addEventListener("unload", resetState, { once: true });
+				window.location.href = "/dashboard";
+			},
+
+			storeReset: () => {
+				set((state) => ({
+					...state,
+					quizQuestion: null,
+					selectedSubject: null,
+					selectedMode: null,
+					question_id: null,
+					nextQuizQuestion: null,
+					isNextQuestionLoading: false,
+					showExplanation: false,
+					isSubmitting: false,
+					userAnswer: null,
+					analytics: null,
+					correctAnswer: false,
+					usedHints: null,
+					avgTimeTaken: null,
+					timeTaken: [],
+					feedback: null,
+				}));
 			},
 		}),
 		{

@@ -1,12 +1,12 @@
 import api from './api';
 
-export const login = async (email, password) => {
+export const signIn = async (email, password) => {
   try {
     const response = await api.post('auth/login/', {
       email,
       password,
     });
-    return response.data;
+    return response;
   } catch (error) {
     throw error.response.data;
   }
@@ -24,16 +24,3 @@ export const register = async (userData) => {
       throw { error: 'Network error' };
     }
   };
-
-export const logout = async (token) => {
-  try {
-    const response = await api.post('auth/logout/', {}, {
-      headers: {
-        'Authorization': `Token ${token}`,
-      },
-    });
-    return response.data;
-  } catch (error) {
-    throw error.response.data;
-  }
-};

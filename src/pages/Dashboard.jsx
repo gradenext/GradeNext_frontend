@@ -1,5 +1,3 @@
-// src/components/dashboard/Dashboard.jsx
-import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
 	BookOpen,
@@ -24,12 +22,8 @@ const Dashboard = () => {
 	const selectedSubject = useStore((state) => state.selectedSubject);
 	const loading = useStore((state) => state.loading);
 
-	const {
-		logout,
-		setSelectedSubject,
-		setSelectedMode,
-		generatePracticeQuestion,
-	} = useStore();
+	const { logout, setSelectedSubject, setSelectedMode, generateQuestion } =
+		useStore();
 
 	// Color palette designed for kids
 	const colors = {
@@ -91,8 +85,8 @@ const Dashboard = () => {
 	const handleStart = async () => {
 		if (!selectedSubject || !selectedMode) return;
 		try {
-			await generatePracticeQuestion();
-			navigate(`/practice/${session_id}`);
+			await generateQuestion();
+			navigate(`/${selectedMode}/${session_id}`);
 		} catch (error) {
 			console.log("Error Occured", error);
 		}

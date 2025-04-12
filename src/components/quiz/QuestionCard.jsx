@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Lightbulb, Loader, Loader2 } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Lightbulb, Loader } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import useStore from "../../store/store";
@@ -7,19 +7,29 @@ import useStore from "../../store/store";
 export const QuestionCard = () => {
 	const [hoverOption, setHoverOption] = useState(null);
 	const [showTooltip, setShowTooltip] = useState(false);
-	const [showExplanation, setShowExplantion] = useState(false);
 
 	const question = useStore((state) => state.quizQuestion);
-	const selectedAnswer = useStore((state) => state.userAnswer);
-	const isCorrect = useStore((state) => state.isCorrect);
-	const loading = useStore((state) => state.loading);
+	const userAnswer = useStore((state) => state.userAnswer);
+	const correctAnswer = useStore((state) => state.correctAnswer);
+	const isSubmitting = useStore((state) => state.isSubmitting);
+	const showExplanation = useStore((state) => state.showExplanation);
+	// const loading = useStore((state) => state.loading);
 
-	const { setUserAnswer, clearUserAnswer, setIsCorrect, submitAnswer } =
+	const { setUserAnswer, clearUserAnswer, submitAnswer, moveToNext } =
 		useStore();
 
 	const onSelectAnswer = (value) => setUserAnswer(value);
 	const onClearSelection = () => clearUserAnswer();
-	const handleSubmitAnswer = () => submitAnswer();
+	const handleSubmitAnswer = () => {
+		submitAnswer();
+	};
+
+	useEffect(() => {
+		userAnswer &&
+			correctAnswer &&
+			userAnswer === correctAnswer &&
+			triggerCorrectConfetti();
+	}, [userAnswer, correctAnswer]);
 
 	const triggerCorrectConfetti = () => {
 		const count = 100;
@@ -41,28 +51,28 @@ export const QuestionCard = () => {
 		fire(0.2, { spread: 60, origin: { x: 0.5, y: 0.7 } });
 	};
 
-	if (loading) {
-		return (
-			<motion.div
-				initial={{ y: 20, opacity: 0 }}
-				animate={{ y: 0, opacity: 1 }}
-				transition={{ duration: 0.5, delay: 0.2 }}
-			>
-				<div className="p-6 rounded-3xl border-4 border-blue-300 bg-white shadow-lg">
-					<div className="flex flex-col items-center justify-center py-10">
-						<div className="animate-bounce mb-4">
-							<div className="w-16 h-16 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center">
-								<div className="w-10 h-10 rounded-full bg-white animate-ping"></div>
-							</div>
-						</div>
-						<p className="text-lg font-bold text-purple-600">
-							Loading your question...
-						</p>
-					</div>
-				</div>
-			</motion.div>
-		);
-	}
+	// if (loading) {
+	// 	return (
+	// 		<motion.div
+	// 			initial={{ y: 20, opacity: 0 }}
+	// 			animate={{ y: 0, opacity: 1 }}
+	// 			transition={{ duration: 0.5, delay: 0.2 }}
+	// 		>
+	// 			<div className="p-6 rounded-3xl border-4 border-blue-300 bg-white shadow-lg">
+	// 				<div className="flex flex-col items-center justify-center py-10">
+	// 					<div className="animate-bounce mb-4">
+	// 						<div className="w-16 h-16 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center">
+	// 							<div className="w-10 h-10 rounded-full bg-white animate-ping"></div>
+	// 						</div>
+	// 					</div>
+	// 					<p className="text-lg font-bold text-purple-600">
+	// 						Loading your question...
+	// 					</p>
+	// 				</div>
+	// 			</div>
+	// 		</motion.div>
+	// 	);
+	// }
 
 	if (!question) return null;
 
@@ -87,7 +97,7 @@ export const QuestionCard = () => {
 						transition={{ duration: 0.5 }}
 					/>
 
-					<div className="">
+					{/* <div className="">
 						<button
 							onMouseEnter={() => setShowTooltip(true)}
 							onMouseLeave={() => setShowTooltip(false)}
@@ -101,93 +111,90 @@ export const QuestionCard = () => {
 								Correct Answer: {question.correctAnswer}
 							</div>
 						)}
-					</div>
+					</div> */}
 				</div>
 
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
 					<AnimatePresence>
-						{Object.values(question.options).map((option, index) => {
-							const buttonClasses =
-								"p-4 text-lg w-full rounded-xl font-medium border-2 transition-all relative";
-							let bgColor = "bg-white";
-							let borderColor = "border-gray-200";
-							let textColor = "text-gray-700";
+						{question?.options
+							?.map((o) => {
+								const parts = o.split(":").map((s) => s.trim());
+								return parts.length >= 2
+									? {
+											key: parts[0],
+											value: parts.slice(1).join(":"),
+									  }
+									: { key: "", value: o };
+							})
+							?.map((option, index) => {
+								const buttonClasses =
+									"p-4 text-lg w-full rounded-xl font-medium border-2 transition-all relative";
+								let bgColor = "bg-white";
+								let borderColor = "border-gray-200";
+								let textColor = "text-gray-700";
 
-							if (showExplanation) {
-								if (option === question.correctAnswer) {
-									bgColor = "bg-green-100";
-									borderColor = "border-green-400";
-									textColor = "text-green-700";
-								} else if (option === selectedAnswer) {
-									bgColor = "bg-red-100";
-									borderColor = "border-red-400";
-									textColor = "text-red-700";
+								if (showExplanation) {
+									if (option?.key === correctAnswer) {
+										bgColor = "bg-green-100";
+										borderColor = "border-green-400";
+										textColor = "text-green-700";
+									} else if (option?.key === userAnswer) {
+										bgColor = "bg-red-100";
+										borderColor = "border-red-400";
+										textColor = "text-red-700";
+									}
+								} else if (userAnswer === option?.key) {
+									bgColor = "bg-blue-100";
+									borderColor = "border-blue-400";
+									textColor = "text-blue-700";
+								} else if (hoverOption === option?.key) {
+									bgColor = "bg-purple-50";
+									borderColor = "border-purple-300";
 								}
-							} else if (selectedAnswer === option) {
-								bgColor = "bg-blue-100";
-								borderColor = "border-blue-400";
-								textColor = "text-blue-700";
-							} else if (hoverOption === option) {
-								bgColor = "bg-purple-50";
-								borderColor = "border-purple-300";
-							}
 
-							const fullClasses = `${buttonClasses} ${bgColor} ${borderColor} ${textColor}`;
+								const fullClasses = `${buttonClasses} ${bgColor} ${borderColor} ${textColor}`;
 
-							return (
-								<motion.button
-									key={option}
-									onClick={() => {
-										onSelectAnswer(option);
-										isCorrect && triggerCorrectConfetti();
-										setIsCorrect();
-									}}
-									disabled={showExplanation}
-									className={fullClasses}
-									onMouseEnter={() => setHoverOption(option)}
-									onMouseLeave={() => setHoverOption(null)}
-									initial={{ opacity: 0, y: 20 }}
-									animate={{ opacity: 1, y: 0 }}
-									transition={{
-										duration: 0.3,
-										delay: index * 0.1,
-									}}
-									whileHover={{
-										scale: showExplanation ? 1 : 1.03,
-										boxShadow: showExplanation
-											? "none"
-											: "0 4px 12px rgba(0,0,0,0.1)",
-									}}
-								>
-									<div className="flex items-center">
-										<div className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-400 to-blue-400 flex items-center justify-center text-white font-bold mr-3 flex-shrink-0">
-											{String.fromCharCode(65 + index)}
+								return (
+									<motion.button
+										key={option?.key}
+										onClick={() => {
+											onSelectAnswer(option?.key);
+										}}
+										disabled={showExplanation}
+										className={fullClasses}
+										onMouseEnter={() =>
+											setHoverOption(option?.key)
+										}
+										onMouseLeave={() =>
+											setHoverOption(null)
+										}
+										initial={{ opacity: 0, y: 20 }}
+										animate={{ opacity: 1, y: 0 }}
+										transition={{
+											duration: 0.3,
+											delay: index * 0.1,
+										}}
+										whileHover={{
+											scale: showExplanation ? 1 : 1.03,
+											boxShadow: showExplanation
+												? "none"
+												: "0 4px 12px rgba(0,0,0,0.1)",
+										}}
+									>
+										<div className="flex items-center">
+											<div className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-400 to-blue-400 flex items-center justify-center text-white font-bold mr-3 flex-shrink-0">
+												{String.fromCharCode(
+													65 + index
+												)}
+											</div>
+											<span
+												dangerouslySetInnerHTML={{
+													__html: option?.value,
+												}}
+											/>
 										</div>
-										<span
-											dangerouslySetInnerHTML={{
-												__html: option,
-											}}
-										/>
-									</div>
 
-									{showExplanation && isCorrect && (
-										<motion.div
-											className="absolute right-3 text-2xl"
-											initial={{ scale: 0 }}
-											animate={{ scale: 1 }}
-											transition={{
-												type: "spring",
-												stiffness: 300,
-												damping: 10,
-											}}
-										>
-											✅
-										</motion.div>
-									)}
-
-									{showExplanation &&
-										isCorrect &&
-										option === selectedAnswer && (
+										{showExplanation && correctAnswer && (
 											<motion.div
 												className="absolute right-3 text-2xl"
 												initial={{ scale: 0 }}
@@ -198,12 +205,14 @@ export const QuestionCard = () => {
 													damping: 10,
 												}}
 											>
-												❌
+												{option?.key === correctAnswer
+													? "✅"
+													: "❌"}
 											</motion.div>
 										)}
-								</motion.button>
-							);
-						})}
+									</motion.button>
+								);
+							})}
 					</AnimatePresence>
 				</div>
 
@@ -215,10 +224,10 @@ export const QuestionCard = () => {
 						transition={{ duration: 0.3 }}
 					>
 						<button
-							disabled={!selectedAnswer}
+							disabled={!userAnswer}
 							onClick={onClearSelection}
 							className={`text-purple-600 hover:text-purple-800 bg-purple-100 rounded-full px-4 py-2 transition-colors ${
-								selectedAnswer
+								userAnswer
 									? "cursor-pointer"
 									: "cursor-not-allowed"
 							}`}
@@ -226,17 +235,35 @@ export const QuestionCard = () => {
 							Clear Response
 						</button>
 						<button
-							disabled={!selectedAnswer}
+							disabled={!userAnswer}
 							onClick={handleSubmitAnswer}
 							className={`text-purple-100 min-w-36 hover:text-purple-200 bg-purple-900 rounded-full px-4 py-2 transition-colors ${
-								selectedAnswer
+								userAnswer
 									? "cursor-pointer"
 									: "cursor-not-allowed"
 							}`}
 						>
-							Submit Answer
+							<div>
+								{isSubmitting ? (
+									<div>
+										<Loader className="mx-auto animate-spin" />
+									</div>
+								) : (
+									<div>Submit Answer</div>
+								)}
+							</div>
 						</button>
 					</motion.div>
+				)}
+				{showExplanation && (
+					<button
+						onClick={() => {
+							moveToNext();
+						}}
+						className="p-4 bg-black text-white"
+					>
+						Continue
+					</button>
 				)}
 			</div>
 		</motion.div>
