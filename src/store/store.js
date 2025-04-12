@@ -31,6 +31,25 @@ const useStore = create(
 					quizQuestion: null,
 					selectedSubject: null,
 					selectedMode: null,
+					loading: false,
+					question_id: null,
+					nextQuizQuestion: null,
+					isNextQuestionLoading: false,
+					showExplanation: false,
+					isSubmitting: false,
+					userAnswer: null,
+					analytics: {
+						session_stats: {
+							correct: 0,
+							incorrect: 0,
+						},
+						max_streak: 0,
+					},
+					correctAnswer: false,
+					usedHints: 0,
+					avgTimeTaken: null,
+					timeTaken: [],
+					feedback: null,
 				});
 				localStorage.removeItem("token");
 				localStorage.removeItem("session_id");
@@ -57,7 +76,13 @@ const useStore = create(
 			showExplanation: false,
 			isSubmitting: false,
 			userAnswer: null,
-			analytics: { session_stats: 0, max_streak: 0 },
+			analytics: {
+				session_stats: {
+					correct: 0,
+					incorrect: 0,
+				},
+				max_streak: 0,
+			},
 			correctAnswer: false,
 			usedHints: 0,
 			avgTimeTaken: null,

@@ -27,93 +27,15 @@ const topicDetails = {
 	],
 };
 
-const fakeTestReport = {
-	totalQuestions: 42,
-	correctAnswers: 28,
-	hintsUsed: 9,
-	averageTimePerQuestion: 34.5,
-	bestStreak: 7,
-	topicStats: {
-		Algebra: {
-			correct: 6,
-			total: 15,
-			hintsUsed: 3,
-			totalTime: 420,
-		},
-		Geometry: {
-			correct: 8,
-			total: 12,
-			hintsUsed: 4,
-			totalTime: 560,
-		},
-		Calculus: {
-			correct: 5,
-			total: 10,
-			hintsUsed: 2,
-			totalTime: 720,
-		},
-		Trigonometry: {
-			correct: 3,
-			total: 5,
-			hintsUsed: 0,
-			totalTime: 180,
-		},
-	},
-	questionsData: [
-		// Sample questions - you can expand this list
-		{
-			topic: "Algebra",
-			difficulty: "easy",
-			correct: true,
-			timeSpent: 25,
-			hintsUsed: 0,
-		},
-		{
-			topic: "Geometry",
-			difficulty: "medium",
-			correct: false,
-			timeSpent: 45,
-			hintsUsed: 1,
-		},
-		{
-			topic: "Calculus",
-			difficulty: "hard",
-			correct: false,
-			timeSpent: 68,
-			hintsUsed: 2,
-		},
-		{
-			topic: "Trigonometry",
-			difficulty: "easy",
-			correct: true,
-			timeSpent: 32,
-			hintsUsed: 0,
-		},
-		{
-			topic: "Algebra",
-			difficulty: "hard",
-			correct: false,
-			timeSpent: 55,
-			hintsUsed: 1,
-		},
-		// Add more entries following the same pattern...
-		// You can generate more entries to reach totalQuestions count
-	],
+const hello = {
+	correct_answer: "A",
+	current_streak: 0,
+	is_correct: false,
+	max_streak: 2,
+	session_stats: { correct: 3, incorrect: 4 },
+	total_stats: { correct: 3, incorrect: 4 },
+	user_answer: "D",
 };
-
-// Add more questions to reach totalQuestions count
-for (let i = 0; i < 38; i++) {
-	// Already added 5 above
-	fakeTestReport.questionsData.push({
-		topic: ["Algebra", "Geometry", "Calculus", "Trigonometry"][
-			Math.floor(Math.random() * 4)
-		],
-		difficulty: ["easy", "medium", "hard"][Math.floor(Math.random() * 3)],
-		correct: Math.random() > 0.3, // 70% correct rate
-		timeSpent: Math.floor(Math.random() * 60 + 15),
-		hintsUsed: Math.floor(Math.random() * 2),
-	});
-}
 
 const Quiz = () => {
 	const quizQuestion = useStore((state) => state.quizQuestion);
@@ -138,14 +60,14 @@ const Quiz = () => {
 			</div>
 
 			<div className="max-w-7xl mx-auto p-6 relative z-10">
-				<QuizNavbar  />
+				<QuizNavbar />
 				<div className="flex ">
 					<div className=" w-[60%] mx-auto px-4">
 						<QuizHeader />
 						<QuestionCard isLoading={false} />
 					</div>
 					<div className="w-[40%]">
-						<ProgessDashboard testReport={fakeTestReport} />
+						<ProgessDashboard />
 					</div>
 				</div>
 			</div>
