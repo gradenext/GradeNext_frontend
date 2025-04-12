@@ -39,6 +39,8 @@ const Signup = () => {
 	const availableCourses = [
 		{ id: "mathematics", label: "Mathematics", emoji: "🧮" },
 		{ id: "english", label: "English", emoji: "📚" },
+		{ id: "computer", label: "Computer Language", emoji: "📚" },
+		{ id: "science", label: "Science", emoji: "🧮" },
 	];
 
 	const handleChange = (e) => {
@@ -186,6 +188,9 @@ const Signup = () => {
 								<option value="3">Grade 3</option>
 								<option value="4">Grade 4</option>
 								<option value="5">Grade 5</option>
+								<option value="6">Grade 6</option>
+								<option value="7">Grade 7</option>
+								<option value="8">Grade 8</option>
 							</select>
 						</div>
 
