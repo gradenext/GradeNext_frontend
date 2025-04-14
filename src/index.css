@@ -1,1 +1,48 @@
 @import "tailwindcss";
+/* For WebKit (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+	width: 2px;
+	height: 2px;
+	background-color: transparent; /* Remove any default background */
+}
+
+::-webkit-scrollbar-track {
+	background: transparent ;
+	border: none; /* Remove any borders */
+	box-shadow: none; /* Remove any shadows */
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: #3b82f6;
+	border-radius: 100px;
+	border: none; /* Remove any borders */
+	background-clip: padding-box; /* Prevents color bleed */
+}
+
+/* For Firefox */
+* {
+	scrollbar-width: thin;
+	scrollbar-color: #3b82f6 transparent; /* thumb | track */
+	scrollbar-track-color: transparent;
+}
+
+/* For Edge Legacy */
+@supports (-ms-ime-align: auto) {
+	* {
+		-ms-overflow-style: none; /* Hides default scrollbar */
+	}
+	::-webkit-scrollbar {
+		display: none; /* Double hiding for Edge */
+	}
+}
+
+/* Optional: Apply to specific elements only */
+.scroll-transparent {
+	scrollbar-width: thin;
+	scrollbar-color: #3b82f6 transparent;
+}
+.scroll-transparent::-webkit-scrollbar {
+	width: 2px;
+	height: 2px;
+	background: transparent;
+}

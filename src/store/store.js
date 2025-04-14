@@ -5,13 +5,12 @@ import {
 	generateRevisionQuestion,
 	submitAnswer,
 } from "../services/quiz";
-import { useNavigate } from "react-router-dom";
 
 const useStore = create(
 	persist(
 		(set, get) => ({
 			// auth
-			token: null,
+			token: sessionStorage.getItem("token"),
 			session_id: null,
 			account_id: null,
 			user: null,
@@ -47,13 +46,11 @@ const useStore = create(
 					},
 					correctAnswer: false,
 					usedHints: 0,
-					avgTimeTaken: null,
+					avgTimeTaken: 0,
 					timeTaken: [],
 					feedback: null,
 				});
-				localStorage.removeItem("token");
-				localStorage.removeItem("session_id");
-				localStorage.removeItem("account_id");
+				sessionStorage.removeItem("token");
 				window.location.href = "/login";
 			},
 
@@ -82,17 +79,24 @@ const useStore = create(
 					incorrect: 0,
 				},
 				max_streak: 0,
+				current_streak: 0,
 			},
 			correctAnswer: false,
 			usedHints: 0,
-			avgTimeTaken: null,
+			avgTimeTaken: 0,
 			timeTaken: [],
 			feedback: null,
+			questionLoadedAt: null,
+
+			setQuestionLoadedAt: (time) => {
+				set({ questionLoadedAt: time });
+			},
 
 			generateQuestion: async () => {
 				set((state) => ({
 					...state,
 					loading: true,
+					isNextQuestionLoading: true,
 				}));
 				try {
 					const {
@@ -190,41 +194,59 @@ const useStore = create(
 					}));
 
 					throw error;
+				} finally {
+					set({
+						loading: false,
+						isNextQuestionLoading: false,
+					});
 				}
 			},
 
 			submitAnswer: async () => {
 				try {
-					set((state) => ({
-						...state,
+					const state = get();
+					set({
 						isSubmitting: true,
 						showExplanation: true,
-					}));
+					});
 
-					const { question_id, userAnswer } = get();
+					// Calculate time taken
+					const timeTaken = state.questionLoadedAt
+						? (Date.now() - state.questionLoadedAt.getTime()) / 1000
+						: 0;
 
+					// Submit answer
 					const response = await submitAnswer(
-						question_id,
-						userAnswer
+						state.question_id,
+						state.userAnswer
 					);
 
-					set((state) => ({
-						...state,
-						isSubmitting: false,
-						showExplanation: true,
-						analytics: response?.data,
-					}));
+					// Update all state at once to prevent multiple renders
+					set((prev) => {
+						const newTimeTaken = [...prev.timeTaken, timeTaken];
+						const newAverage =
+							newTimeTaken.length > 0
+								? newTimeTaken.reduce((a, b) => a + b, 0) /
+								  newTimeTaken.length
+								: 0;
 
-					set((state) => ({
-						...state,
-						correctAnswer: response?.data?.correct_answer,
-					}));
+						return {
+							...prev,
+							isSubmitting: false,
+							showExplanation: true,
+							analytics: response?.data,
+							correctAnswer: response?.data?.correct_answer,
+							timeTaken: newTimeTaken,
+							avgTimeTaken: newAverage,
+							questionLoadedAt: null,
+						};
+					});
 				} catch (error) {
-					set((state) => ({ ...state, isSubmitting: false }));
-
-					const err = error.response?.data || error;
-					console.error("Submission failed:", err);
-					throw new Error(err.message || "Failed to submit answer");
+					set({
+						isSubmitting: false,
+						showExplanation: false,
+					});
+					throw error;
 				}
 			},
 
@@ -253,48 +275,11 @@ const useStore = create(
 				}));
 			},
 
-			setAvgTimeTaken: (time) => {
-				set((state) => ({
-					timeTaken: [...state.timeTaken, time],
-				}));
-			},
-
 			setFeedBack: (value) => {
 				set({ feedback: value });
 			},
 
 			exitQuiz: () => {
-				// Store the reset function to run after navigation
-				const resetState = () => {
-					set({
-						loading: false,
-						question_id: null,
-						quizQuestion: null,
-						nextQuizQuestion: null,
-						isNextQuestionLoading: false,
-						showExplanation: false,
-						isSubmitting: false,
-						userAnswer: null,
-						analytics: {
-							session_stats: {
-								correct: 0,
-								incorrect: 0,
-							},
-							max_streak: 0,
-						},
-						isCorrect: false,
-						correctAnswer: false,
-						usedHints: 0,
-						avgTimeTaken: null,
-						timeTaken: [],
-					});
-				};
-
-				window.addEventListener("unload", resetState, { once: true });
-				window.location.href = "/dashboard";
-			},
-
-			reset: () =>
 				set({
 					loading: false,
 					question_id: null,
@@ -304,22 +289,17 @@ const useStore = create(
 					showExplanation: false,
 					isSubmitting: false,
 					userAnswer: null,
-					analytics: {
-						session_stats: {
-							correct: 0,
-							incorrect: 0,
-						},
-						max_streak: 0,
-					},
+					isCorrect: false,
 					correctAnswer: false,
-					usedHints: null,
-					avgTimeTaken: null,
+					usedHints: 0,
+					avgTimeTaken: 0,
 					timeTaken: [],
-				}),
+				});
+			},
 		}),
 		{
-			name: "store", // Name for localStorage
-			storage: createJSONStorage(() => localStorage), // Uses localStorage for persistence
+			name: "store",
+			storage: createJSONStorage(() => sessionStorage),
 		}
 	)
 );

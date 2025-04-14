@@ -10,7 +10,8 @@ export const generatePracticeQuestion = async (session_id, grade, subject) => {
 
 		return response;
 	} catch (error) {
-		return error;
+		console.log(error);
+		throw error;
 	}
 };
 
@@ -24,7 +25,8 @@ export const generateRevisionQuestion = async (session_id, grade, subject) => {
 
 		return response;
 	} catch (error) {
-		return error;
+		console.log(error);
+		throw error;
 	}
 };
 
@@ -37,6 +39,19 @@ export const submitAnswer = async (question_id, user_answer) => {
 
 		return response;
 	} catch (error) {
-		return error;
+		console.log(error);
+		throw error;
+	}
+};
+export const getTopicIntroduction = async (selectedSubject) => {
+	try {
+		const response = await api.post("/topic-introduction/", {
+			subject: selectedSubject,
+		});
+
+		return response.data;
+	} catch (error) {
+		console.log(error);
+		throw error;
 	}
 };

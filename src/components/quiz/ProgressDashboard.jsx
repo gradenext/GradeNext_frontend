@@ -38,99 +38,105 @@ const COLORS = {
 	},
 };
 
+const fakeTestReport = {
+	totalQuestions: 0,
+	correctAnswers: 0,
+	hintsUsed: 0,
+	averageTimePerQuestion: 0,
+	bestStreak: 0,
+	topicStats: {
+		Algebra: {
+			correct: 6,
+			total: 15,
+			hintsUsed: 3,
+			totalTime: 420,
+		},
+		Geometry: {
+			correct: 8,
+			total: 12,
+			hintsUsed: 4,
+			totalTime: 560,
+		},
+		Calculus: {
+			correct: 5,
+			total: 10,
+			hintsUsed: 2,
+			totalTime: 720,
+		},
+		Trigonometry: {
+			correct: 3,
+			total: 5,
+			hintsUsed: 0,
+			totalTime: 180,
+		},
+	},
+	questionsData: [
+		// Sample questions - you can expand this list
+		{
+			topic: "Algebra",
+			difficulty: "easy",
+			correct: true,
+			timeSpent: 25,
+			hintsUsed: 0,
+		},
+		{
+			topic: "Geometry",
+			difficulty: "medium",
+			correct: false,
+			timeSpent: 45,
+			hintsUsed: 1,
+		},
+		{
+			topic: "Calculus",
+			difficulty: "hard",
+			correct: false,
+			timeSpent: 68,
+			hintsUsed: 2,
+		},
+		{
+			topic: "Trigonometry",
+			difficulty: "easy",
+			correct: true,
+			timeSpent: 32,
+			hintsUsed: 0,
+		},
+		{
+			topic: "Algebra",
+			difficulty: "hard",
+			correct: false,
+			timeSpent: 55,
+			hintsUsed: 1,
+		},
+	],
+};
+
+// Add more questions to reach totalQuestions count
+for (let i = 0; i < 38; i++) {
+	// Already added 5 above
+	fakeTestReport.questionsData.push({
+		topic: ["Algebra", "Geometry", "Calculus", "Trigonometry"][
+			Math.floor(Math.random() * 4)
+		],
+		difficulty: ["easy", "medium", "hard"][Math.floor(Math.random() * 3)],
+		correct: Math.random() > 0.3, // 70% correct rate
+		timeSpent: Math.floor(Math.random() * 60 + 15),
+		hintsUsed: Math.floor(Math.random() * 2),
+	});
+}
+
 function ProgressDashboard() {
-	const analytics = useStore((state) => state);
-	console.log(analytics);
 	const { session_stats, max_streak } = useStore((state) => state.analytics);
 	const hintsUsed = useStore((state) => state.usedHints);
+	const avgTimeTaken = useStore((state) => state.avgTimeTaken);
 
 	const testReport = {
+		...fakeTestReport,
 		totalQuestions: session_stats?.correct + session_stats?.incorrect,
 		correctAnswers: session_stats?.correct,
 		hintsUsed,
-		averageTimePerQuestion: 34.5,
+		averageTimePerQuestion: avgTimeTaken,
 		bestStreak: max_streak,
-		topicStats: {
-			Algebra: {
-				correct: 6,
-				total: 15,
-				hintsUsed: 3,
-				totalTime: 420,
-			},
-			Geometry: {
-				correct: 8,
-				total: 12,
-				hintsUsed: 4,
-				totalTime: 560,
-			},
-			Calculus: {
-				correct: 5,
-				total: 10,
-				hintsUsed: 2,
-				totalTime: 720,
-			},
-			Trigonometry: {
-				correct: 3,
-				total: 5,
-				hintsUsed: 0,
-				totalTime: 180,
-			},
-		},
-		questionsData: [
-			// Sample questions - you can expand this list
-			{
-				topic: "Algebra",
-				difficulty: "easy",
-				correct: true,
-				timeSpent: 25,
-				hintsUsed: 0,
-			},
-			{
-				topic: "Geometry",
-				difficulty: "medium",
-				correct: false,
-				timeSpent: 45,
-				hintsUsed: 1,
-			},
-			{
-				topic: "Calculus",
-				difficulty: "hard",
-				correct: false,
-				timeSpent: 68,
-				hintsUsed: 2,
-			},
-			{
-				topic: "Trigonometry",
-				difficulty: "easy",
-				correct: true,
-				timeSpent: 32,
-				hintsUsed: 0,
-			},
-			{
-				topic: "Algebra",
-				difficulty: "hard",
-				correct: false,
-				timeSpent: 55,
-				hintsUsed: 1,
-			},
-		],
 	};
-
-	// Add more questions to reach totalQuestions count
-	for (let i = 0; i < 38; i++) {
-		// Already added 5 above
-		testReport.questionsData.push({
-			topic: ["Algebra", "Geometry", "Calculus", "Trigonometry"][
-				Math.floor(Math.random() * 4)
-			],
-			difficulty: ["easy", "medium", "hard"][
-				Math.floor(Math.random() * 3)
-			],
-			correct: Math.random() > 0.3, // 70% correct rate
-			timeSpent: Math.floor(Math.random() * 60 + 15),
-			hintsUsed: Math.floor(Math.random() * 2),
-		});
-	}
 
 	const [activeTab, setActiveTab] = useState("overview");
 
@@ -537,7 +543,7 @@ function ProgressDashboard() {
 												</div>
 												<div>
 													<div className="text-sm font-medium">
-														Fastest Answer
+														Strongest Topic
 													</div>
 													<div className="text-xs text-gray-500">
 														{Math.min(

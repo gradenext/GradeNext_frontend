@@ -4,7 +4,7 @@ const LevelProgess = ({ questionsInCurrentLevel, correctInCurrentLevel }) => {
 	return (
 		<div className="flex items-center gap-2 mb-4">
 			<div className="text-sm text-gray-900">Level Progress:</div>
-			<div className="flex gap-1">
+			<div className="flex gap-x-1">
 				{[...Array(5)].map((_, index) => {
 					const hasIncorrect =
 						questionsInCurrentLevel > correctInCurrentLevel;

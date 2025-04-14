@@ -4,38 +4,9 @@ import QuizNavbar from "../components/quiz/QuizNavbar";
 import QuizHeader from "../components/quiz/QuizHeader";
 import { useWindowSize } from "react-use";
 import ReactConfetti from "react-confetti";
-import Caclulator from "../components/quiz/Calculator";
 import TopicIntroduction from "../components/quiz/TopicIntroduction";
 import ProgessDashboard from "../components/quiz/ProgressDashboard";
 import { QuestionCard } from "../components/quiz/QuestionCard";
-
-const topicDetails = {
-	title: "Adding, Subtracting, and Understanding Data",
-	description:
-		"In this topic, we'll learn about adding and subtracting numbers, which are ways to find out how much we have in total or how much is left. We will also explore how to collect, organize, and understand simple data by using charts and graphs.",
-	keyPoints: [
-		"Adding means putting numbers together to find out how many there are in all.",
-		"Subtracting means taking away some numbers to find out how many are left.",
-		"Data is information we collect, such as counting the number of apples or the days of sunshine.",
-		"We can organize data using charts, like bar graphs, to make it easier to understand.",
-		"Understanding data helps us answer questions about the things we count or measure.",
-	],
-	examples: [
-		"If you have 3 apples and get 2 more, you add them together: 3 + 2 = 5 apples.",
-		"If you have 5 candies and eat 2, you subtract to find out how many are left: 5 - 2 = 3 candies.",
-		"If your class counts how many students bring lunch from home and how many buy lunch at school, you can use a chart to show this data.",
-	],
-};
-
-const hello = {
-	correct_answer: "A",
-	current_streak: 0,
-	is_correct: false,
-	max_streak: 2,
-	session_stats: { correct: 3, incorrect: 4 },
-	total_stats: { correct: 3, incorrect: 4 },
-	user_answer: "D",
-};
 
 const Quiz = () => {
 	const quizQuestion = useStore((state) => state.quizQuestion);
@@ -59,10 +30,10 @@ const Quiz = () => {
 				<div className="absolute bottom-40 right-1/3 w-12 h-12 bg-blue-300 rounded-full opacity-50 animate-float-delay-slow"></div>
 			</div>
 
-			<div className="max-w-7xl mx-auto p-6 relative z-10">
+			<div className=" mx-auto px-6 relative z-10">
 				<QuizNavbar />
-				<div className="flex ">
-					<div className=" w-[60%] mx-auto px-4">
+				<div className="flex gap-x-2 ">
+					<div className=" w-[60%] mx-auto">
 						<QuizHeader />
 						<QuestionCard isLoading={false} />
 					</div>
@@ -72,14 +43,10 @@ const Quiz = () => {
 				</div>
 			</div>
 
-			<Caclulator />
 			<TopicIntroduction
 				topicName={quizQuestion?.progress?.current_topic
 					?.split("_")
 					.join(" ")}
-				topicDetail={topicDetails}
-				isLoading={false}
-				// error={"topicDetailError"}
 			/>
 		</div>
 	);

@@ -7,6 +7,7 @@ import StreakDisplay from "./StreakDisplay";
 
 const QuizHeader = () => {
 	const quizQuestion = useStore((state) => state.quizQuestion);
+	const { max_streak, current_streak } = useStore((state) => state.analytics);
 
 	return (
 		<motion.div
@@ -41,8 +42,8 @@ const QuizHeader = () => {
 					Questions: {5}/5 | Correct: {2}
 				</div>
 				<StreakDisplay
-					currentStreak={quizQuestion?.progress?.current_streak}
-					bestStreak={quizQuestion?.progress?.max_streak}
+					currentStreak={current_streak}
+					bestStreak={max_streak}
 				/>
 			</div>
 		</motion.div>

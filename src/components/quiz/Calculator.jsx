@@ -1,5 +1,6 @@
 import { Calculator, X } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
+import Modal from "../Modal";
 
 const CalculatorComponent = () => {
 	const [isOpen, setIsOpen] = useState(false);
@@ -224,94 +225,73 @@ const CalculatorComponent = () => {
 	return (
 		<>
 			<button
-				className="fixed bottom-4 left-4 z-50 bg-white text-sm border border-gray-300 rounded-lg p-3 shadow-lg cursor-pointer"
+				className=" bg-blue-500 text-sm border border-blue-500 rounded-full p-3  shadow-lg cursor-pointer"
 				onClick={() => setIsOpen(true)}
 			>
-				<Calculator className="h-6 w-6" />
+				<Calculator className="h-4 w-4 text-white" />
 			</button>
 
-			<div
-				className={`fixed inset-0 z-50 bg-black/80 flex items-center justify-center transition-opacity duration-300 ${
-					isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-				}`}
+			<Modal
+				isOpen={isOpen}
+				onClose={() => setIsOpen(false)}
+				title={"Calculator"}
 			>
-				<div
-					ref={modalRef}
-					className={`bg-white rounded-lg p-4 w-80 shadow-xl transition-transform duration-300 ${
-						isOpen ? "scale-100" : "scale-95"
-					}`}
-				>
-					<div className="mb-4">
-						<h2 className="text-lg font-bold mb-2 flex justify-between items-center">
-							<span>Calculator</span>
-							<button
-								onClick={() => setIsOpen(false)}
-								className="text-gray-500 hover:text-black cursor-pointer transition-colors"
-							>
-								<X size={24} />
-							</button>
-						</h2>
-						<div className="bg-gray-100 p-4 rounded-lg flex flex-col gap-y-4">
-							<div className="text-gray-500 text-3xl h-6 text-right">
-								{firstNumber && `${firstNumber} ${operation}`}
-							</div>
-							<div
-								className={`text-right transition-all ${
-									display === "Error"
-										? "text-red-500 text-2xl"
-										: "text-3xl"
-								}`}
-								style={{
-									fontSize:
-										display.length > 10
-											? `${Math.max(
-													1.5 -
-														(display.length - 10) *
-															0.15,
-													0.8
-											  )}rem`
-											: undefined,
-								}}
-							>
-								{display}
-							</div>
+				<div className="mb-4">
+					<div className="bg-gray-100 p-4 rounded-lg flex flex-col gap-y-4">
+						<div className="text-gray-500 text-3xl h-6 text-right">
+							{firstNumber && `${firstNumber} ${operation}`}
+						</div>
+						<div
+							className={`text-right transition-all ${
+								display === "Error"
+									? "text-red-500 text-2xl"
+									: "text-3xl"
+							}`}
+							style={{
+								fontSize:
+									display.length > 10
+										? `${Math.max(
+												1.5 -
+													(display.length - 10) *
+														0.15,
+												0.8
+										  )}rem`
+										: undefined,
+							}}
+						>
+							{display}
 						</div>
 					</div>
-					<div className="grid grid-cols-4 gap-2">
-						{calculatorButtons.map((row, rowIndex) =>
-							row.map((btn) => (
-								<button
-									key={btn}
-									onClick={() => {
-										if (btn === ".") handleDecimal();
-										else if (
-											[
-												"C",
-												"=",
-												"+",
-												"-",
-												"×",
-												"÷",
-											].includes(btn)
-										)
-											handleOperation(btn);
-										else handleNumber(btn);
-									}}
-									className={`h-14 text-lg rounded-lg border cursor-pointer ${
-										btn === "="
-											? "bg-blue-800 hover:bg-blue-700 text-white col-span-4"
-											: ["+", "-", "×", "÷"].includes(btn)
-											? " bg-blue-800 hover:bg-blue-700 text-white"
-											: "bg-white hover:bg-gray-200 border-gray-300"
-									} transition-colors`}
-								>
-									{btn}
-								</button>
-							))
-						)}
-					</div>
 				</div>
-			</div>
+				<div className="grid grid-cols-4 gap-2">
+					{calculatorButtons.map((row, rowIndex) =>
+						row.map((btn) => (
+							<button
+								key={btn}
+								onClick={() => {
+									if (btn === ".") handleDecimal();
+									else if (
+										["C", "=", "+", "-", "×", "÷"].includes(
+											btn
+										)
+									)
+										handleOperation(btn);
+									else handleNumber(btn);
+								}}
+								className={`h-14 text-lg rounded-lg border cursor-pointer ${
+									btn === "="
+										? "bg-blue-800 hover:bg-blue-700 text-white col-span-4"
+										: ["+", "-", "×", "÷"].includes(btn)
+										? " bg-blue-800 hover:bg-blue-700 text-white"
+										: "bg-white hover:bg-gray-200 border-gray-300"
+								} transition-colors`}
+							>
+								{btn}
+							</button>
+						))
+					)}
+				</div>
+			</Modal>
 		</>
 	);
 };

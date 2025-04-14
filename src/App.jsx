@@ -3,39 +3,10 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import Quiz from "./pages/Quiz";
-import ProtectedRoute from "./components/ProtectedRoute";
 import useStore from "./store/store";
-import { useEffect } from "react";
 
 function App() {
 	const token = useStore((state) => state.token);
-
-	const storeReset = useStore((state) => state.reset);
-
-	useEffect(() => {
-		const handleBeforeUnload = () => {
-			sessionStorage.setItem("isRefreshing", "true");
-		};
-
-		const handleUnload = () => {
-			const isRefreshing =
-				sessionStorage.getItem("isRefreshing") === "true";
-
-			if (!isRefreshing) {
-				storeReset();
-			}
-
-			sessionStorage.removeItem("isRefreshing");
-		};
-
-		window.addEventListener("beforeunload", handleBeforeUnload);
-		window.addEventListener("unload", handleUnload);
-
-		return () => {
-			window.removeEventListener("beforeunload", handleBeforeUnload);
-			window.removeEventListener("unload", handleUnload);
-		};
-	}, [storeReset]);
 
 	return (
 		<div className="min-h-screen bg-gray-50">

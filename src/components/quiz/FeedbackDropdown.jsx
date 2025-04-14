@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import useStore from "../../store/store";
+import { X } from "lucide-react";
+import Modal from "../Modal";
 
 const FEEDBACK_OPTIONS = [
 	{
@@ -16,12 +18,37 @@ const FEEDBACK_OPTIONS = [
 	{ value: "other", label: "Other issue" },
 ];
 
-const FeedbackDropdown = () => {
+const FeedbackModal = () => {
 	const { setFeedBack } = useStore();
-
 	const [isOpen, setIsOpen] = useState(false);
 	const [selectedFeedback, setSelectedFeedback] = useState("");
 	const [submitted, setSubmitted] = useState(false);
+	const modalRef = useRef(null);
+
+	// Close modal when clicking outside or pressing Escape
+	useEffect(() => {
+		const handleClickOutside = (event) => {
+			if (modalRef.current && !modalRef.current.contains(event.target)) {
+				setIsOpen(false);
+			}
+		};
+
+		const handleEscape = (event) => {
+			if (event.key === "Escape") {
+				setIsOpen(false);
+			}
+		};
+
+		if (isOpen) {
+			document.addEventListener("mousedown", handleClickOutside);
+			document.addEventListener("keydown", handleEscape);
+		}
+
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+			document.removeEventListener("keydown", handleEscape);
+		};
+	}, [isOpen]);
 
 	const handleSubmit = () => {
 		if (selectedFeedback) {
@@ -33,127 +60,81 @@ const FeedbackDropdown = () => {
 	};
 
 	return (
-		<div className="navbar-dropdown-container">
+		<>
 			<button
-				className="navbar-button"
-				onClick={() => setIsOpen(!isOpen)}
+				className="text-sm capitalize bg-blue-500 py-2 px-4 rounded-full text-white font-bold shadow-md relative  p-2 cursor-pointer hover:bg-blue-600 transition-colors"
+				onClick={() => setIsOpen(true)}
 			>
 				Report Issue
 			</button>
 
-			{isOpen && (
-				<div className="dropdown-menu">
-					<div className="dropdown-content">
-						{FEEDBACK_OPTIONS.map((option) => (
-							<div
-								key={option.value}
-								className={`dropdown-item ${
-									selectedFeedback === option.value
-										? "selected"
-										: ""
-								}`}
-								onClick={() =>
-									setSelectedFeedback(option.value)
-								}
+			{/* Modal Overlay */}
+			<div
+				className={`fixed inset-0 z-50 bg-black/80 flex items-center justify-center transition-opacity duration-300 ${
+					isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+				}`}
+			>
+				{/* Modal Content */}
+				<div
+					ref={modalRef}
+					className={`bg-white rounded-lg shadow-xl w-full max-w-md mx-4 transition-all duration-300 ${
+						isOpen ? "scale-100" : "scale-95"
+					}`}
+				>
+					<Modal
+						isOpen={isOpen}
+						onClose={() => setIsOpen(false)}
+						title={"Report an Issue"}
+					>
+						<div className="space-y-3 mb-6">
+							{FEEDBACK_OPTIONS.map((option) => (
+								<div
+									key={option.value}
+									className={`p-4 cursor-pointer rounded-lg border transition-all ${
+										selectedFeedback === option.value
+											? "bg-blue-50 border-blue-200"
+											: "border-transparent hover:bg-gray-50"
+									}`}
+									onClick={() =>
+										setSelectedFeedback(option.value)
+									}
+								>
+									{option.label}
+								</div>
+							))}
+						</div>
+
+						<div className="flex justify-end space-x-3">
+							<button
+								className="px-4 py-2 text-gray-600 hover:text-gray-800 rounded-lg transition-colors cursor-pointer"
+								onClick={() => setIsOpen(false)}
 							>
-								{option.label}
-							</div>
-						))}
-
-						<button
-							className="submit-button"
-							onClick={handleSubmit}
-							disabled={!selectedFeedback}
-						>
-							Submit Feedback
-						</button>
-					</div>
+								Cancel
+							</button>
+							<button
+								className={`px-4 py-2 rounded-lg text-white transition-colors ${
+									selectedFeedback
+										? "bg-green-500 hover:bg-green-600 cursor-pointer"
+										: "bg-gray-400 cursor-not-allowed"
+								}`}
+								onClick={handleSubmit}
+								disabled={!selectedFeedback}
+							>
+								Submit Feedback
+							</button>
+						</div>
+					</Modal>
 				</div>
-			)}
+			</div>
 
+			{/* Success Notification */}
 			{submitted && (
-				<div className="success-message">
+				<div className="fixed bottom-5 right-5 p-4 bg-green-100 text-green-800 rounded-lg shadow-md transition-opacity duration-300">
 					Thank you for your feedback! We'll review this question.
 				</div>
 			)}
-
-			<style jsx>{`
-				.navbar-dropdown-container {
-					position: relative;
-					display: inline-block;
-				}
-
-				.navbar-button {
-					padding: 8px 16px;
-					background: #3b82f6;
-					color: white;
-					border: none;
-					border-radius: 4px;
-					cursor: pointer;
-					font-size: 14px;
-				}
-
-				.dropdown-menu {
-					position: absolute;
-					top: 100%;
-					left: 0;
-					margin-top: 8px;
-					min-width: 300px;
-					background: white;
-					border: 1px solid #e5e7eb;
-					border-radius: 6px;
-					box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-					z-index: 100;
-				}
-
-				.dropdown-content {
-					padding: 8px;
-				}
-
-				.dropdown-item {
-					padding: 8px;
-					cursor: pointer;
-					border-radius: 4px;
-					margin: 2px 0;
-				}
-
-				.dropdown-item:hover {
-					background: #f3f4f6;
-				}
-
-				.dropdown-item.selected {
-					background: #eff6ff;
-				}
-
-				.submit-button {
-					width: 100%;
-					margin-top: 8px;
-					padding: 8px;
-					background: #10b981;
-					color: white;
-					border: none;
-					border-radius: 4px;
-					cursor: pointer;
-				}
-
-				.submit-button:disabled {
-					background: #6b7280;
-					cursor: not-allowed;
-				}
-
-				.success-message {
-					position: fixed;
-					bottom: 20px;
-					right: 20px;
-					padding: 12px;
-					background: #d1fae5;
-					color: #065f46;
-					border-radius: 4px;
-					box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-				}
-			`}</style>
-		</div>
+		</>
 	);
 };
 
-export default FeedbackDropdown;
+export default FeedbackModal;

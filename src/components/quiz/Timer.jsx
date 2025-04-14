@@ -10,8 +10,8 @@ const Timer = () => {
 		onExpire: () => console.warn("Timer expired!"),
 	});
 	return (
-		<div className="text-lg font-bold">
-			Time: {minutes}:{seconds}
+		<div className="text-blue-500 font-bold text-xl">
+			Time: {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
 		</div>
 	);
 };

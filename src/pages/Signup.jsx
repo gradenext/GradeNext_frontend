@@ -109,10 +109,8 @@ const Signup = () => {
 				grade: parseInt(formData.grade),
 			};
 
-			const data = await register(payload);
-			localStorage.setItem("token", data.token);
-			localStorage.setItem("account_id", data.account_id);
-			navigate("/dashboard");
+			await register(payload);
+			navigate("/login");
 		} catch (err) {
 			setError(
 				err.error ||

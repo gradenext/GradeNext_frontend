@@ -17,6 +17,19 @@ export const QuestionCard = () => {
 	const showExplanation = useStore((state) => state.showExplanation);
 	// const loading = useStore((state) => state.loading);
 
+	const setQuestionLoadedAt = useStore((state) => state.setQuestionLoadedAt);
+
+	// Track when the question is actually mounted/rendered
+	const questionMountedRef = useRef(null);
+
+	useEffect(() => {
+		if (question) {
+			const now = new Date();
+			questionMountedRef.current = now;
+			setQuestionLoadedAt(now);
+		}
+	}, [question, setQuestionLoadedAt]);
+
 	const {
 		setUserAnswer,
 		clearUserAnswer,
@@ -152,7 +165,7 @@ export const QuestionCard = () => {
 											onSelectAnswer(option?.key);
 										}}
 										disabled={showExplanation}
-										className={fullClasses}
+										className={`${fullClasses} cursor-pointer`}
 										onMouseEnter={() =>
 											setHoverOption(option?.key)
 										}
@@ -248,15 +261,7 @@ export const QuestionCard = () => {
 									: "cursor-not-allowed"
 							}`}
 						>
-							<div>
-								{isSubmitting ? (
-									<div>
-										<Loader className="mx-auto animate-spin" />
-									</div>
-								) : (
-									<div>Submit Answer</div>
-								)}
-							</div>
+							<div>Submit Answer</div>
 						</button>
 					</motion.div>
 				)}
