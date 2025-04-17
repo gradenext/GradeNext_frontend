@@ -227,7 +227,7 @@ const useStore = create(
 						const newAverage =
 							newTimeTaken.length > 0
 								? newTimeTaken.reduce((a, b) => a + b, 0) /
-								  newTimeTaken.length
+								newTimeTaken.length
 								: 0;
 
 						return {
@@ -300,6 +300,23 @@ const useStore = create(
 		{
 			name: "store",
 			storage: createJSONStorage(() => sessionStorage),
+			partialize: (state) => ({
+				question_id: state.question_id,
+				quizQuestion: state.quizQuestion,
+				nextQuizQuestion: state.nextQuizQuestion,
+				userAnswer: state.userAnswer,
+				analytics: state.analytics,
+				correctAnswer: state.correctAnswer,
+				usedHints: state.usedHints,
+				avgTimeTaken: state.avgTimeTaken,
+				timeTaken: state.timeTaken,
+				feedback: state.feedback,
+				questionLoadedAt: state.questionLoadedAt,
+				token: state.token,
+				session_id: state.session_id,
+				account_id: state.account_id,
+				user: state.user,
+			}),
 		}
 	)
 );

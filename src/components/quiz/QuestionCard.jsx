@@ -121,15 +121,6 @@ export const QuestionCard = () => {
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
 					<AnimatePresence>
 						{question?.options
-							?.map((o) => {
-								const parts = o.split(":").map((s) => s.trim());
-								return parts.length >= 2
-									? {
-											key: parts[0],
-											value: parts.slice(1).join(":"),
-									  }
-									: { key: "", value: o };
-							})
 							?.map((option, index) => {
 								const buttonClasses =
 									"p-4 text-lg w-full rounded-xl font-medium border-2 transition-all relative";
@@ -138,20 +129,20 @@ export const QuestionCard = () => {
 								let textColor = "text-gray-700";
 
 								if (showExplanation) {
-									if (option?.key === correctAnswer) {
+									if (option === correctAnswer) {
 										bgColor = "bg-green-100";
 										borderColor = "border-green-400";
 										textColor = "text-green-700";
-									} else if (option?.key === userAnswer) {
+									} else if (option === userAnswer) {
 										bgColor = "bg-red-100";
 										borderColor = "border-red-400";
 										textColor = "text-red-700";
 									}
-								} else if (userAnswer === option?.key) {
+								} else if (userAnswer === option) {
 									bgColor = "bg-blue-100";
 									borderColor = "border-blue-400";
 									textColor = "text-blue-700";
-								} else if (hoverOption === option?.key) {
+								} else if (hoverOption === option) {
 									bgColor = "bg-purple-50";
 									borderColor = "border-purple-300";
 								}
@@ -160,14 +151,14 @@ export const QuestionCard = () => {
 
 								return (
 									<motion.button
-										key={option?.key}
+										key={index}
 										onClick={() => {
-											onSelectAnswer(option?.key);
+											onSelectAnswer(option);
 										}}
 										disabled={showExplanation}
 										className={`${fullClasses} cursor-pointer`}
 										onMouseEnter={() =>
-											setHoverOption(option?.key)
+											setHoverOption(option)
 										}
 										onMouseLeave={() =>
 											setHoverOption(null)
@@ -193,7 +184,7 @@ export const QuestionCard = () => {
 											</div>
 											<span
 												dangerouslySetInnerHTML={{
-													__html: option?.value,
+													__html: option,
 												}}
 											/>
 										</div>
@@ -209,7 +200,7 @@ export const QuestionCard = () => {
 													damping: 10,
 												}}
 											>
-												{option?.key === correctAnswer
+												{option === correctAnswer
 													? "✅"
 													: "❌"}
 											</motion.div>
