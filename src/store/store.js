@@ -93,21 +93,22 @@ const useStore = create(
 			},
 
 			generateQuestion: async () => {
+				const {
+					session_id,
+					user,
+					selectedSubject,
+					quizQuestion,
+					nextQuizQuestion,
+					selectedMode,
+				} = get();
+
 				set((state) => ({
 					...state,
 					loading: true,
-					isNextQuestionLoading: true,
+					isNextQuestionLoading: nextQuizQuestion ? false : true,
 				}));
-				try {
-					const {
-						session_id,
-						user,
-						selectedSubject,
-						quizQuestion,
-						nextQuizQuestion,
-						selectedMode,
-					} = get();
 
+				try {
 					// Determine which API function to use based on mode
 					const generateFunction =
 						selectedMode === "practice"
@@ -143,7 +144,9 @@ const useStore = create(
 					else if (!nextQuizQuestion) {
 						set((state) => ({
 							...state,
-							isNextQuestionLoading: true,
+							isNextQuestionLoading: nextQuizQuestion
+								? false
+								: true,
 						}));
 
 						const response = await generateFunction(
@@ -162,7 +165,9 @@ const useStore = create(
 					else {
 						set((state) => ({
 							...state,
-							isNextQuestionLoading: true,
+							isNextQuestionLoading: nextQuizQuestion
+								? false
+								: true,
 						}));
 
 						// First move next question to current
@@ -203,8 +208,13 @@ const useStore = create(
 			},
 
 			submitAnswer: async () => {
+				const state = get();
 				try {
-					const state = get();
+					if (state?.correctAnswer) {
+						await state.moveToNext();
+						return;
+					}
+
 					set({
 						isSubmitting: true,
 						showExplanation: true,
@@ -227,7 +237,7 @@ const useStore = create(
 						const newAverage =
 							newTimeTaken.length > 0
 								? newTimeTaken.reduce((a, b) => a + b, 0) /
-								newTimeTaken.length
+								  newTimeTaken.length
 								: 0;
 
 						return {
@@ -242,6 +252,12 @@ const useStore = create(
 						};
 					});
 				} catch (error) {
+					if (
+						error?.response?.data?.error ===
+						"Invalid or already answered question"
+					) {
+						await state.moveToNext();
+					}
 					set({
 						isSubmitting: false,
 						showExplanation: false,
@@ -301,6 +317,8 @@ const useStore = create(
 			name: "store",
 			storage: createJSONStorage(() => sessionStorage),
 			partialize: (state) => ({
+				selectedSubject: state.selectedSubject,
+				selectedMode: state.selectedMode,
 				question_id: state.question_id,
 				quizQuestion: state.quizQuestion,
 				nextQuizQuestion: state.nextQuizQuestion,
