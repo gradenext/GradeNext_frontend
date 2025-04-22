@@ -8,6 +8,7 @@ const QuizNavbar = () => {
 	const grade = useStore((state) => state.user.grade);
 	const selectedSubject = useStore((state) => state.selectedSubject);
 	const selectedMode = useStore((state) => state.selectedMode);
+	const selectedTopic = useStore((state) => state.selectedTopic);
 	const { exitQuiz } = useStore();
 	const navigate = useNavigate();
 	return (
@@ -20,7 +21,7 @@ const QuizNavbar = () => {
 				</div>
 
 				<div className="text-3xl bg-blue-500 uppercase bg-clip-text text-transparent font-bold">
-					{selectedMode}
+					{selectedMode === "topic" ? selectedTopic?.topic_name : selectedMode}
 				</div>
 				<div className="relative flex items-center justify-center gap-x-2">
 					<Caclulator />

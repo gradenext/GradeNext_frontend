@@ -27,7 +27,8 @@ const Login = () => {
 				response?.data?.token,
 				response?.data?.session_id,
 				response?.data?.account_id,
-				response?.data.user
+				response?.data.user,
+				response?.data.user_stats
 			);
 
 			sessionStorage.setItem("token", response?.data.token);

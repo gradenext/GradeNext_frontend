@@ -10,6 +10,7 @@ import {
 	Sparkles,
 	Gem,
 	Puzzle,
+	User,
 } from "lucide-react";
 import useStore from "../store/store";
 import { useNavigate } from "react-router-dom";
@@ -84,6 +85,11 @@ const Dashboard = () => {
 
 	const handleStart = async () => {
 		if (!selectedSubject || !selectedMode) return;
+
+		if (selectedMode === "topic") {
+			navigate(`/treasurehunt/topics/${selectedSubject}`);
+			return;
+		}
 		try {
 			await generateQuestion();
 			navigate(`/${selectedMode}/${session_id}`);
@@ -98,10 +104,27 @@ const Dashboard = () => {
 		<div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-6 relative">
 			{/* Floating Logout Button */}
 			<motion.button
+				whileHover={{ scale: 1.05 }}
+				whileTap={{ scale: 0.95 }}
+				className="fixed top-6 left-6 z-50 flex items-center space-x-3 px-4 py-2 rounded-xl shadow-lg transition-all duration-200 cursor-pointer"
+				style={{
+					background:
+						"linear-gradient(135deg, #6bc1ff 0%, #8ed1ff 100%)",
+					fontFamily: "'Bubblegum Sans', cursive",
+				}}
+				onClick={() => navigate("/user/profile")}
+			>
+				<img
+					src="https://api.dicebear.com/9.x/adventurer/svg?seed=Nolan"
+					alt="Avatar"
+					className="w-8 h-8 rounded-full border-2 border-white"
+				/>
+			</motion.button>
+			<motion.button
 				onClick={handleLogout}
 				whileHover={{ scale: 1.05 }}
 				whileTap={{ scale: 0.95 }}
-				className="fixed top-6 right-6 z-50 flex items-center space-x-2 px-4 py-2 rounded-xl shadow-lg transition-all duration-200"
+				className="fixed top-6 right-6 z-50 flex items-center space-x-2 px-4 py-2 rounded-xl shadow-lg transition-all duration-200 cursor-pointer"
 				style={{
 					background:
 						"linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%)",

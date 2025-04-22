@@ -3,8 +3,22 @@ import { persist, createJSONStorage } from "zustand/middleware";
 import {
 	generatePracticeQuestion,
 	generateRevisionQuestion,
+	generateTreasureQuestion,
 	submitAnswer,
 } from "../services/quiz";
+
+function getQuestionGenerator(mode) {
+	switch (mode) {
+		case "practice":
+			return generatePracticeQuestion;
+		case "topic":
+			return generateTreasureQuestion;
+		case "revision":
+			return generateRevisionQuestion;
+		default:
+			throw new Error(`Unknown mode: ${mode}`);
+	}
+}
 
 const useStore = create(
 	persist(
@@ -14,10 +28,11 @@ const useStore = create(
 			session_id: null,
 			account_id: null,
 			user: null,
+			user_stats: null,
 
 			// Login function
-			login: (token, session_id, account_id, user) => {
-				set({ token, session_id, account_id, user });
+			login: (token, session_id, account_id, user, user_stats) => {
+				set({ token, session_id, account_id, user, user_stats });
 			},
 
 			// Logout function
@@ -27,13 +42,15 @@ const useStore = create(
 					session_id: null,
 					account_id: null,
 					user: null,
-					quizQuestion: null,
+					user_stats: null,
 					selectedSubject: null,
 					selectedMode: null,
+					selectedTopic: null,
 					loading: false,
-					question_id: null,
-					nextQuizQuestion: null,
 					isNextQuestionLoading: false,
+					question_id: null,
+					quizQuestion: null,
+					nextQuizQuestion: null,
 					showExplanation: false,
 					isSubmitting: false,
 					userAnswer: null,
@@ -49,6 +66,7 @@ const useStore = create(
 					avgTimeTaken: 0,
 					timeTaken: [],
 					feedback: null,
+					questionLoadedAt: null,
 				});
 				sessionStorage.removeItem("token");
 				window.location.href = "/login";
@@ -56,6 +74,7 @@ const useStore = create(
 
 			selectedSubject: null,
 			selectedMode: null,
+			selectedTopic: null,
 
 			setSelectedSubject: (subjectId) => {
 				set({ selectedSubject: subjectId });
@@ -63,6 +82,9 @@ const useStore = create(
 
 			setSelectedMode: (actionId) => {
 				set({ selectedMode: actionId });
+			},
+			setSelectedTopic: (topic_key) => {
+				set({ selectedTopic: topic_key });
 			},
 
 			loading: false,
@@ -100,6 +122,7 @@ const useStore = create(
 					quizQuestion,
 					nextQuizQuestion,
 					selectedMode,
+					selectedTopic,
 				} = get();
 
 				set((state) => ({
@@ -110,10 +133,7 @@ const useStore = create(
 
 				try {
 					// Determine which API function to use based on mode
-					const generateFunction =
-						selectedMode === "practice"
-							? generatePracticeQuestion
-							: generateRevisionQuestion;
+					const generateFunction = getQuestionGenerator(selectedMode);
 
 					// Case 1: No current question - fetch both initial and next question
 					if (!quizQuestion) {
@@ -121,14 +141,16 @@ const useStore = create(
 						const initialResponse = await generateFunction(
 							session_id,
 							user.grade,
-							selectedSubject
+							selectedSubject,
+							selectedTopic?.topic_key
 						);
 
 						// Fetch next question in parallel for efficiency
 						const nextResponse = await generateFunction(
 							session_id,
 							user.grade,
-							selectedSubject
+							selectedSubject,
+							selectedTopic?.topic_key
 						);
 
 						set((state) => ({
@@ -152,7 +174,8 @@ const useStore = create(
 						const response = await generateFunction(
 							session_id,
 							user.grade,
-							selectedSubject
+							selectedSubject,
+							selectedTopic?.topic_key
 						);
 
 						set((state) => ({
@@ -182,7 +205,8 @@ const useStore = create(
 						const response = await generateFunction(
 							session_id,
 							user.grade,
-							selectedSubject
+							selectedSubject,
+							selectedTopic?.topic_key
 						);
 
 						set((state) => ({
@@ -310,6 +334,9 @@ const useStore = create(
 					usedHints: 0,
 					avgTimeTaken: 0,
 					timeTaken: [],
+					selectedTopic: null,
+					selectedMode: null,
+					selectedSubject: null,
 				});
 			},
 		}),
@@ -319,6 +346,7 @@ const useStore = create(
 			partialize: (state) => ({
 				selectedSubject: state.selectedSubject,
 				selectedMode: state.selectedMode,
+				selectedTopic: state.selectedTopic,
 				question_id: state.question_id,
 				quizQuestion: state.quizQuestion,
 				nextQuizQuestion: state.nextQuizQuestion,
@@ -334,6 +362,7 @@ const useStore = create(
 				session_id: state.session_id,
 				account_id: state.account_id,
 				user: state.user,
+				user_stats: state.user_stats,
 			}),
 		}
 	)
