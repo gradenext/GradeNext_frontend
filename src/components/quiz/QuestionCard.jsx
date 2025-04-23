@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import useStore from "../../store/store";
 import { QuestionFooter } from "./QuizFooter";
+import Timer from "./Timer";
 
 export const QuestionCard = () => {
 	const [hoverOption, setHoverOption] = useState(null);
@@ -14,9 +15,7 @@ export const QuestionCard = () => {
 	const userAnswer = useStore((state) => state.userAnswer);
 	const correctAnswer = useStore((state) => state.correctAnswer);
 	const showExplanation = useStore((state) => state.showExplanation);
-	const isNextQuestionLoading = useStore(
-		(state) => state.isNextQuestionLoading
-	);
+	const loading = useStore((state) => state.loading);
 
 	const setQuestionLoadedAt = useStore((state) => state.setQuestionLoadedAt);
 
@@ -72,14 +71,15 @@ export const QuestionCard = () => {
 		fire(0.2, { spread: 60, origin: { x: 0.5, y: 0.7 } });
 	};
 
-	if (isNextQuestionLoading) {
+	if (loading) {
 		return (
 			<motion.div
 				initial={{ y: 20, opacity: 0 }}
 				animate={{ y: 0, opacity: 1 }}
 				transition={{ duration: 0.5, delay: 0.2 }}
+				className="h-full"
 			>
-				<div className="p-6 rounded-3xl border-4 border-blue-300 bg-white shadow-lg">
+				<div className="p-6 rounded-3xl border-4 border-blue-300 bg-white shadow-lg h-full flex flex-col items-center justify-center">
 					<div className="flex flex-col items-center justify-center py-10">
 						<div className="animate-bounce mb-4">
 							<div className="w-16 h-16 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center">
@@ -102,10 +102,13 @@ export const QuestionCard = () => {
 			initial={{ opacity: 0, y: 20 }}
 			animate={{ opacity: 1, y: 0 }}
 			transition={{ duration: 0.5 }}
+			className="h-full"
 		>
-			<div className="p-6 rounded-3xl border-4 border-blue-300 bg-white shadow-lg relative overflow-hidden">
+			<div className="p-6 rounded-3xl border-4 border-blue-300 bg-white shadow-lg relative overflow-hidden h-full ">
 				<div className="absolute -right-8 -top-8 w-16 h-16 bg-yellow-200 rounded-full opacity-30"></div>
 				<div className="absolute -left-8 -bottom-8 w-16 h-16 bg-purple-200 rounded-full opacity-30"></div>
+
+				<Timer />
 
 				<div className="relative">
 					<motion.h2

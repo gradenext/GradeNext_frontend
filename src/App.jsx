@@ -13,7 +13,10 @@ function App() {
 	const token = useStore((state) => state.token);
 
 	return (
-		<div className="min-h-screen bg-gray-50">
+		<div
+			style={{ fontFamily: "'Bubblegum Sans', cursive" }}
+			className="min-h-screen bg-gray-50"
+		>
 			{!token ? (
 				<Routes>
 					<Route

@@ -77,10 +77,7 @@ const TopicIntroduction = ({ topicName }) => {
 				>
 					<div className="flex flex-row items-center justify-between mb-4 ">
 						<h2 className="text-2xl font-bold capitalize">
-							Introduction to{" "}
-							<span className="capitalize underline">
-								{topicName}
-							</span>
+							Topic Introduction
 						</h2>
 						<button
 							onClick={handleMinimize}

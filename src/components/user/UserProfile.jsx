@@ -76,7 +76,6 @@ const UserProfile = () => {
 			icon: <MapPin className="w-5 h-5" />,
 			color: colors.success,
 		},
-		
 	];
 
 	return (
@@ -127,9 +126,7 @@ const UserProfile = () => {
 			>
 				<div className="relative">
 					<img
-						src={`https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(
-							user.student_name
-						)}&radius=50&size=120`}
+						src={`https://api.dicebear.com/9.x/adventurer/svg?seed=Eliza`}
 						alt="User Avatar"
 						className="w-32 h-32 rounded-full border-4 shadow-lg"
 						style={{ borderColor: colors.primary }}

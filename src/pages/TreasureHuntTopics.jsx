@@ -93,7 +93,7 @@ const TreasureHuntTopics = () => {
 					className="text-2xl font-bold"
 					style={{
 						color: colors.primary,
-						fontFamily: "'Bubblegum Sans', cursive",
+						
 					}}
 				>
 					Preparing Your Learning Adventure...
@@ -108,7 +108,7 @@ const TreasureHuntTopics = () => {
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
 			transition={{ duration: 0.5 }}
-			style={{ fontFamily: "'Bubblegum Sans', cursive" }}
+			
 		>
 			{/* Header Section with Dashboard Button */}
 			<div className="flex justify-between items-start mb-8">
@@ -155,7 +155,7 @@ const TreasureHuntTopics = () => {
 					className="px-4 py-2 rounded-lg text-white shadow-md flex items-center gap-2 cursor-pointer"
 					style={{
 						backgroundColor: colors.secondary,
-						fontFamily: "'Bubblegum Sans', cursive",
+						
 					}}
 				>
 					<LayoutDashboard className="w-5 h-5" />
@@ -194,7 +194,7 @@ const TreasureHuntTopics = () => {
 									className="w-14 h-14 rounded-full flex items-center justify-center text-white font-bold shadow-md"
 									style={{
 										backgroundColor: colors.primary,
-										fontFamily: "'Bubblegum Sans', cursive",
+										
 									}}
 								>
 									{index + 1}

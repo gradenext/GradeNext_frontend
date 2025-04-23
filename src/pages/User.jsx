@@ -27,10 +27,7 @@ export default function Dashboard() {
 	};
 
 	return (
-		<div
-			className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-4 sm:px-12 py-6"
-			style={{ fontFamily: "'Bubblegum Sans', cursive" }}
-		>
+		<div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-4 sm:px-12 py-6">
 			<motion.div
 				className="mx-auto bg-white rounded-2xl shadow-lg overflow-hidden"
 				initial={{ opacity: 0, y: 20 }}

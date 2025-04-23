@@ -47,10 +47,8 @@ const useStore = create(
 					selectedMode: null,
 					selectedTopic: null,
 					loading: false,
-					isNextQuestionLoading: false,
 					question_id: null,
 					quizQuestion: null,
-					nextQuizQuestion: null,
 					showExplanation: false,
 					isSubmitting: false,
 					userAnswer: null,
@@ -90,8 +88,6 @@ const useStore = create(
 			loading: false,
 			question_id: null,
 			quizQuestion: null,
-			nextQuizQuestion: null,
-			isNextQuestionLoading: false,
 			showExplanation: false,
 			isSubmitting: false,
 			userAnswer: null,
@@ -119,8 +115,6 @@ const useStore = create(
 					session_id,
 					user,
 					selectedSubject,
-					quizQuestion,
-					nextQuizQuestion,
 					selectedMode,
 					selectedTopic,
 				} = get();
@@ -128,105 +122,35 @@ const useStore = create(
 				set((state) => ({
 					...state,
 					loading: true,
-					isNextQuestionLoading: nextQuizQuestion ? false : true,
 				}));
 
 				try {
 					// Determine which API function to use based on mode
 					const generateFunction = getQuestionGenerator(selectedMode);
 
-					// Case 1: No current question - fetch both initial and next question
-					if (!quizQuestion) {
-						// Fetch initial question
-						const initialResponse = await generateFunction(
-							session_id,
-							user.grade,
-							selectedSubject,
-							selectedTopic?.topic_key
-						);
+					const initialResponse = await generateFunction(
+						session_id,
+						user.grade,
+						selectedSubject,
+						selectedTopic?.topic_key
+					);
 
-						// Fetch next question in parallel for efficiency
-						const nextResponse = await generateFunction(
-							session_id,
-							user.grade,
-							selectedSubject,
-							selectedTopic?.topic_key
-						);
-
-						set((state) => ({
-							...state,
-							quizQuestion: initialResponse.data,
-							question_id: initialResponse.data?.question_id,
-							nextQuizQuestion: nextResponse.data,
-							loading: false,
-							isNextQuestionLoading: false,
-						}));
-					}
-					// Case 2: Current question exists but no next question - fetch next question
-					else if (!nextQuizQuestion) {
-						set((state) => ({
-							...state,
-							isNextQuestionLoading: nextQuizQuestion
-								? false
-								: true,
-						}));
-
-						const response = await generateFunction(
-							session_id,
-							user.grade,
-							selectedSubject,
-							selectedTopic?.topic_key
-						);
-
-						set((state) => ({
-							...state,
-							nextQuizQuestion: response.data,
-							isNextQuestionLoading: false,
-						}));
-					}
-					// Case 3: Both questions exist - move next to current and fetch new next question
-					else {
-						set((state) => ({
-							...state,
-							isNextQuestionLoading: nextQuizQuestion
-								? false
-								: true,
-						}));
-
-						// First move next question to current
-						set((state) => ({
-							...state,
-							quizQuestion: state.nextQuizQuestion,
-							question_id: state.nextQuizQuestion?.question_id,
-							nextQuizQuestion: null,
-						}));
-
-						// Then fetch new next question
-						const response = await generateFunction(
-							session_id,
-							user.grade,
-							selectedSubject,
-							selectedTopic?.topic_key
-						);
-
-						set((state) => ({
-							...state,
-							nextQuizQuestion: response.data,
-							isNextQuestionLoading: false,
-						}));
-					}
+					set((state) => ({
+						...state,
+						quizQuestion: initialResponse.data,
+						question_id: initialResponse.data?.question_id,
+						loading: false,
+					}));
 				} catch (error) {
 					set((state) => ({
 						...state,
 						loading: false,
-						isNextQuestionLoading: false,
 					}));
 
-					throw error;
+					console.log(error);
 				} finally {
 					set({
 						loading: false,
-						isNextQuestionLoading: false,
 					});
 				}
 			},
@@ -234,11 +158,6 @@ const useStore = create(
 			submitAnswer: async () => {
 				const state = get();
 				try {
-					if (state?.correctAnswer) {
-						await state.moveToNext();
-						return;
-					}
-
 					set({
 						isSubmitting: true,
 						showExplanation: true,
@@ -282,11 +201,13 @@ const useStore = create(
 					) {
 						await state.moveToNext();
 					}
+
 					set({
 						isSubmitting: false,
 						showExplanation: false,
 					});
-					throw error;
+
+					console.log(error);
 				}
 			},
 
@@ -324,8 +245,6 @@ const useStore = create(
 					loading: false,
 					question_id: null,
 					quizQuestion: null,
-					nextQuizQuestion: null,
-					isNextQuestionLoading: false,
 					showExplanation: false,
 					isSubmitting: false,
 					userAnswer: null,
@@ -349,7 +268,6 @@ const useStore = create(
 				selectedTopic: state.selectedTopic,
 				question_id: state.question_id,
 				quizQuestion: state.quizQuestion,
-				nextQuizQuestion: state.nextQuizQuestion,
 				userAnswer: state.userAnswer,
 				analytics: state.analytics,
 				correctAnswer: state.correctAnswer,

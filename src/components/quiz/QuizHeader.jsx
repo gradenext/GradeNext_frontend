@@ -18,7 +18,7 @@ const QuizHeader = () => {
 		>
 			{/* Topic and Level Details */}
 			<div className="flex justify-between items-center mb-4">
-				<Timer />
+				
 				<div className="text-xl capitalize font-bold bg-gradient-to-r from-purple-600 to-blue-600 text-transparent bg-clip-text">
 					{/* {config.displayNames[currentTopic]} (Level:{" "}
 							{difficultyLevel + 1}) */}

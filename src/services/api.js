@@ -1,4 +1,5 @@
 import axios from "axios";
+import useStore from "../store/store";
 
 const api = axios.create({
 	baseURL: "https://gradenext-backend.onrender.com/api/", // Your Django backend URL
@@ -25,9 +26,12 @@ api.interceptors.response.use(
 	(error) => {
 		if (
 			error.response &&
-			(error.response.status === 401 || error.response.status === 403)
+			(error.response.status === 401 ||
+				error.response.status === 403 ||
+				error.response.status === 400)
 		) {
 			sessionStorage.removeItem("token");
+			useStore.getState().logout();
 			window.location.href = "/login";
 		}
 		return Promise.reject(error);

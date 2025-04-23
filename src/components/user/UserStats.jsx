@@ -192,7 +192,6 @@ const CustomTooltip = ({ active, payload, label }) => {
 				className="bg-white p-3 rounded-lg shadow-lg border"
 				style={{
 					borderColor: colors.primary,
-					fontFamily: "'Bubblegum Sans', cursive",
 				}}
 			>
 				<p className="font-bold" style={{ color: colors.primary }}>
@@ -235,7 +234,6 @@ export default function Stats() {
 		<div
 			className="p-4 sm:p-6 max-w-6xl mx-auto"
 			style={{
-				fontFamily: "'Bubblegum Sans', cursive",
 				backgroundColor: colors.background,
 			}}
 		>
@@ -247,7 +245,7 @@ export default function Stats() {
 				className="text-center mb-6 sm:mb-8"
 			>
 				<h2
-					className="text-3xl sm:text-4xl font-bold mb-2"
+					className="text-3xl sm:text-4xl font-bold mb-2 py-2"
 					style={{
 						background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
 						WebkitBackgroundClip: "text",
@@ -505,8 +503,6 @@ export default function Stats() {
 													content={<CustomTooltip />}
 													wrapperStyle={{
 														minWidth: "220px",
-														fontFamily:
-															"'Bubblegum Sans', cursive",
 														zIndex: 1000,
 														pointerEvents: "auto", // Ensure tooltip doesn't block labels
 													}}
@@ -770,8 +766,6 @@ export default function Stats() {
 											content={<CustomTooltip />}
 											wrapperStyle={{
 												minWidth: "250px",
-												fontFamily:
-													"'Bubblegum Sans', cursive",
 												fontSize: "14px",
 												fontWeight: "bold",
 												zIndex: 1000,

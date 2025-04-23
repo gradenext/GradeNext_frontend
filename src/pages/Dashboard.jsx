@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import useStore from "../store/store";
 import { useNavigate } from "react-router-dom";
+import Timer from "../components/quiz/Timer";
 
 const Dashboard = () => {
 	const navigate = useNavigate();
@@ -21,6 +22,7 @@ const Dashboard = () => {
 	const session_id = useStore((state) => state.session_id);
 	const selectedMode = useStore((state) => state.selectedMode);
 	const selectedSubject = useStore((state) => state.selectedSubject);
+	const overallStats = useStore((state) => state.user_stats.overall);
 	const loading = useStore((state) => state.loading);
 
 	const { logout, setSelectedSubject, setSelectedMode, generateQuestion } =
@@ -76,13 +78,6 @@ const Dashboard = () => {
 		},
 	];
 
-	const stats = [
-		{ label: "Gold Stars", value: "🌟 128", progress: 60 },
-		{ label: "Power Streak", value: "🔥 5 Days", progress: 80 },
-		{ label: "Brain Level", value: "🧠 Level 12", progress: 45 },
-		{ label: "Achievements", value: "🏆 8/15", progress: 53 },
-	];
-
 	const handleStart = async () => {
 		if (!selectedSubject || !selectedMode) return;
 
@@ -97,11 +92,37 @@ const Dashboard = () => {
 			console.log("Error Occured", error);
 		}
 	};
+	const stats = [
+		{
+			label: "📋 Total Questions",
+			value: overallStats?.total,
+		},
+		{
+			label: "✅ Correct",
+			value: overallStats.correct,
+			progress:
+				(overallStats.correct / overallStats?.total).toFixed(2) * 100,
+		},
+		{
+			label: "❌ Incorrect",
+			value: overallStats.incorrect,
+			progress:
+				(overallStats.incorrect / overallStats?.total).toFixed(2) * 100,
+		},
+		{
+			label: "🎯 Accuracy",
+			value: `${
+				(overallStats.correct / overallStats?.total).toFixed(2) * 100
+			}%`,
+			progress:
+				(overallStats.correct / overallStats?.total).toFixed(2) * 100,
+		},
+	];
 
 	const handleLogout = () => logout();
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-6 relative">
+		<div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 relative">
 			{/* Floating Logout Button */}
 			<motion.button
 				whileHover={{ scale: 1.05 }}
@@ -110,7 +131,6 @@ const Dashboard = () => {
 				style={{
 					background:
 						"linear-gradient(135deg, #6bc1ff 0%, #8ed1ff 100%)",
-					fontFamily: "'Bubblegum Sans', cursive",
 				}}
 				onClick={() => navigate("/user/profile")}
 			>
@@ -128,7 +148,6 @@ const Dashboard = () => {
 				style={{
 					background:
 						"linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%)",
-					fontFamily: "'Bubblegum Sans', cursive",
 				}}
 			>
 				<Sparkles className="w-5 h-5 text-white" />
@@ -152,9 +171,8 @@ const Dashboard = () => {
 						<Rocket className="w-16 h-16 text-purple-600" />
 					</motion.div>
 					<h1
-						className="text-4xl md:text-5xl font-bold mb-4"
+						className="text-4xl md:text-5xl font-bold mb-4 pb-4"
 						style={{
-							fontFamily: "'Bubblegum Sans', cursive",
 							background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
 							WebkitBackgroundClip: "text",
 							WebkitTextFillColor: "transparent",
@@ -162,10 +180,7 @@ const Dashboard = () => {
 					>
 						Learning Wonderland!
 					</h1>
-					<p
-						className="text-xl text-gray-700"
-						style={{ fontFamily: "'Comic Neue', cursive" }}
-					>
+					<p className="text-xl text-gray-700">
 						Choose your adventure and start learning!
 					</p>
 				</motion.div>
@@ -184,7 +199,6 @@ const Dashboard = () => {
 								className="text-2xl font-bold"
 								style={{
 									color: colors.primary,
-									fontFamily: "'Bubblegum Sans', cursive",
 								}}
 							>
 								🎯 Choose Your Subject
@@ -255,7 +269,6 @@ const Dashboard = () => {
 								className="text-2xl font-bold"
 								style={{
 									color: colors.secondary,
-									fontFamily: "'Bubblegum Sans', cursive",
 								}}
 							>
 								🎮 Learning Activities
@@ -311,62 +324,80 @@ const Dashboard = () => {
 					<div className="space-y-8">
 						{/* Progress Stats */}
 						<motion.div
-							className="p-6 bg-white rounded-2xl shadow-lg"
+							className="py-8 px-4 bg-white rounded-2xl shadow-2xl border border-gray-100"
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
 							transition={{ delay: 0.4 }}
 						>
 							<h2
-								className="text-2xl font-bold mb-6"
-								style={{
-									color: colors.accent,
-									fontFamily: "'Bubblegum Sans', cursive",
-								}}
+								className="text-3xl font-extrabold mb-8 flex items-center gap-2"
+								style={{ color: colors.accent }}
 							>
-								📊 Your Progress
+								📊 Overall Progress
 							</h2>
-							<div className="space-y-6">
-								{stats.map((stat, index) => (
-									<div key={index} className="space-y-2">
-										<div className="flex justify-between items-center">
-											<span
-												className="text-gray-600"
-												style={{
-													fontFamily:
-														"'Comic Neue', cursive",
-												}}
+
+							<div className="space-y-8">
+								{stats.map((stat, index) => {
+									const barColor = [
+										colors.primary,
+										colors.secondary,
+										colors.accent,
+										colors.success,
+									][index % 4];
+
+									if (stat.label === "📋 Total Questions") {
+										return (
+											<div
+												key={index}
+												className="flex justify-between items-center border-x-0 border-3 py-2 border-gray-400"
 											>
-												{stat.label}
-											</span>
-											<span
-												className="font-bold"
-												style={{
-													color: colors.primary,
-												}}
-											>
-												{stat.value}
-											</span>
+												<span className="text-sm text-gray-500 font-medium uppercase tracking-wide">
+													{stat.label}
+												</span>
+												<span
+													className={`font-semibold text-lg`}
+													style={{ color: barColor }}
+												>
+													{stat.value}
+												</span>
+											</div>
+										);
+									}
+
+									return (
+										<div key={index} className="space-y-2">
+											<div className="flex justify-between items-center">
+												<span className="text-sm text-gray-500 font-medium uppercase tracking-wide">
+													{stat.label}
+												</span>
+												<span
+													className={`font-semibold text-lg`}
+													style={{ color: barColor }}
+												>
+													{stat.value}
+												</span>
+											</div>
+											{
+												<div className="h-3 bg-gray-200 rounded-full overflow-hidden relative group">
+													<motion.div
+														initial={{ width: 0 }}
+														animate={{
+															width: `${stat.progress}%`,
+														}}
+														transition={{
+															duration: 0.8,
+														}}
+														className="h-full rounded-full"
+														style={{
+															backgroundColor:
+																barColor,
+														}}
+													/>
+												</div>
+											}
 										</div>
-										<div className="h-3 bg-gray-200 rounded-full overflow-hidden">
-											<motion.div
-												initial={{ width: 0 }}
-												animate={{
-													width: `${stat.progress}%`,
-												}}
-												transition={{ duration: 0.8 }}
-												className="h-full rounded-full"
-												style={{
-													backgroundColor: [
-														colors.primary,
-														colors.secondary,
-														colors.accent,
-														colors.success,
-													][index % 4],
-												}}
-											/>
-										</div>
-									</div>
-								))}
+									);
+								})}
 							</div>
 						</motion.div>
 
@@ -390,7 +421,6 @@ const Dashboard = () => {
 								style={{
 									backgroundColor: colors.primary,
 									color: "white",
-									fontFamily: "'Bubblegum Sans', cursive",
 								}}
 							>
 								{loading ? (
@@ -426,16 +456,6 @@ const Dashboard = () => {
 					</div>
 				</div>
 			</div>
-
-			{/* Global Styles */}
-			<style>{`
-				@import url("https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Comic+Neue:wght@400;700&display=swap");
-
-				body {
-					--tw-bg-opacity: 1;
-					background-color: ${colors.background};
-				}
-			`}</style>
 		</div>
 	);
 };
