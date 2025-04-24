@@ -23,3 +23,15 @@ export const register = async (userData) => {
 		throw { error: "Network error" };
 	}
 };
+
+export const profile = async () => {
+	try {
+		const response = await api.get("auth/profile/");
+		return response.data;
+	} catch (error) {
+		if (error.response?.data) {
+			throw error.response.data;
+		}
+		throw { error: "Network error" };
+	}
+};

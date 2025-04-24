@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Mail, Lock, Loader2, LogIn } from "lucide-react";
-import { signIn } from "../services/auth";
+import { profile, signIn } from "../services/auth";
 import useStore from "../store/store";
 
 const Login = () => {
@@ -22,13 +22,14 @@ const Login = () => {
 
 		try {
 			const response = await signIn(email, password);
+			const profile = await profile();
 
 			login(
 				response?.data?.token,
 				response?.data?.session_id,
 				response?.data?.account_id,
-				response?.data.user,
-				response?.data.user_stats
+				profile?.user,
+				profile?.user_stats
 			);
 
 			sessionStorage.setItem("token", response?.data.token);
