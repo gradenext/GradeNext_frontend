@@ -22,17 +22,15 @@ const Login = () => {
 
 		try {
 			const response = await signIn(email, password);
-			const profile = await profile();
-
+			sessionStorage.setItem("token", response?.data.token);
+			const user = await profile();
 			login(
 				response?.data?.token,
 				response?.data?.session_id,
 				response?.data?.account_id,
-				profile?.user,
-				profile?.user_stats
+				user?.user,
+				user?.user_stats
 			);
-
-			sessionStorage.setItem("token", response?.data.token);
 
 			navigate("/dashboard");
 		} catch (err) {
