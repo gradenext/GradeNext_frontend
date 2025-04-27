@@ -20,7 +20,7 @@ const QuizNavbar = () => {
 					</span>
 				</div>
 
-				<div className="text-3xl bg-blue-500 uppercase bg-clip-text text-transparent font-bold">
+				<div className=" bg-blue-500 capitalize bg-clip-text text-transparent font-bold text-center">
 					{selectedMode === "topic" ? selectedTopic?.topic_name : selectedMode}
 				</div>
 				<div className="relative flex items-center justify-center gap-x-2">

@@ -10,50 +10,56 @@ import UserProfile from "./components/user/UserProfile";
 import UserStats from "./components/user/UserStats";
 
 function App() {
-	const token = useStore((state) => state.token);
+	try {
+		const token = useStore((state) => state.token);
 
-	return (
-		<div
-			style={{ fontFamily: "'Bubblegum Sans', cursive" }}
-			className="min-h-screen bg-gray-50"
-		>
-			{!token ? (
-				<Routes>
-					<Route
-						path="*"
-						element={<Navigate to="/login" replace />}
-					/>
-					<Route path="/login" element={<Login />} />
-					<Route path="/signup" element={<Signup />} />
-				</Routes>
-			) : (
-				<Routes>
-					<Route path="/dashboard" element={<Dashboard />} />
-					<Route
-						path="/treasurehunt/topics/:subject"
-						element={<TreasureHuntTopics />}
-					/>
-					<Route
-						path="/treasurehunt/:session_id/:subject/:topic"
-						element={<Quiz />}
-					/>
-					<Route path="/:mode/:session_id" element={<Quiz />} />
-					<Route path="/user" element={<User />}>
-						<Route path="profile" element={<UserProfile />} />
-						<Route path="stats" element={<UserStats />} />
+		return (
+			<div
+				style={{ fontFamily: "'Bubblegum Sans', cursive" }}
+				className="min-h-screen bg-gray-50"
+			>
+				{!token ? (
+					<Routes>
 						<Route
 							path="*"
-							element={<Navigate to={"/user/profile"} replace />}
+							element={<Navigate to="/login" replace />}
 						/>
-					</Route>
-					<Route
-						path="*"
-						element={<Navigate to="/dashboard" replace />}
-					/>
-				</Routes>
-			)}
-		</div>
-	);
+						<Route path="/login" element={<Login />} />
+						<Route path="/signup" element={<Signup />} />
+					</Routes>
+				) : (
+					<Routes>
+						<Route path="/dashboard" element={<Dashboard />} />
+						<Route
+							path="/treasurehunt/topics/:subject"
+							element={<TreasureHuntTopics />}
+						/>
+						<Route
+							path="/treasurehunt/:session_id/:subject/:topic"
+							element={<Quiz />}
+						/>
+						<Route path="/:mode/:session_id" element={<Quiz />} />
+						<Route path="/user" element={<User />}>
+							<Route path="profile" element={<UserProfile />} />
+							<Route path="stats" element={<UserStats />} />
+							<Route
+								path="*"
+								element={
+									<Navigate to={"/user/profile"} replace />
+								}
+							/>
+						</Route>
+						<Route
+							path="*"
+							element={<Navigate to="/dashboard" replace />}
+						/>
+					</Routes>
+				)}
+			</div>
+		);
+	} catch (error) {
+		console.log(error);
+	}
 }
 
 export default App;

@@ -77,7 +77,11 @@ const TopicIntroduction = ({ topicName }) => {
 				>
 					<div className="flex flex-row items-center justify-between mb-4 ">
 						<h2 className="text-2xl font-bold capitalize">
-							Topic Introduction
+							Show{" "}
+							<span className="capitalize underline">
+								{topicName}
+							</span>{" "}
+							Introduction
 						</h2>
 						<button
 							onClick={handleMinimize}
@@ -165,13 +169,7 @@ const TopicIntroduction = ({ topicName }) => {
 					className="bg-black text-white rounded-full px-4 py-2 flex items-center gap-2 shadow-lg transition-colors cursor-pointer"
 				>
 					<Maximize2 className="h-4 w-4" />
-					<span>
-						Show{" "}
-						<span className="capitalize underline">
-							{topicName}
-						</span>{" "}
-						Introduction
-					</span>
+					<span>Topic Introduction</span>
 				</button>
 			</div>
 		</>

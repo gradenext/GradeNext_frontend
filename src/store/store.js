@@ -47,8 +47,10 @@ const useStore = create(
 					selectedMode: null,
 					selectedTopic: null,
 					loading: false,
+					isNextQuestionLoading: false,
 					question_id: null,
 					quizQuestion: null,
+					nextQuizQuestion: null,
 					showExplanation: false,
 					isSubmitting: false,
 					userAnswer: null,
@@ -65,6 +67,7 @@ const useStore = create(
 					timeTaken: [],
 					feedback: null,
 					questionLoadedAt: null,
+					showExitModal: false,
 				});
 				sessionStorage.removeItem("token");
 				window.location.href = "/login";
@@ -88,6 +91,8 @@ const useStore = create(
 			loading: false,
 			question_id: null,
 			quizQuestion: null,
+			nextQuizQuestion: null,
+			isNextQuestionLoading: false,
 			showExplanation: false,
 			isSubmitting: false,
 			userAnswer: null,
@@ -105,6 +110,7 @@ const useStore = create(
 			timeTaken: [],
 			feedback: null,
 			questionLoadedAt: null,
+			showExitModal: false,
 
 			setQuestionLoadedAt: (time) => {
 				set({ questionLoadedAt: time });
@@ -115,6 +121,8 @@ const useStore = create(
 					session_id,
 					user,
 					selectedSubject,
+					quizQuestion,
+					nextQuizQuestion,
 					selectedMode,
 					selectedTopic,
 				} = get();
@@ -122,35 +130,105 @@ const useStore = create(
 				set((state) => ({
 					...state,
 					loading: true,
+					isNextQuestionLoading: nextQuizQuestion ? false : true,
 				}));
 
 				try {
 					// Determine which API function to use based on mode
 					const generateFunction = getQuestionGenerator(selectedMode);
 
-					const initialResponse = await generateFunction(
-						session_id,
-						user.grade,
-						selectedSubject,
-						selectedTopic?.topic_key
-					);
+					// Case 1: No current question - fetch both initial and next question
+					if (!quizQuestion) {
+						// Fetch initial question
+						const initialResponse = await generateFunction(
+							session_id,
+							user.grade,
+							selectedSubject,
+							selectedTopic?.topic_key
+						);
 
-					set((state) => ({
-						...state,
-						quizQuestion: initialResponse.data,
-						question_id: initialResponse.data?.question_id,
-						loading: false,
-					}));
+						// Fetch next question in parallel for efficiency
+						const nextResponse = await generateFunction(
+							session_id,
+							user.grade,
+							selectedSubject,
+							selectedTopic?.topic_key
+						);
+
+						set((state) => ({
+							...state,
+							quizQuestion: initialResponse.data,
+							question_id: initialResponse.data?.question_id,
+							nextQuizQuestion: nextResponse.data,
+							loading: false,
+							isNextQuestionLoading: false,
+						}));
+					}
+					// Case 2: Current question exists but no next question - fetch next question
+					else if (!nextQuizQuestion) {
+						set((state) => ({
+							...state,
+							isNextQuestionLoading: nextQuizQuestion
+								? false
+								: true,
+						}));
+
+						const response = await generateFunction(
+							session_id,
+							user.grade,
+							selectedSubject,
+							selectedTopic?.topic_key
+						);
+
+						set((state) => ({
+							...state,
+							nextQuizQuestion: response.data,
+							isNextQuestionLoading: false,
+						}));
+					}
+					// Case 3: Both questions exist - move next to current and fetch new next question
+					else {
+						set((state) => ({
+							...state,
+							isNextQuestionLoading: nextQuizQuestion
+								? false
+								: true,
+						}));
+
+						// First move next question to current
+						set((state) => ({
+							...state,
+							quizQuestion: state.nextQuizQuestion,
+							question_id: state.nextQuizQuestion?.question_id,
+							nextQuizQuestion: null,
+						}));
+
+						// Then fetch new next question
+						const response = await generateFunction(
+							session_id,
+							user.grade,
+							selectedSubject,
+							selectedTopic?.topic_key
+						);
+
+						set((state) => ({
+							...state,
+							nextQuizQuestion: response.data,
+							isNextQuestionLoading: false,
+						}));
+					}
 				} catch (error) {
 					set((state) => ({
 						...state,
 						loading: false,
+						isNextQuestionLoading: false,
 					}));
 
-					console.log(error);
+					throw error;
 				} finally {
 					set({
 						loading: false,
+						isNextQuestionLoading: false,
 					});
 				}
 			},
@@ -158,6 +236,11 @@ const useStore = create(
 			submitAnswer: async () => {
 				const state = get();
 				try {
+					if (state?.correctAnswer) {
+						await state.moveToNext();
+						return;
+					}
+
 					set({
 						isSubmitting: true,
 						showExplanation: true,
@@ -201,13 +284,11 @@ const useStore = create(
 					) {
 						await state.moveToNext();
 					}
-
 					set({
 						isSubmitting: false,
 						showExplanation: false,
 					});
-
-					console.log(error);
+					throw error;
 				}
 			},
 
@@ -245,6 +326,8 @@ const useStore = create(
 					loading: false,
 					question_id: null,
 					quizQuestion: null,
+					nextQuizQuestion: null,
+					isNextQuestionLoading: false,
 					showExplanation: false,
 					isSubmitting: false,
 					userAnswer: null,
@@ -256,6 +339,7 @@ const useStore = create(
 					selectedTopic: null,
 					selectedMode: null,
 					selectedSubject: null,
+					showExitModal: false,
 				});
 			},
 		}),
@@ -268,6 +352,7 @@ const useStore = create(
 				selectedTopic: state.selectedTopic,
 				question_id: state.question_id,
 				quizQuestion: state.quizQuestion,
+				nextQuizQuestion: state.nextQuizQuestion,
 				userAnswer: state.userAnswer,
 				analytics: state.analytics,
 				correctAnswer: state.correctAnswer,
@@ -281,6 +366,7 @@ const useStore = create(
 				account_id: state.account_id,
 				user: state.user,
 				user_stats: state.user_stats,
+				showExitModal: state.showExitModal,
 			}),
 		}
 	)

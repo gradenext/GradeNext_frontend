@@ -158,7 +158,7 @@ const Dashboard = () => {
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 				{/* Animated Header */}
 				<motion.div
-					className="text-center mb-12"
+					className="text-center mb-4"
 					initial={{ opacity: 0, y: 20 }}
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ duration: 0.8 }}
@@ -171,7 +171,7 @@ const Dashboard = () => {
 						<Rocket className="w-16 h-16 text-purple-600" />
 					</motion.div>
 					<h1
-						className="text-4xl md:text-5xl font-bold mb-4 pb-4"
+						className="text-4xl md:text-5xl font-bold pb-2"
 						style={{
 							background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
 							WebkitBackgroundClip: "text",
@@ -321,7 +321,7 @@ const Dashboard = () => {
 					</div>
 
 					{/* Right Column */}
-					<div className="space-y-8">
+					<div className="space-y-2">
 						{/* Progress Stats */}
 						<motion.div
 							className="py-8 px-4 bg-white rounded-2xl shadow-2xl border border-gray-100"

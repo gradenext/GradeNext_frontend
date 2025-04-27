@@ -34,7 +34,7 @@ const Quiz = () => {
 				<QuizNavbar />
 				<div className="flex gap-x-2 ">
 					<div className=" w-[60%] min-h-[50vh] mx-auto">
-						<QuestionCard isLoading={false} />
+						<QuestionCard />
 					</div>
 					<div className="w-[40%] ">
 						<ProgessDashboard />
