@@ -14,12 +14,12 @@ import {
 } from "lucide-react";
 import useStore from "../store/store";
 import { useNavigate } from "react-router-dom";
-import Timer from "../components/quiz/Timer";
+import { startSession } from ".././services/auth";
 
 const Dashboard = () => {
 	const navigate = useNavigate();
 
-	const session_id = useStore((state) => state.session_id);
+	const setSession = useStore((state) => state.setSession);
 	const selectedMode = useStore((state) => state.selectedMode);
 	const selectedSubject = useStore((state) => state.selectedSubject);
 	const overallStats = useStore((state) => state.user_stats.overall);
@@ -81,13 +81,17 @@ const Dashboard = () => {
 	const handleStart = async () => {
 		if (!selectedSubject || !selectedMode) return;
 
-		if (selectedMode === "topic") {
-			navigate(`/treasurehunt/topics/${selectedSubject}`);
-			return;
-		}
+		// setSessionLoading(true);
 		try {
-			await generateQuestion();
-			navigate(`/${selectedMode}/${session_id}`);
+			const id = await startSession();
+			setSession(id);
+			if (selectedMode === "topic") {
+				navigate(`/treasurehunt/topics/${selectedSubject}`);
+				return;
+			} else {
+				await generateQuestion();
+				navigate(`/${selectedMode}/${id}`);
+			}
 		} catch (error) {
 			console.log("Error Occured", error);
 		}

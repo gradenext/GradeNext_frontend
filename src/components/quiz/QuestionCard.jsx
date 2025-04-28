@@ -5,6 +5,7 @@ import confetti from "canvas-confetti";
 import useStore from "../../store/store";
 import { QuestionFooter } from "./QuizFooter";
 import Timer from "./Timer";
+import Caclulator from "./Calculator";
 
 export const QuestionCard = () => {
 	const [hoverOption, setHoverOption] = useState(null);
@@ -110,8 +111,9 @@ export const QuestionCard = () => {
 				<div className="absolute -right-8 -top-8 w-16 h-16 bg-yellow-200 rounded-full opacity-30"></div>
 				<div className="absolute -left-8 -bottom-8 w-16 h-16 bg-purple-200 rounded-full opacity-30"></div>
 
-				<div className="h-fit">
+				<div className="h-fit w-full flex justify-between items-center">
 					<Timer />
+					<Caclulator className="w-6 h-6 sm:w-5 sm:h-5" />
 				</div>
 
 				<div className="h-full">

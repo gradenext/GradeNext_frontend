@@ -7,27 +7,26 @@ import useStore from "../../store/store";
 
 const Timer = () => {
 	const navigate = useNavigate();
-	const exitQuiz = useStore((state) => state.exitQuiz);
+	const setExitModal = useStore((state) => state.setExitModal);
 	const STORAGE_KEY = "quiz-expiry-time";
 
 	const beepRef = useRef(new Audio("/beep.mp3"));
 	const warned = useRef(false);
 
 	const getExpiryTime = () => {
-		const saved = localStorage.getItem(STORAGE_KEY);
+		const saved = sessionStorage.getItem(STORAGE_KEY);
 		if (saved) return new Date(saved);
 		const newTime = new Date();
 		newTime.setMinutes(newTime.getMinutes() + 30);
-		localStorage.setItem(STORAGE_KEY, newTime.toISOString());
+		sessionStorage.setItem(STORAGE_KEY, newTime.toISOString());
 		return newTime;
 	};
 
 	const { seconds, minutes } = useTimer({
 		expiryTimestamp: getExpiryTime(),
 		onExpire: () => {
-			localStorage.removeItem(STORAGE_KEY);
-			exitQuiz();
-			navigate("/dashboard");
+			sessionStorage.removeItem(STORAGE_KEY);
+			setExitModal(true, true);
 		},
 	});
 
@@ -38,7 +37,7 @@ const Timer = () => {
 			warned.current = true;
 		}
 
-		() => localStorage.removeItem(STORAGE_KEY);
+		() => sessionStorage.removeItem(STORAGE_KEY);
 	}, [minutes, seconds]);
 
 	const maxTime = 30 * 60;
@@ -46,17 +45,21 @@ const Timer = () => {
 	const percentage = (remaining / maxTime) * 100;
 
 	return (
-		<div className="w-20 h-20 mx-auto my-2">
-			<CircularProgressbar
-				value={percentage}
-				text={`${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`}
-				styles={buildStyles({
-					textColor: "#1D4ED8",
-					pathColor: "#1D4ED8",
-					trailColor: "#E5E7EB",
-					textSize: "18px",
-				})}
-			/>
+		<div className="w-fit">
+			<div className="w-20 h-20 mx-auto my-2">
+				<CircularProgressbar
+					value={percentage}
+					text={`${minutes}:${
+						seconds < 10 ? `0${seconds}` : seconds
+					}`}
+					styles={buildStyles({
+						textColor: "#1D4ED8",
+						pathColor: "#1D4ED8",
+						trailColor: "#E5E7EB",
+						textSize: "18px",
+					})}
+				/>
+			</div>
 		</div>
 	);
 };

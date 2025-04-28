@@ -8,6 +8,7 @@ import TreasureHuntTopics from "./pages/TreasureHuntTopics";
 import User from "./pages/User";
 import UserProfile from "./components/user/UserProfile";
 import UserStats from "./components/user/UserStats";
+import QuizReport from "./components/quiz/QuizReport";
 
 function App() {
 	try {
@@ -39,6 +40,10 @@ function App() {
 							element={<Quiz />}
 						/>
 						<Route path="/:mode/:session_id" element={<Quiz />} />
+						<Route
+							path="/report"
+							element={<QuizReport />}
+						/>
 						<Route path="/user" element={<User />}>
 							<Route path="profile" element={<UserProfile />} />
 							<Route path="stats" element={<UserStats />} />

@@ -13,7 +13,7 @@ const Login = () => {
 	const [password, setPassword] = useState("");
 	const [error, setError] = useState("");
 
-	const { login } = useStore();
+	const { login, setUserData } = useStore();
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -24,13 +24,8 @@ const Login = () => {
 			const response = await signIn(email, password);
 			sessionStorage.setItem("token", response?.data.token);
 			const user = await profile();
-			login(
-				response?.data?.token,
-				response?.data?.session_id,
-				response?.data?.account_id,
-				user?.user,
-				user?.user_stats
-			);
+			login(response?.data?.token, response?.data?.account_id);
+			setUserData(user?.user, user?.user_stats);
 
 			navigate("/dashboard");
 		} catch (err) {

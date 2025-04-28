@@ -26,9 +26,7 @@ api.interceptors.response.use(
 	(error) => {
 		if (
 			error.response &&
-			(error.response.status === 401 ||
-				error.response.status === 403 ||
-				error.response.status === 400)
+			(error.response.status === 401 || error.response.status === 403)
 		) {
 			sessionStorage.removeItem("token");
 			useStore.getState().logout();

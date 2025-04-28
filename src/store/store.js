@@ -31,8 +31,18 @@ const useStore = create(
 			user_stats: null,
 
 			// Login function
-			login: (token, session_id, account_id, user, user_stats) => {
-				set({ token, session_id, account_id, user, user_stats });
+			login: (token, account_id) => {
+				set({ token, account_id });
+			},
+
+			setUserData: (user, user_stats) => {
+				set({ user, user_stats });
+			},
+
+			setSession: (session_id = null) => {
+				set({
+					session_id: session_id ? session_id : null,
+				});
 			},
 
 			// Logout function
@@ -67,7 +77,10 @@ const useStore = create(
 					timeTaken: [],
 					feedback: null,
 					questionLoadedAt: null,
-					showExitModal: false,
+					exitModal: {
+						timerExpired: false,
+						showModal: false,
+					},
 				});
 				sessionStorage.removeItem("token");
 				window.location.href = "/login";
@@ -110,7 +123,20 @@ const useStore = create(
 			timeTaken: [],
 			feedback: null,
 			questionLoadedAt: null,
-			showExitModal: false,
+			exitModal: {
+				timerExpired: false,
+				showModal: false,
+			},
+
+			setExitModal: (showModal, timerExpired) => {
+				set({
+					exitModal: {
+						showModal,
+						timerExpired:
+							timerExpired !== undefined && timerExpired,
+					},
+				});
+			},
 
 			setQuestionLoadedAt: (time) => {
 				set({ questionLoadedAt: time });
@@ -339,7 +365,19 @@ const useStore = create(
 					selectedTopic: null,
 					selectedMode: null,
 					selectedSubject: null,
-					showExitModal: false,
+					exitModal: {
+						timerExpired: false,
+						showModal: false,
+					},
+					analytics: {
+						session_stats: {
+							correct: 0,
+							incorrect: 0,
+						},
+						max_streak: 0,
+						current_streak: 0,
+					},
+					questionLoadedAt: null,
 				});
 			},
 		}),
@@ -366,7 +404,7 @@ const useStore = create(
 				account_id: state.account_id,
 				user: state.user,
 				user_stats: state.user_stats,
-				showExitModal: state.showExitModal,
+				exitModal: state.exitModal,
 			}),
 		}
 	)

@@ -39,14 +39,23 @@ const CalculatorComponent = () => {
 			case "÷":
 				return num2 === 0 ? NaN : num1 / num2;
 			default:
-				return NaN;
+				return num2; // Return the second number if no operation
 		}
 	};
 
 	const formatNumber = (num) => {
+		if (isNaN(num)) return "Error";
 		const stringNum = num.toString();
-		if (stringNum.includes("e")) return "Error";
-		if (stringNum.length > 10) return stringNum.slice(0, 10);
+		if (stringNum.includes("e"))
+			return parseFloat(num.toPrecision(10)).toString();
+		if (stringNum.length > 10) {
+			// Handle integers that are too long
+			if (!stringNum.includes(".")) {
+				return "Error";
+			}
+			// Handle decimal numbers that are too long
+			return stringNum.slice(0, 11);
+		}
 		return stringNum;
 	};
 
@@ -84,54 +93,43 @@ const CalculatorComponent = () => {
 
 	const handleOperation = (op) => {
 		if (op === "C") {
-			setDisplay("0");
-			setFirstNumber("");
-			setOperation("");
-			setNewNumber(true);
-			setWaitingForSecondNumber(false);
+			resetCalculator();
 			return;
 		}
 
 		if (op === "=") {
-			if (!operation || !firstNumber) return;
+			if (!operation || firstNumber === "") return;
 
 			const num1 = parseFloat(firstNumber);
 			const num2 = parseFloat(display);
 			const result = computeResult(num1, num2, operation);
 
-			if (!isFinite(result)) {
+			if (isNaN(result)) {
 				setDisplay("Error");
-				setFirstNumber("");
-				setOperation("");
-				setNewNumber(true);
-				setWaitingForSecondNumber(false);
+				resetCalculator();
 				return;
 			}
 
 			setDisplay(formatNumber(result));
-			setFirstNumber("");
-			setOperation("");
-			setNewNumber(true);
-			setWaitingForSecondNumber(false);
+			resetCalculator(false, formatNumber(result));
 			return;
 		}
 
-		if (firstNumber && operation && !newNumber) {
+		// If we have a previous operation pending, compute it first
+		if (firstNumber !== "" && operation && !waitingForSecondNumber) {
 			const num1 = parseFloat(firstNumber);
 			const num2 = parseFloat(display);
 			const result = computeResult(num1, num2, operation);
 
-			if (!isFinite(result)) {
+			if (isNaN(result)) {
 				setDisplay("Error");
-				setFirstNumber("");
-				setOperation("");
-				setNewNumber(true);
-				setWaitingForSecondNumber(false);
+				resetCalculator();
 				return;
 			}
 
-			setDisplay(formatNumber(result));
-			setFirstNumber(formatNumber(result));
+			const formattedResult = formatNumber(result);
+			setDisplay(formattedResult);
+			setFirstNumber(formattedResult);
 		} else {
 			setFirstNumber(display);
 		}
@@ -141,18 +139,44 @@ const CalculatorComponent = () => {
 		setWaitingForSecondNumber(true);
 	};
 
+	const resetCalculator = (fullReset = true, initialDisplay = "0") => {
+		if (fullReset) {
+			setFirstNumber("");
+			setOperation("");
+		}
+		setDisplay(initialDisplay);
+		setNewNumber(true);
+		setWaitingForSecondNumber(false);
+	};
+
+	const handleBackspace = () => {
+		if (display === "Error") {
+			resetCalculator();
+			return;
+		}
+
+		if (
+			display.length === 1 ||
+			(display.length === 2 && display.startsWith("-"))
+		) {
+			setDisplay("0");
+			setNewNumber(true);
+		} else {
+			setDisplay(display.slice(0, -1));
+		}
+	};
+
 	const calculatorButtons = [
-		["7", "8", "9", "+"],
-		["4", "5", "6", "×"],
-		["1", "2", "3", "-"],
-		["0", ".", "C", "÷"],
-		["="],
+		["C", "÷", "×", "⌫"],
+		["7", "8", "9", "-"],
+		["4", "5", "6", "+"],
+		["1", "2", "3"],
+		["0", ".", "="],
 	];
 
 	useEffect(() => {
 		const handleKeyDown = (e) => {
 			const key = e.key;
-			const currentState = stateRef.current;
 
 			if (
 				[
@@ -172,7 +196,10 @@ const CalculatorComponent = () => {
 					"*",
 					"/",
 					"Enter",
+					"=",
 					"Backspace",
+					"Escape",
+					"Delete",
 				].includes(key)
 			) {
 				e.preventDefault();
@@ -182,16 +209,10 @@ const CalculatorComponent = () => {
 				handleNumber(key);
 			} else if (key === ".") {
 				handleDecimal();
-			} else if (key === "Enter") {
+			} else if (key === "Enter" || key === "=") {
 				handleOperation("=");
-			} else if (key === "Backspace") {
-				if (display === "Error") {
-					handleOperation("C");
-				} else {
-					setDisplay((prev) =>
-						prev.length > 1 ? prev.slice(0, -1) : "0"
-					);
-				}
+			} else if (key === "Backspace" || key === "Delete") {
+				handleBackspace();
 			} else if (key === "Escape") {
 				handleOperation("C");
 			} else if (["+", "-", "*", "/"].includes(key)) {
@@ -204,28 +225,10 @@ const CalculatorComponent = () => {
 		return () => window.removeEventListener("keydown", handleKeyDown);
 	}, []);
 
-	const modalRef = useRef(null);
-
-	// Click outside handler
-	useEffect(() => {
-		const handleClickOutside = (event) => {
-			if (modalRef.current && !modalRef.current.contains(event.target)) {
-				setIsOpen(false);
-			}
-		};
-
-		if (isOpen) {
-			document.addEventListener("mousedown", handleClickOutside);
-		}
-		return () => {
-			document.removeEventListener("mousedown", handleClickOutside);
-		};
-	}, [isOpen]);
-
 	return (
 		<>
 			<button
-				className=" bg-blue-500 text-sm border border-blue-500 rounded-full p-3  shadow-lg cursor-pointer"
+				className="bg-blue-500 text-sm border border-blue-500 rounded-full p-3 shadow-lg cursor-pointer"
 				onClick={() => setIsOpen(true)}
 			>
 				<Calculator className="h-4 w-4 text-white" />
@@ -236,60 +239,80 @@ const CalculatorComponent = () => {
 				onClose={() => setIsOpen(false)}
 				title={"Calculator"}
 			>
-				<div className="mb-4">
-					<div className="bg-gray-100 p-4 rounded-lg flex flex-col gap-y-4">
-						<div className="text-gray-500 text-3xl h-6 text-right">
-							{firstNumber && `${firstNumber} ${operation}`}
-						</div>
-						<div
-							className={`text-right transition-all ${
-								display === "Error"
-									? "text-red-500 text-2xl"
-									: "text-3xl"
-							}`}
-							style={{
-								fontSize:
-									display.length > 10
-										? `${Math.max(
-												1.5 -
-													(display.length - 10) *
-														0.15,
-												0.8
-										  )}rem`
-										: undefined,
-							}}
-						>
-							{display}
+				<div className="w-full">
+					<div className="mb-4">
+						<div className="bg-gray-100 p-4 rounded-lg flex flex-col gap-y-4">
+							<div className="text-gray-500 text-xl h-6 text-right">
+								{firstNumber && `${firstNumber} ${operation}`}
+							</div>
+							<div
+								className={`text-right transition-all ${
+									display === "Error"
+										? "text-red-500 text-2xl"
+										: "text-3xl"
+								}`}
+								style={{
+									fontSize:
+										display.length > 10
+											? `${Math.max(
+													1.5 -
+														(display.length - 10) *
+															0.15,
+													0.8
+											  )}rem`
+											: undefined,
+								}}
+							>
+								{display}
+							</div>
 						</div>
 					</div>
-				</div>
-				<div className="grid grid-cols-4 gap-2">
-					{calculatorButtons.map((row, rowIndex) =>
-						row.map((btn) => (
-							<button
-								key={btn}
-								onClick={() => {
-									if (btn === ".") handleDecimal();
-									else if (
-										["C", "=", "+", "-", "×", "÷"].includes(
-											btn
-										)
-									)
-										handleOperation(btn);
-									else handleNumber(btn);
-								}}
-								className={`h-14 text-lg rounded-lg border cursor-pointer ${
-									btn === "="
-										? "bg-blue-800 hover:bg-blue-700 text-white col-span-4"
-										: ["+", "-", "×", "÷"].includes(btn)
-										? " bg-blue-800 hover:bg-blue-700 text-white"
-										: "bg-white hover:bg-gray-200 border-gray-300"
-								} transition-colors`}
-							>
-								{btn}
-							</button>
-						))
-					)}
+					<div className="grid grid-cols-4 gap-2">
+						{calculatorButtons.map((row, rowIndex) =>
+							row.map((btn, btnIndex) => (
+								<button
+									key={btn}
+									onClick={() => {
+										if (btn === ".") {
+											handleDecimal();
+										} else if (btn === "⌫") {
+											handleBackspace();
+										} else if (
+											[
+												"C",
+												"=",
+												"+",
+												"-",
+												"×",
+												"÷",
+											].includes(btn)
+										) {
+											handleOperation(btn);
+										} else {
+											handleNumber(btn);
+										}
+									}}
+									className={`h-14 text-lg rounded-lg border cursor-pointer ${
+										btn === "="
+											? "bg-blue-800 hover:bg-blue-700 text-white row-span-2"
+											: ["+", "-", "×", "÷"].includes(btn)
+											? "bg-blue-800 hover:bg-blue-700 text-white"
+											: btn === "C" || btn === "⌫"
+											? "bg-red-500 hover:bg-red-400 text-white"
+											: "bg-white hover:bg-gray-200 border-gray-300"
+									} ${
+										rowIndex === 3 && btnIndex === 2
+											? "col-span-2"
+											: rowIndex === 4 && btn === "0"
+											? "col-span-2"
+											: ""
+									} transition-colors`}
+								>
+									{btn}
+								</button>
+							))
+						)}
+					</div>
 				</div>
 			</Modal>
 		</>

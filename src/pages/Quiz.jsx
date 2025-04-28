@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import useStore from "../store/store";
 import QuizNavbar from "../components/quiz/QuizNavbar";
-import QuizHeader from "../components/quiz/QuizHeader";
 import { useWindowSize } from "react-use";
 import ReactConfetti from "react-confetti";
 import TopicIntroduction from "../components/quiz/TopicIntroduction";
 import ProgessDashboard from "../components/quiz/ProgressDashboard";
 import { QuestionCard } from "../components/quiz/QuestionCard";
+import ExitModal from "../components/quiz/ExitModal";
 
 const Quiz = () => {
 	const quizQuestion = useStore((state) => state.quizQuestion);
@@ -47,6 +47,7 @@ const Quiz = () => {
 					?.split("_")
 					.join(" ")}
 			/>
+			<ExitModal />
 		</div>
 	);
 };

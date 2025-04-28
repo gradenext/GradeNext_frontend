@@ -35,3 +35,27 @@ export const profile = async () => {
 		throw { error: "Network error" };
 	}
 };
+
+export const startSession = async () => {
+	try {
+		const response = await api.post("sessions/");
+		return response.data.session_id;
+	} catch (error) {
+		if (error.response?.data) {
+			throw error.response.data;
+		}
+		throw { error: "Network error" };
+	}
+};
+
+export const endSession = async (session_id) => {
+	try {
+		const response = await api.post(`sessions/${session_id}/expire/`);
+		return response.data;
+	} catch (error) {
+		if (error.response?.data) {
+			throw error.response.data;
+		}
+		throw { error: "Network error" };
+	}
+};
