@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Lightbulb, Loader } from "lucide-react";
+import { Lightbulb } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import useStore from "../../store/store";
@@ -12,8 +12,6 @@ export const QuestionCard = () => {
   const [showTooltip, setShowTooltip] = useState(false);
   const showHint = useRef(false);
 
-  const selectedMode = useStore((state) => state.selectedMode);
-  const selectedTopic = useStore((state) => state.selectedTopic);
   const question = useStore((state) => state.quizQuestion);
   const userAnswer = useStore((state) => state.userAnswer);
   const correctAnswer = useStore((state) => state.correctAnswer);
@@ -82,9 +80,9 @@ export const QuestionCard = () => {
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.2 }}
-        className="h-full"
+        className=""
       >
-        <div className="p-6 rounded-3xl border-4 border-blue-300 bg-white shadow-lg h-full flex flex-col items-center justify-center">
+        <div className="min-h-[90vh] p-6 rounded-3xl border-4 border-blue-300 bg-white shadow-lg flex flex-col items-center justify-center">
           <div className="flex flex-col items-center justify-center py-10">
             <div className="animate-bounce mb-4">
               <div className="w-16 h-16 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center">
@@ -108,34 +106,31 @@ export const QuestionCard = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="p-6 rounded-3xl border-4 border-blue-300 bg-white shadow-lg relative overflow-hidden flex flex-col ">
+      <div className="min-h-[90vh] p-6 rounded-3xl border-4 border-blue-300 bg-white shadow-lg relative overflow-hidden flex flex-col justify-between">
         <div className="absolute -right-8 -top-8 w-16 h-16 bg-yellow-200 rounded-full opacity-30"></div>
         <div className="absolute -left-8 -bottom-8 w-16 h-16 bg-purple-200 rounded-full opacity-30"></div>
 
-        <div className="h-fit w-full flex justify-between items-center">
+        <div className="h-[80px] w-full flex justify-between items-center">
           <Timer />
-          <div className="sm:w-auto text-4xl bg-blue-500 capitalize bg-clip-text text-transparent font-bold text-center    overflow-hidden w-full sm:max-w-[50%] px-1">
-            {selectedMode === "topic"
-              ? selectedTopic?.topic_name
-              : selectedMode}
+          <div className="sm:w-auto text-xl bg-blue-500 capitalize bg-clip-text text-transparent font-bold text-center   overflow-hidden w-full sm:max-w-[50%] px-1">
+            {question?.progress?.current_topic?.split("_").join(" ")}
           </div>
           <Caclulator className="w-6 h-6 sm:w-5 sm:h-5" />
         </div>
 
-        <div className="h-full">
-          <div className="relative">
+        <div className="min-h-[80vh] flex flex-col justify-evenly ">
+          <div className="relative h-1/2">
             <motion.h2
-              className="text-xl mb-6 pr-10 font-bold text-purple-800 bg-gradient-to-r from-purple-100 to-blue-100 p-4 rounded-xl border-2 border-purple-200"
-              dangerouslySetInnerHTML={{
-                __html: question?.question,
-              }}
+              className="text-xl min-h-[30vh] h-full font-bold text-purple-800 bg-gradient-to-r from-purple-100 to-blue-100 p-4 rounded-xl border-2 border-purple-200"
               initial={{ scale: 0.95 }}
               animate={{ scale: 1 }}
               transition={{ duration: 0.5 }}
-            />
+            >
+              {question?.question}
+            </motion.h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+          <div className="h-full grid grid-cols-1 gap-4 mt-2">
             <AnimatePresence>
               {question?.options?.map((option, index) => {
                 const buttonClasses =
@@ -219,9 +214,10 @@ export const QuestionCard = () => {
             </AnimatePresence>
           </div>
 
+          {/* Action Button */}
           {!showExplanation && (
             <motion.div
-              className="mt-4 flex flex-wrap justify-center  gap-4"
+              className="mt-4 h-full flex flex-wrap justify-center  gap-4"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}
@@ -263,6 +259,7 @@ export const QuestionCard = () => {
             </motion.div>
           )}
 
+          {/* Hint and Explanation */}
           <QuestionFooter
             showHint={showHint?.current}
             showExplanation={showExplanation}

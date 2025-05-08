@@ -47,10 +47,9 @@ const COLORS = {
 };
 
 function ProgressDashboard() {
-  const { session_stats, max_streak } = useStore((state) => state.analytics);
+  const { session_stats } = useStore((state) => state.analytics);
   const hintsUsed = useStore((state) => state.usedHints);
   const avgTimeTaken = useStore((state) => state.avgTimeTaken);
-  const timeTaken = useStore((state) => state.timeTaken);
 
   // Calculate totals
   const totalQuestions =
@@ -69,13 +68,6 @@ function ProgressDashboard() {
       color: "#fb7185",
     },
   ];
-
-  // Prepare time taken data for line chart
-  const timeData =
-    timeTaken?.map((time, index) => ({
-      question: index + 1,
-      time: time,
-    })) || [];
 
   // Custom tooltip for line chart
   const CustomLineTooltip = ({ active, payload, label }) => {
@@ -116,21 +108,29 @@ function ProgressDashboard() {
           </h2>
 
           <motion.div
-            className="bg-[#FEF3C7] px-4 py-2 rounded-xl shadow w-full sm:w-2/3"
+            className="bg-[#FEF3C7] p-2 rounded-xl shadow w-full"
             whileHover={{ y: -4 }}
           >
             <div className="flex items-center justify-center gap-3">
               <Gauge className="h-5 w-5 text-purple-600" />
-              <div className="text-xl font-bold text-purple-800">
+              <div className="text-lg font-bold text-purple-800">
                 {accuracy}%
               </div>
-              <div className="text-sm text-gray-700">Accuracy</div>
+              <div className="text-xs text-gray-700">Accuracy</div>
+            </div>
+
+            {/* Progress bar */}
+            <div className="w-full bg-purple-100 h-3 rounded-full">
+              <div
+                className="bg-purple-600 h-3 rounded-full transition-all duration-500"
+                style={{ width: `${accuracy}%` }}
+              ></div>
             </div>
           </motion.div>
         </div>
 
         {/* Summary Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+        <div className="grid grid-cols-1 gap-3 mb-6">
           {[
             {
               value: totalQuestions,
@@ -160,137 +160,52 @@ function ProgressDashboard() {
             <motion.div
               key={i}
               whileHover={{ y: -3 }}
-              className={`bg-${stat.color}-100 p-2 rounded-xl shadow-md flex items-center gap-1`}
+              className={`bg-${stat.color}-100 rounded-xl shadow-md flex items-center gap-1`}
             >
               <div className={`p-2 rounded-full text-${stat.color}-600`}>
                 {stat.icon}
               </div>
-              <div>
+              <div className="flex gap-2 items-center">
                 <div className="text-lg font-bold text-gray-800">
                   {stat.value}
                 </div>
-                <div className="text-sm text-gray-600">{stat.label}</div>
+                <div className="text-xs text-gray-600">{stat.label}</div>
               </div>
             </motion.div>
           ))}
         </div>
 
         {/* Charts Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="">
+          {/* Pie Chart */}
           {/* Pie Chart */}
           <div className="bg-pink-50 p-4 rounded-xl border border-pink-200">
-            <h3 className="text-base font-semibold text-gray-800 mb-2">
-              Correct vs Incorrect
-            </h3>
-            <div className="h-52">
+            <div className="h-44">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={pieData}
                     cx="50%"
                     cy="50%"
-                    innerRadius={40}
-                    outerRadius={65}
-                    paddingAngle={5}
+                    innerRadius={30}
+                    outerRadius={50}
+                    paddingAngle={3}
                     dataKey="value"
-                    label={({ name, percent }) =>
-                      `${name}: ${(percent * 100).toFixed(0)}%`
-                    }
                   >
                     {pieData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
                   <Tooltip formatter={(value) => [`${value} answers`]} />
-                  <Legend wrapperStyle={{ fontSize: "12px" }} />
+                  <Legend
+                    verticalAlign="bottom"
+                    height={36}
+                    iconSize={10}
+                    wrapperStyle={{ fontSize: "12px" }}
+                  />
                 </PieChart>
               </ResponsiveContainer>
             </div>
-
-            {/* Best Streak */}
-            <motion.div
-              className="bg-yellow-50 p-3 mt-3 rounded-lg border border-yellow-200"
-              whileHover={{ scale: 1.03 }}
-            >
-              <h4 className="text-sm font-semibold text-yellow-700 mb-1 capitalize">
-                correct answers in-a-row !
-              </h4>
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">🔥</span>
-                <div>
-                  <div className="text-2xl font-bold text-yellow-600">
-                    {max_streak || 0}
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-
-          {/* Line Chart */}
-          <div className="bg-purple-50 p-4 rounded-xl border border-purple-200">
-            <h3 className="text-base font-semibold text-gray-800 mb-2">
-              Time Taken Per Question
-            </h3>
-            <div className="h-52">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={timeData}>
-                  <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-                  <XAxis
-                    dataKey="question"
-                    tick={{ fontSize: 10 }}
-                    label={{
-                      value: "Q#",
-                      position: "insideBottomRight",
-                      offset: -5,
-                      fontSize: 10,
-                    }}
-                  />
-                  <YAxis
-                    tick={{ fontSize: 10 }}
-                    label={{
-                      value: "Time (s)",
-                      angle: -90,
-                      position: "insideLeft",
-                      fontSize: 10,
-                      offset: 15,
-                    }}
-                  />
-                  <Tooltip content={<CustomLineTooltip />} />
-                  <Legend wrapperStyle={{ fontSize: "12px" }} />
-                  <Line
-                    type="monotone"
-                    dataKey="time"
-                    stroke="#A78BFA"
-                    strokeWidth={2}
-                    dot={{ r: 3 }}
-                    activeDot={{ r: 5 }}
-                    name="Time"
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-
-            {/* Time Analysis */}
-            <motion.div
-              className="bg-indigo-50 p-3 mt-3 rounded-lg border border-indigo-200"
-              whileHover={{ scale: 1.03 }}
-            >
-            
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div>
-                  <div className="text-xs text-gray-500">Fastest</div>
-                  <div className="text-lg font-bold text-indigo-600">
-                    {timeTaken?.length ? Math.min(...timeTaken) : 0}s
-                  </div>
-                </div>
-                <div>
-                  <div className="text-xs text-gray-500">Slowest</div>
-                  <div className="text-lg font-bold text-indigo-600">
-                    {timeTaken?.length ? Math.max(...timeTaken) : 0}s
-                  </div>
-                </div>
-              </div>
-            </motion.div>
           </div>
         </div>
       </div>

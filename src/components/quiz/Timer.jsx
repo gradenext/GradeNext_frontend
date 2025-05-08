@@ -44,7 +44,7 @@ const Timer = () => {
 
   return (
     <div className="w-fit">
-      <div className="w-20 h-20 mx-auto my-2">
+      <div className="w-16 h-16 mx-auto my-2">
         <CircularProgressbar
           value={percentage}
           text={`${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`}
@@ -52,7 +52,7 @@ const Timer = () => {
             textColor: "#1D4ED8",
             pathColor: "#1D4ED8",
             trailColor: "#E5E7EB",
-            textSize: "18px",
+            textSize: "24px",
           })}
         />
       </div>

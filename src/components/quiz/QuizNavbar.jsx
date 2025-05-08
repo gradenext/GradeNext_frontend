@@ -6,6 +6,8 @@ const QuizNavbar = () => {
   const grade = useStore((state) => state.user.grade);
   const selectedSubject = useStore((state) => state.selectedSubject);
   const setExitModal = useStore((state) => state.setExitModal);
+  const selectedMode = useStore((state) => state.selectedMode);
+  const selectedTopic = useStore((state) => state.selectedTopic);
 
   return (
     <div className="animate-fadeIn my-2">
@@ -17,7 +19,9 @@ const QuizNavbar = () => {
           </span>
         </div>
 
-        
+        <div className="sm:w-auto text-4xl bg-blue-500 capitalize bg-clip-text text-transparent font-bold text-center   overflow-hidden w-full sm:max-w-[50%] px-1">
+          {selectedMode === "topic" ? selectedTopic?.topic_name : selectedMode}
+        </div>
 
         {/* Action Buttons - Bottom on mobile, right on desktop */}
         <div className="w-fit sm:w-auto relative flex items-center justify-center gap-x-1 sm:gap-x-2 flex-wrap gap-y-1 sm:gap-y-2">
