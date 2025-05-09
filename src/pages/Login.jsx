@@ -22,7 +22,7 @@ const Login = () => {
 
 		try {
 			const response = await signIn(email, password);
-			sessionStorage.setItem("token", response?.data.token);
+			sessionStorage.setItem("token", response?.data?.token);
 			const user = await profile();
 			login(response?.data?.token, response?.data?.account_id);
 			setUserData(user?.user, user?.user_stats);
