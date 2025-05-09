@@ -14,15 +14,15 @@ export const signIn = async (email, password) => {
 
 export const register = async (userData) => {
 	try {
-		const response = await api.post("auth/register/", userData);
-		return response.data;
+	  const response = await api.post("auth/register/", userData);
+	  return response.data;
 	} catch (error) {
-		if (error.response?.data) {
-			throw error.response.data;
-		}
-		throw { error: "Network error" };
+	  if (error.response?.data) {
+		throw error.response.data;
+	  }
+	  throw { error: "Network error" };
 	}
-};
+  };
 
 export const profile = async () => {
 	try {

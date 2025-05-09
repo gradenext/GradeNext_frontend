@@ -30,6 +30,8 @@ const Signup = () => {
 		zip_code: "",
 		address: "",
 		mobileNo: "",
+		plan: 'basic',
+		coupon_code: '',
 	});
 	const [error, setError] = useState("");
 	const [loading, setLoading] = useState(false);
@@ -39,8 +41,8 @@ const Signup = () => {
 	const availableCourses = [
 		{ id: "mathematics", label: "Mathematics", emoji: "🧮" },
 		{ id: "english", label: "English", emoji: "📚" },
-		{ id: "computer", label: "Computer Language", emoji: "📚" },
-		{ id: "science", label: "Science", emoji: "🧮" },
+		// { id: "computer", label: "Computer Language", emoji: "📚" },
+		// { id: "science", label: "Science", emoji: "🧮" },
 	];
 
 	const handleChange = (e) => {
@@ -57,6 +59,12 @@ const Signup = () => {
 	};
 
 	const validateStep = () => {
+		if (step === 3) {
+			if (!formData.plan) return "Please select a plan";
+			if (formData.coupon_code && formData.coupon_code !== 'NG100') {
+			  return "Invalid coupon code";
+			}
+	}
 		if (step === 1) {
 			if (!formData.student_name) return "Student name is required";
 			if (!formData.parent_name) return "Parent name is required";
@@ -68,7 +76,9 @@ const Signup = () => {
 			if (!formData.country) return "Country is required";
 			if (!formData.state) return "State is required";
 			if (!formData.zip_code) return "Zip code is required";
-		} else if (step === 3) {
+		}
+		
+		else if (step === 4) {
 			if (!formData.email) return "Email is required";
 			if (!formData.password) return "Password is required";
 			if (formData.password.length < 6)
@@ -86,7 +96,7 @@ const Signup = () => {
 			return;
 		}
 		setError("");
-		setStep(Math.min(step + 1, 3));
+		setStep(Math.min(step + 1, 4));
 	};
 
 	const prevStep = () => {
@@ -107,6 +117,8 @@ const Signup = () => {
 			const payload = {
 				...formData,
 				grade: parseInt(formData.grade),
+				coupon_code: formData.coupon_code || undefined,
+				plan: formData.coupon_code === 'NG100' ? 'enterprise' : formData.plan
 			};
 
 			await register(payload);
@@ -114,7 +126,7 @@ const Signup = () => {
 		} catch (err) {
 			setError(
 				err.error ||
-					"Registration failed. Please check all fields and try again."
+				"Registration failed. Please check all fields and try again."
 			);
 		} finally {
 			setLoading(false);
@@ -123,14 +135,11 @@ const Signup = () => {
 
 	const getStepTitle = (step) => {
 		switch (step) {
-			case 1:
-				return "Tell Us About You";
-			case 2:
-				return "Where Are You From?";
-			case 3:
-				return "Create Your Account";
-			default:
-				return "Sign Up";
+			case 1: return "Tell Us About You";
+			case 2: return "Where Are You From?";
+			case 3: return "Choose Your Plan";
+			case 4: return "Create Your Account";
+			default: return "Sign Up";
 		}
 	};
 
@@ -215,8 +224,8 @@ const Signup = () => {
 											{gender === "male"
 												? "Boy"
 												: gender === "female"
-												? "Girl"
-												: "Other"}
+													? "Girl"
+													: "Other"}
 										</span>
 									</label>
 								))}
@@ -233,11 +242,10 @@ const Signup = () => {
 									<motion.div
 										key={course.id}
 										whileHover={{ scale: 1.03 }}
-										className={`flex items-center p-2 rounded-lg ${
-											formData.courses.includes(course.id)
-												? "bg-purple-100 border-2 border-purple-300"
-												: "bg-white"
-										}`}
+										className={`flex items-center p-2 rounded-lg ${formData.courses.includes(course.id)
+											? "bg-purple-100 border-2 border-purple-300"
+											: "bg-white"
+											}`}
 									>
 										<label className="flex items-center w-full">
 											<input
@@ -327,8 +335,74 @@ const Signup = () => {
 						</div>
 					</div>
 				);
+				case 3:
+					return (
+					  <div className="space-y-6">
+						<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+						  {[
+							{ 
+							  id: 'basic',
+							  title: 'Basic Plan',
+							  price: 'Free',
+							  features: ['Limited practice', 'Progress Tracking', 'Email support'],
+							},
+							{
+							  id: 'pro',
+							  title: 'Pro Plan',
+							  price: '$49/mo',
+							  features: ['Unlimited Questions', 'Revision Mode', 'Advanced Analytics', 'Priority email support'],
+							},
+							{
+							  id: 'enterprise',
+							  title: 'Enterprise',
+							  price: 'Custom',
+							  features: ['All Pro Features', 'Topic Practice', '1-on-1 student mentoring', 'Custom Reports','Tutor support'],
+							}
+						  ].map((plan) => (
+							<motion.div
+							  key={plan.id}
+							  whileHover={{ scale: 1.03 }}
+							  className={`cursor-pointer p-4 rounded-xl border-2 ${
+								formData.plan === plan.id 
+								  ? 'border-purple-500 bg-purple-50' 
+								  : 'border-purple-200 bg-white'
+							  }`}
+							  onClick={() => setFormData(prev => ({ ...prev, plan: plan.id }))}>
+							  <h3 className="text-lg font-bold text-purple-800">{plan.title}</h3>
+							  <p className="text-xl font-bold text-purple-600 my-2">{plan.price}</p>
+							  <ul className="space-y-1">
+								{plan.features.map((feature) => (
+								  <li key={feature} className="text-purple-700 flex items-center">
+									<span className="mr-2">✔️</span>
+									{feature}
+								  </li>
+								))}
+							  </ul>
+							</motion.div>
+						  ))}
+						</div>
+			  
+						<div className="space-y-2">
+						  <label className="text-sm font-medium text-purple-700">
+							Have a coupon code?
+						  </label>
+						  <input
+							name="coupon_code"
+							value={formData.coupon_code}
+							onChange={handleChange}
+							className="w-full px-4 py-3 bg-purple-50 border-2 border-purple-200 text-purple-900 rounded-xl"
+							placeholder="Enter coupon code"
+						  />
+						  {formData.coupon_code === 'NG100' && (
+							<p className="text-green-600 text-sm mt-2">
+							  🎉 NG100 applied! Enjoy Enterprise features!
+							</p>
+						  )}
+						</div>
+					  </div>
+					);
 
-			case 3:
+			case 4:
 				return (
 					<div className="grid grid-cols-1 gap-4">
 						<div className="space-y-2">
@@ -493,13 +567,13 @@ const Signup = () => {
 								{getStepTitle(step)}
 							</h2>
 							<p className="text-center text-purple-600 mt-2">
-								Step {step} of 3
+								Step {step} of 4
 							</p>
 
 							<div className="w-full bg-purple-100 rounded-full h-2.5 mt-4">
 								<div
 									className="bg-gradient-to-r from-purple-600 to-blue-600 h-2.5 rounded-full transition-all"
-									style={{ width: `${(step / 3) * 100}%` }}
+									style={{ width: `${(step / 4) * 100}%` }}
 								/>
 							</div>
 						</div>
@@ -535,7 +609,7 @@ const Signup = () => {
 										</button>
 									)}
 
-									{step < 3 ? (
+									{step < 4 ? (
 										<button
 											type="button"
 											onClick={nextStep}
@@ -559,7 +633,7 @@ const Signup = () => {
 								</div>
 							</form>
 
-							{step === 3 && (
+							{/* {step === 4 && (
 								<div className="mt-8">
 									<div className="relative">
 										<div className="absolute inset-0 flex items-center">
@@ -581,7 +655,7 @@ const Signup = () => {
 										Sign up with Google
 									</button>
 								</div>
-							)}
+							)} */}
 						</div>
 
 						<div className="bg-gradient-to-r from-purple-100 to-blue-100 p-4 text-center">
