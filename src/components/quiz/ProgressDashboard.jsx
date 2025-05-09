@@ -90,7 +90,7 @@ function ProgressDashboard() {
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, type: "spring", stiffness: 80 }}
-      className="w-full"
+      className="w-full "
     >
       <div className="p-6 rounded-3xl border-4 border-pink-300 bg-white shadow-xl relative overflow-hidden">
         {/* Fun Decorative Elements */}
@@ -100,15 +100,16 @@ function ProgressDashboard() {
           🌟
         </div>
 
-        {/* Header */}
-        <div className="flex flex-col gap-y-4 items-center mb-4 text-center">
-          <h2 className="text-3xl font-extrabold bg-gradient-to-r from-pink-500 to-blue-500 text-transparent bg-clip-text">
-            <Trophy className="inline mr-2 h-7 w-7 text-yellow-500" />
-            Your Progress Overview
-          </h2>
-
+        <div className="h-full">
+          {/* Header */}
+          <div className="flex flex-col gap-y-4 items-center mb-4 text-center">
+            <h2 className="text-xl flex gap-x-2 font-extrabold bg-gradient-to-r from-pink-500 to-blue-500 text-transparent bg-clip-text">
+              <Trophy className=" h-7 w-7 text-yellow-500" />
+              Your Progress
+            </h2>
+          </div>
           <motion.div
-            className="bg-[#FEF3C7] p-2 rounded-xl shadow w-full"
+            className="bg-[#FEF3C7] p-2 rounded-xl shadow w-full mb-2"
             whileHover={{ y: -4 }}
           >
             <div className="flex items-center justify-center gap-3">
@@ -127,60 +128,60 @@ function ProgressDashboard() {
               ></div>
             </div>
           </motion.div>
-        </div>
 
-        {/* Summary Stats */}
-        <div className="grid grid-cols-1 gap-3 mb-6">
-          {[
-            {
-              value: totalQuestions,
-              label: "Total Questions",
-              color: "pink",
-              icon: <BookOpen className="h-6 w-6" />,
-            },
-            {
-              value: session_stats?.correct || 0,
-              label: "Correct Answers",
-              color: "green",
-              icon: <CheckCircle className="h-6 w-6" />,
-            },
-            {
-              value: hintsUsed || 0,
-              label: "Hints Used",
-              color: "blue",
-              icon: <HelpCircle className="h-6 w-6" />,
-            },
-            {
-              value: `${Math.round(avgTimeTaken || 0)}s`,
-              label: "Avg Time/Question",
-              color: "yellow",
-              icon: <Clock className="h-6 w-6" />,
-            },
-          ].map((stat, i) => (
-            <motion.div
-              key={i}
-              whileHover={{ y: -3 }}
-              className={`bg-${stat.color}-100 rounded-xl shadow-md flex items-center gap-1`}
-            >
-              <div className={`p-2 rounded-full text-${stat.color}-600`}>
-                {stat.icon}
-              </div>
-              <div className="flex gap-2 items-center">
-                <div className="text-lg font-bold text-gray-800">
-                  {stat.value}
+          {/* Summary Stats */}
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-2 mb-2 h-full">
+            {[
+              {
+                value: totalQuestions,
+                label: "Total Questions",
+                color: "pink",
+                icon: <BookOpen className="h-6 w-6" />,
+              },
+              {
+                value: session_stats?.correct || 0,
+                label: "Correct Answers",
+                color: "green",
+                icon: <CheckCircle className="h-6 w-6" />,
+              },
+              {
+                value: hintsUsed || 0,
+                label: "Hints Used",
+                color: "blue",
+                icon: <HelpCircle className="h-6 w-6" />,
+              },
+              {
+                value: `${Math.round(avgTimeTaken || 0)}s`,
+                label: "Avg Time/Question",
+                color: "yellow",
+                icon: <Clock className="h-6 w-6" />,
+              },
+            ].map((stat, i) => (
+              <motion.div
+                key={i}
+                whileHover={{ y: -3 }}
+                className={`bg-${stat.color}-100 rounded-xl shadow-md flex items-center gap-1`}
+              >
+                <div className={`p-2 rounded-full text-${stat.color}-600`}>
+                  {stat.icon}
                 </div>
-                <div className="text-xs text-gray-600">{stat.label}</div>
-              </div>
-            </motion.div>
-          ))}
+                <div className="flex gap-2 items-center">
+                  <div className="text-lg font-bold text-gray-800">
+                    {stat.value}
+                  </div>
+                  <div className="text-xs text-gray-600">{stat.label}</div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
 
         {/* Charts Section */}
-        <div className="">
+        <div className="h-full">
           {/* Pie Chart */}
           {/* Pie Chart */}
           <div className="bg-pink-50 p-4 rounded-xl border border-pink-200">
-            <div className="h-44">
+            <div className="h-40 xl:h-60">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie

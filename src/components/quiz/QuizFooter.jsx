@@ -10,8 +10,8 @@ export const QuestionFooter = ({ showHint, showExplanation, onContinue }) => {
 	return (
 		<>
 			{showHint && (
-				<div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-md">
-					<div className="text-sm text-blue-800">
+				<div className="my-2 p-2 bg-blue-50 border border-blue-200 rounded-md">
+					<div className=" text-blue-800">
 						<strong>Hint:</strong>{" "}
 						<span dangerouslySetInnerHTML={{ __html: hint }} />
 					</div>
@@ -19,8 +19,8 @@ export const QuestionFooter = ({ showHint, showExplanation, onContinue }) => {
 			)}
 
 			{showExplanation && (
-				<div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-md">
-					<div className="text-sm text-blue-800">
+				<div className=" p-2 bg-blue-50 border border-blue-200 rounded-md">
+					<div className=" text-blue-800">
 						<strong>Explanation:</strong>{" "}
 						<div
 							dangerouslySetInnerHTML={{ __html: explanation }}
