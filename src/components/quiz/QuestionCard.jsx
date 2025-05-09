@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Lightbulb } from "lucide-react";
+import { Lightbulb, Speaker, SpeakerIcon, Speech } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import useStore from "../../store/store";
@@ -9,7 +9,7 @@ import Caclulator from "./Calculator";
 
 export const QuestionCard = () => {
   const [hoverOption, setHoverOption] = useState(null);
-  const [showTooltip, setShowTooltip] = useState(false);
+  const [showHintTooltip, setShowHintTooltip] = useState(false);
   const showHint = useRef(false);
 
   const question = useStore((state) => state.quizQuestion);
@@ -19,8 +19,13 @@ export const QuestionCard = () => {
   const isNextQuestionLoading = useStore(
     (state) => state.isNextQuestionLoading
   );
-
   const setQuestionLoadedAt = useStore((state) => state.setQuestionLoadedAt);
+
+  const speakText = () => {
+    const utterance = new SpeechSynthesisUtterance(question?.question);
+    utterance.lang = "en-US";
+    window.speechSynthesis.speak(utterance);
+  };
 
   // Track when the question is actually mounted/rendered
   const questionMountedRef = useRef(null);
@@ -218,8 +223,8 @@ export const QuestionCard = () => {
               transition={{ duration: 0.2 }}
             >
               <button
-                onMouseEnter={() => setShowTooltip(true)}
-                onMouseLeave={() => setShowTooltip(false)}
+                onMouseEnter={() => setShowHintTooltip(true)}
+                onMouseLeave={() => setShowHintTooltip(false)}
                 onClick={() => {
                   showHint.current = true;
                   setUsedHints();
@@ -227,7 +232,7 @@ export const QuestionCard = () => {
                 className="relative bg-yellow-100 hover:bg-yellow-200 text-yellow-700 rounded-full h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center cursor-pointer"
               >
                 <Lightbulb className="h-4 w-4 sm:h-5 sm:w-5" />
-                {showTooltip && (
+                {showHintTooltip && (
                   <div className="absolute w-32 sm:w-40 right-1/2 translate-x-[50%] bottom-[120%] bg-yellow-100 border border-yellow-300 text-yellow-800 text-xs sm:text-sm font-medium p-1 sm:p-2 rounded-md z-50">
                     Click to show hint
                   </div>

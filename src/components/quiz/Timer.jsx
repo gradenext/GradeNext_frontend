@@ -6,24 +6,23 @@ import useStore from "../../store/store";
 
 const Timer = () => {
   const setExitModal = useStore((state) => state.setExitModal);
-  const STORAGE_KEY = "quiz-expiry-time";
+  const expiryTime = useStore((state) => state.expiryTime);
+  const setExpiryTime = useStore((state) => state.setExpiryTime);
 
   const beepRef = useRef(new Audio("/beep.mp3"));
   const warned = useRef(false);
 
   const getExpiryTime = () => {
-    const saved = sessionStorage.getItem(STORAGE_KEY);
-    if (saved) return new Date(saved);
+    if (expiryTime) return new Date(expiryTime);
     const newTime = new Date();
     newTime.setMinutes(newTime.getMinutes() + 30);
-    sessionStorage.setItem(STORAGE_KEY, newTime.toISOString());
+    setExpiryTime(newTime.toISOString());
     return newTime;
   };
 
   const { seconds, minutes } = useTimer({
     expiryTimestamp: getExpiryTime(),
     onExpire: () => {
-      sessionStorage.removeItem(STORAGE_KEY);
       setExitModal(true, true);
     },
   });
@@ -34,8 +33,6 @@ const Timer = () => {
       beepRef.current.play().catch(() => {});
       warned.current = true;
     }
-
-    () => sessionStorage.removeItem(STORAGE_KEY);
   }, [minutes, seconds]);
 
   const maxTime = 30 * 60;

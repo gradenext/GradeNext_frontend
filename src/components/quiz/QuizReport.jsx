@@ -83,7 +83,6 @@ const StatCard = ({ label, value, color, icon }) => (
 const QuizReport = () => {
 	const navigate = useNavigate();
 	const data = useStore((state) => state?.analytics?.session_stats);
-	const topic = useStore((state) => state?.selectedTopic);
 	const exitQuiz = useStore((state) => state?.exitQuiz);
 
 	// Calculate total questions and accuracy safely
