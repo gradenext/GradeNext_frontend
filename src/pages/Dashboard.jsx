@@ -115,9 +115,9 @@ const Dashboard = () => {
     },
     {
       label: "🎯 Accuracy",
-      value: `${
-        (overallStats.correct / overallStats?.total).toFixed(2) * 100
-      }%`,
+      value: `${((overallStats.correct / overallStats?.total) * 100).toFixed(
+        2
+      )}%`,
       progress: (overallStats.correct / overallStats?.total).toFixed(2) * 100,
     },
   ];
