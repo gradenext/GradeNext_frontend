@@ -12,7 +12,7 @@ import {
   Phone,
   ChevronDown,
 } from "lucide-react";
-import { register } from "../services/auth";
+import { register, verifyOTP } from "../services/auth";
 
 const plans = [
   {
@@ -45,6 +45,30 @@ const plans = [
     ],
   },
 ];
+
+const availableCourses = [
+  { id: "mathematics", label: "Mathematics", emoji: "🧮" },
+  { id: "english", label: "English", emoji: "📚" },
+  // { id: "computer", label: "Computer Language", emoji: "📚" },
+  // { id: "science", label: "Science", emoji: "🧮" },
+];
+
+const getStepTitle = (step) => {
+  switch (step) {
+    case 1:
+      return "Tell Us About You";
+    case 2:
+      return "Where Are You From?";
+    case 3:
+      return "Choose Your Plan";
+    case 4:
+      return "Create Your Account";
+    case 5:
+      return "Verify Your Account";
+    default:
+      return "Sign Up";
+  }
+};
 
 function PlanAccordion({ formData, setFormData }) {
   const [openId, setOpenId] = useState(null);
@@ -127,13 +151,35 @@ const Signup = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [otp, setOtp] = useState(Array(6).fill(""));
 
-  const availableCourses = [
-    { id: "mathematics", label: "Mathematics", emoji: "🧮" },
-    { id: "english", label: "English", emoji: "📚" },
-    // { id: "computer", label: "Computer Language", emoji: "📚" },
-    // { id: "science", label: "Science", emoji: "🧮" },
-  ];
+  const handleOtpChange = (e, index) => {
+    const value = e.target.value.replace(/[^0-9]/g, "");
+    const newOtp = [...otp];
+
+    if (value.length === 1) {
+      newOtp[index] = value;
+      setOtp(newOtp);
+      const nextInput = document.querySelector(`input[name=otp${index + 1}]`);
+      if (nextInput) nextInput.focus();
+    } else if (value === "") {
+      newOtp[index] = "";
+      setOtp(newOtp);
+    }
+  };
+
+  const handleOtpKeyDown = (e, index) => {
+    if (e.key === "Backspace") {
+      if (otp[index]) {
+        const newOtp = [...otp];
+        newOtp[index] = "";
+        setOtp(newOtp);
+      } else {
+        const prevInput = document.querySelector(`input[name=otp${index - 1}]`);
+        if (prevInput) prevInput.focus();
+      }
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;
@@ -149,12 +195,6 @@ const Signup = () => {
   };
 
   const validateStep = () => {
-    if (step === 3) {
-      if (!formData.plan) return "Please select a plan";
-      if (formData.coupon_code && formData.coupon_code !== "NG100") {
-        return "Invalid coupon code";
-      }
-    }
     if (step === 1) {
       if (!formData.student_name) return "Student name is required";
       if (!formData.parent_name) return "Parent name is required";
@@ -166,6 +206,11 @@ const Signup = () => {
       if (!formData.country) return "Country is required";
       if (!formData.state) return "State is required";
       if (!formData.zip_code) return "Zip code is required";
+    } else if (step === 3) {
+      if (!formData.plan) return "Please select a plan";
+      if (formData.coupon_code && formData.coupon_code !== "NG100") {
+        return "Invalid coupon code";
+      }
     } else if (step === 4) {
       if (!formData.email) return "Email is required";
       if (!formData.password) return "Password is required";
@@ -210,7 +255,8 @@ const Signup = () => {
       };
 
       await register(payload);
-      navigate("/login");
+      setError("");
+      setStep(5);
     } catch (err) {
       setError(
         err.error ||
@@ -221,18 +267,28 @@ const Signup = () => {
     }
   };
 
-  const getStepTitle = (step) => {
-    switch (step) {
-      case 1:
-        return "Tell Us About You";
-      case 2:
-        return "Where Are You From?";
-      case 3:
-        return "Choose Your Plan";
-      case 4:
-        return "Create Your Account";
-      default:
-        return "Sign Up";
+  const handleVerifyOTP = async (e) => {
+    e.preventDefault();
+
+    const otpValue = otp.join("");
+
+    console.log(otpValue);
+
+    if (otpValue?.length !== 6) {
+      setError("Please enter a valid 6 digit OTP");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await verifyOTP(formData?.email, otpValue);
+      navigate("/login");
+    } catch (error) {
+      setError(
+        error.error || "Verification failed. Please check otp and try again."
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -531,6 +587,33 @@ const Signup = () => {
             </div>
           </div>
         );
+
+      case 5:
+        return (
+          <div className="grid grid-cols-1 gap-4">
+            <p className="text-sm text-purple-700">
+              📧 An email has been sent to{" "}
+              <span className="font-semibold">{formData.email}</span> with a
+              verification code.
+            </p>
+
+            <div className="flex justify-between gap-2">
+              {[...Array(6)].map((_, i) => (
+                <input
+                  key={i}
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={1}
+                  name={`otp${i}`}
+                  value={otp[i] || ""}
+                  onChange={(e) => handleOtpChange(e, i)}
+                  onKeyDown={(e) => handleOtpKeyDown(e, i)}
+                  className="w-12 h-12 text-center text-xl bg-purple-50 border-2 border-purple-200 text-purple-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400"
+                />
+              ))}
+            </div>
+          </div>
+        );
     }
   };
 
@@ -600,19 +683,19 @@ const Signup = () => {
                 {getStepTitle(step)}
               </h2>
               <p className="text-center text-purple-600 mt-2">
-                Step {step} of 4
+                Step {step} of 5
               </p>
 
               <div className="w-full bg-purple-100 rounded-full h-2.5 mt-4">
                 <div
                   className="bg-gradient-to-r from-purple-600 to-blue-600 h-2.5 rounded-full transition-all"
-                  style={{ width: `${(step / 4) * 100}%` }}
+                  style={{ width: `${(step / 5) * 100}%` }}
                 />
               </div>
             </div>
 
             <div className="p-6">
-              <form onSubmit={handleSubmit}>
+              <form>
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={step}
@@ -642,7 +725,7 @@ const Signup = () => {
                     </button>
                   )}
 
-                  {step < 4 ? (
+                  {step < 4 && (
                     <button
                       type="button"
                       onClick={nextStep}
@@ -650,10 +733,26 @@ const Signup = () => {
                     >
                       Next 👉
                     </button>
-                  ) : (
+                  )}
+                  {step === 4 && (
                     <button
                       type="submit"
                       disabled={loading}
+                      onClick={handleSubmit}
+                      className="ml-auto px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all disabled:opacity-50"
+                    >
+                      {loading ? (
+                        <Loader2 className="h-5 w-5 animate-spin mx-4" />
+                      ) : (
+                        "Verify my Account"
+                      )}
+                    </button>
+                  )}
+                  {step === 5 && (
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      onClick={handleVerifyOTP}
                       className="ml-auto px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all disabled:opacity-50"
                     >
                       {loading ? (

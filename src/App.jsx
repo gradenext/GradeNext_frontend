@@ -6,6 +6,7 @@ import Quiz from "./pages/Quiz";
 import useStore from "./store/store";
 import TreasureHuntTopics from "./pages/TreasureHuntTopics";
 import User from "./pages/User";
+import ForgotPassword from "./pages/ForgotPassword";
 import UserProfile from "./components/user/UserProfile";
 import UserStats from "./components/user/UserStats";
 import QuizReport from "./components/quiz/QuizReport";
@@ -27,6 +28,7 @@ function App() {
 						/>
 						<Route path="/login" element={<Login />} />
 						<Route path="/signup" element={<Signup />} />
+						<Route path="/forgot-password" element={<ForgotPassword />} />
 					</Routes>
 				) : (
 					<Routes>
