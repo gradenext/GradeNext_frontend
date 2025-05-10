@@ -11,6 +11,8 @@ import {
   Loader2,
   Phone,
   ChevronDown,
+  ShieldCheck,
+  Rocket,
 } from "lucide-react";
 import { register, verifyOTP } from "../services/auth";
 
@@ -79,43 +81,48 @@ function PlanAccordion({ formData, setFormData }) {
   };
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-4">
       {plans.map((plan) => (
         <motion.div
           key={plan.id}
-          whileHover={{ scale: 1.02 }}
-          className={`cursor-pointer py-2 px-4 rounded-xl border-2 transition-all duration-300 ${
+          whileHover={{ scale: 1.01 }}
+          className={`cursor-pointer p-4 rounded-2xl border transition-all duration-300 shadow-sm ${
             formData.plan === plan.id
               ? "border-purple-500 bg-purple-50"
               : "border-purple-200 bg-white"
           }`}
           onClick={() => toggleAccordion(plan.id)}
         >
-          <div className="flex justify-between items-center ">
-            <h3 className="text-lg font-bold text-purple-800">{plan.title}</h3>
-            <div className="flex gap-x-4 items-center">
-              <p className="text-xl font-bold text-purple-600 ">{plan.price}</p>
-              <ChevronDown
-                className={`text-purple-600 transition-transform duration-300 ${
-                  openId === plan.id ? "rotate-180" : "rotate-0"
-                }`}
-              />
+          <div className="flex justify-center items-center gap-2 ms:items-center">
+            <div className="w-full flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+              <h3 className="text-lg font-semibold text-purple-800">
+                {plan.title}
+              </h3>
+              <p className="text-xl font-bold text-purple-600">{plan.price}</p>
             </div>
+            <ChevronDown
+              className={`text-purple-600 transition-transform duration-300 ${
+                openId === plan.id ? "rotate-180" : "rotate-0"
+              }`}
+            />
           </div>
 
           <AnimatePresence>
             {openId === plan.id && (
               <motion.ul
-                className=" grid grid-cols-2 gap-1 my-1 items-center text-purple-700"
+                className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-4 text-purple-700"
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
                 transition={{ duration: 0.3 }}
               >
                 {plan.features.map((feature) => (
-                  <li key={feature} className="flex items-center">
-                    <span className="mr-2">✔️</span>
-                    {feature}
+                  <li
+                    key={feature}
+                    className="flex items-start gap-2 text-sm sm:text-base"
+                  >
+                    <span className="text-green-600">✔️</span>
+                    <span>{feature}</span>
                   </li>
                 ))}
               </motion.ul>
@@ -383,7 +390,7 @@ const Signup = () => {
                 <span className="mr-2">🎯</span>
                 Select Subjects
               </label>
-              <div className="grid grid-cols-2 gap-2 bg-purple-50 p-3 rounded-xl border-2 border-purple-200">
+              <div className="grid col-span-2 md:grid-cols-2 gap-2 bg-purple-50 p-3 rounded-xl border-2 border-purple-200">
                 {availableCourses.map((course) => (
                   <motion.div
                     key={course.id}
@@ -478,6 +485,7 @@ const Signup = () => {
             </div>
           </div>
         );
+
       case 3:
         return (
           <div className="space-y-6">
@@ -590,14 +598,16 @@ const Signup = () => {
 
       case 5:
         return (
-          <div className="grid grid-cols-1 gap-4">
-            <p className="text-sm text-purple-700">
-              📧 An email has been sent to{" "}
-              <span className="font-semibold">{formData.email}</span> with a
-              verification code.
+          <div className="grid grid-cols-1 gap-4 w-full max-w-md mx-auto">
+            <p className="text-sm sm:text-base text-center sm:text-left text-purple-700">
+              📧 We've sent a verification code to{" "}
+              <span className="font-semibold text-purple-900">
+                {formData.email}
+              </span>
+              . Please enter the 6-digit code below to verify your email.
             </p>
 
-            <div className="flex justify-between gap-2">
+            <div className="flex justify-center flex-wrap gap-1">
               {[...Array(6)].map((_, i) => (
                 <input
                   key={i}
@@ -608,17 +618,28 @@ const Signup = () => {
                   value={otp[i] || ""}
                   onChange={(e) => handleOtpChange(e, i)}
                   onKeyDown={(e) => handleOtpKeyDown(e, i)}
-                  className="w-12 h-12 text-center text-xl bg-purple-50 border-2 border-purple-200 text-purple-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400"
+                  className="w-12 h-12 md:w-14 md:h-14 text-center text-xl font-semibold bg-gradient-to-b from-purple-50 to-purple-100 border-2 border-purple-300 text-purple-900 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
                 />
               ))}
             </div>
+
+            <p className="text-center text-sm text-purple-600 mt-2">
+              Didn’t receive it?{" "}
+              <button
+                type="button"
+                onClick={handleSubmit}
+                className="text-purple-800 font-medium hover:underline hover:text-purple-900 transition"
+              >
+                Resend Code
+              </button>
+            </p>
           </div>
         );
     }
   };
 
   return (
-    <div className="h-screen w-screen overflow-hidden relative flex items-center justify-center">
+    <div className=" min-h-screen w-screen relative flex items-center justify-center">
       <div className="absolute inset-0 bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500" />
 
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -714,7 +735,7 @@ const Signup = () => {
                   </div>
                 )}
 
-                <div className="flex justify-between mt-8">
+                <div className="flex flex-wrap items-center justify-center gap-6 mt-8">
                   {step > 1 && (
                     <button
                       type="button"
@@ -729,7 +750,7 @@ const Signup = () => {
                     <button
                       type="button"
                       onClick={nextStep}
-                      className="ml-auto px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all"
+                      className="px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all"
                     >
                       Next 👉
                     </button>
@@ -739,55 +760,38 @@ const Signup = () => {
                       type="submit"
                       disabled={loading}
                       onClick={handleSubmit}
-                      className="ml-auto px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all disabled:opacity-50"
+                      className="flex items-center justify-center gap-2 min-w-[200px] px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all disabled:opacity-50"
                     >
                       {loading ? (
-                        <Loader2 className="h-5 w-5 animate-spin mx-4" />
+                        <Loader2 className="h-6 w-6 animate-spin" />
                       ) : (
-                        "Verify my Account"
+                        <>
+                          <ShieldCheck className="h-5 w-5" />
+                          Verify my Account
+                        </>
                       )}
                     </button>
                   )}
+
                   {step === 5 && (
                     <button
                       type="submit"
                       disabled={loading}
                       onClick={handleVerifyOTP}
-                      className="ml-auto px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all disabled:opacity-50"
+                      className="flex items-center justify-center gap-2 min-w-[200px] px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all disabled:opacity-50"
                     >
                       {loading ? (
-                        <Loader2 className="h-5 w-5 animate-spin mx-4" />
+                        <Loader2 className="h-6 w-6 animate-spin" />
                       ) : (
-                        "Start My Adventure 🚀"
+                        <>
+                          <Rocket className="h-5 w-5" />
+                          Start My Adventure
+                        </>
                       )}
                     </button>
                   )}
                 </div>
               </form>
-
-              {/* {step === 4 && (
-								<div className="mt-8">
-									<div className="relative">
-										<div className="absolute inset-0 flex items-center">
-											<div className="w-full border-t-2 border-purple-200" />
-										</div>
-										<div className="relative flex justify-center">
-											<span className="px-2 bg-white text-purple-600 text-sm">
-												Or continue with
-											</span>
-										</div>
-									</div>
-
-									<button className="w-full mt-4 py-3 px-4 border-2 border-purple-200 rounded-xl text-purple-700 hover:bg-purple-50 transition-colors">
-										<img
-											src="https://www.svgrepo.com/show/475656/google-color.svg"
-											alt="Google"
-											className="h-5 w-5 inline mr-2"
-										/>
-										Sign up with Google
-									</button>
-								</div>
-							)} */}
             </div>
 
             <div className="bg-gradient-to-r from-purple-100 to-blue-100 p-4 text-center">

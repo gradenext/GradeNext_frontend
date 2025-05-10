@@ -146,7 +146,7 @@ const Signup = () => {
                 <Lock className="h-4 w-4 mr-2 text-purple-500" />
                 OTP
               </label>
-              <div className="flex justify-between gap-2">
+              <div className="flex justify-center flex-wrap gap-1">
                 {[...Array(6)].map((_, i) => (
                   <input
                     key={i}
@@ -157,7 +157,7 @@ const Signup = () => {
                     value={otp[i] || ""}
                     onChange={(e) => handleOtpChange(e, i)}
                     onKeyDown={(e) => handleOtpKeyDown(e, i)}
-                    className="w-12 h-12 text-center text-xl bg-purple-50 border-2 border-purple-200 text-purple-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400"
+                    className="w-12 h-12 md:w-14 md:h-14 text-center text-xl font-semibold bg-gradient-to-b from-purple-50 to-purple-100 border-2 border-purple-300 text-purple-900 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
                   />
                 ))}
               </div>
@@ -229,7 +229,7 @@ const Signup = () => {
   };
 
   return (
-    <div className="h-screen w-screen overflow-hidden relative flex items-center justify-center">
+    <div className="min-h-screen w-screen overflow-hidden relative flex items-center justify-center">
       <div className="absolute inset-0 bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500" />
 
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -325,7 +325,7 @@ const Signup = () => {
                   </div>
                 )}
 
-                <div className="flex justify-between">
+                <div className="flex flex-wrap items-center justify-center gap-6 mt-8">
                   {step === 2 && (
                     <button
                       type="button"
@@ -340,7 +340,7 @@ const Signup = () => {
                       type="submit"
                       disabled={loading}
                       onClick={handleForget}
-                      className="ml-auto px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all disabled:opacity-50"
+                      className=" px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all disabled:opacity-50"
                     >
                       {loading ? (
                         <Loader2 className="h-5 w-5 animate-spin mx-4" />
@@ -354,7 +354,7 @@ const Signup = () => {
                       type="submit"
                       disabled={loading}
                       onClick={handleReset}
-                      className="ml-auto px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all disabled:opacity-50"
+                      className=" px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all disabled:opacity-50"
                     >
                       {loading ? (
                         <Loader2 className="h-5 w-5 animate-spin mx-4" />
