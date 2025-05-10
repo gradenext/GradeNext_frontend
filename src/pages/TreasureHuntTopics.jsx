@@ -104,7 +104,7 @@ const TreasureHuntTopics = () => {
 
 	return (
 		<motion.div
-			className="mx-auto py-6 px-12"
+			className="mx-auto py-6 px-12 bg-gradient-to-br from-emerald-600 via-teal-600 to-cyan-700"
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
 			transition={{ duration: 0.5 }}
@@ -131,14 +131,14 @@ const TreasureHuntTopics = () => {
 					<h2
 						className="text-3xl sm:text-4xl font-bold mb-2"
 						style={{
-							background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
+							background: `linear-gradient(45deg, ${colors.secondary}, ${colors.background})`,
 							WebkitBackgroundClip: "text",
 							WebkitTextFillColor: "transparent",
 						}}
 					>
 						Treasure Hunt Topics
 					</h2>
-					<p className="text-lg sm:text-xl text-gray-700">
+					<p className="text-lg sm:text-xl text-gray-800">
 						Choose your learning adventure!
 					</p>
 					<div
