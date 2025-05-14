@@ -2,7 +2,7 @@ import axios from "axios";
 import useStore from "../store/store";
 
 const api = axios.create({
-	baseURL: "https://gradenext-backend.onrender.com/api/", // Your Django backend URL
+	baseURL: "http://api.gradenext.com/api/", // Your Django backend URL
 	headers: {
 		"Content-Type": "application/json",
 	},
