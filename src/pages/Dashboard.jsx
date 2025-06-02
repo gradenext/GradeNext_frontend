@@ -15,6 +15,7 @@ import {
 import useStore from "../store/store";
 import { useNavigate } from "react-router-dom";
 import { startSession } from ".././services/auth";
+import { useState } from "react";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ const Dashboard = () => {
   const selectedMode = useStore((state) => state.selectedMode);
   const selectedSubject = useStore((state) => state.selectedSubject);
   const overallStats = useStore((state) => state.user_stats.overall);
-  const loading = useStore((state) => state.loading);
+  const [loading, setLoading] = useState(false);
 
   const { logout, setSelectedSubject, setSelectedMode, generateQuestion } =
     useStore();
@@ -83,6 +84,7 @@ const Dashboard = () => {
 
     // setSessionLoading(true);
     try {
+      setLoading(true);
       const id = await startSession();
       setSession(id);
       if (selectedMode === "topic") {
@@ -94,6 +96,8 @@ const Dashboard = () => {
       }
     } catch (error) {
       console.log("Error Occured", error);
+    } finally {
+      setLoading(false);
     }
   };
   const stats = [
@@ -388,7 +392,7 @@ const Dashboard = () => {
             >
               <button
                 onClick={handleStart}
-                disabled={!selectedSubject || !selectedMode}
+                disabled={!selectedSubject || !selectedMode || loading}
                 className={`w-full py-5 text-xl font-bold rounded-2xl transition-all 
                   ${
                     selectedSubject && selectedMode
