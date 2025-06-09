@@ -8,6 +8,7 @@ import Timer from "./Timer";
 import Caclulator from "./Calculator";
 import Modal from "../Modal";
 import QuestionImage from "./QuestionImage";
+import Markdown from "markdown-to-jsx";
 
 export const QuestionCard = () => {
   const [hoverOption, setHoverOption] = useState(null);
@@ -126,7 +127,7 @@ export const QuestionCard = () => {
         <div className="flex flex-col gap-3 sm:gap-4 flex-1">
           {/* Question section */}
           <motion.div
-            className="flex-1 min-h-[20vh] overflow-y-auto text-lg sm:text-xl font-bold text-purple-800 bg-gradient-to-r from-purple-50 to-blue-50 p-3 sm:p-4 rounded-lg sm:rounded-xl border border-purple-100 sm:border-2 sm:border-purple-200"
+            className="flex-1 min-h-[20vh] overflow-y-auto bg-gradient-to-r from-purple-50 to-blue-50 p-3 sm:p-4 rounded-lg sm:rounded-xl border border-purple-100 sm:border-2 sm:border-purple-200"
             initial={{ scale: 0.95 }}
             animate={{ scale: 1 }}
             transition={{ duration: 0.3 }}
@@ -137,7 +138,35 @@ export const QuestionCard = () => {
                 alt="Question Illustration"
               />
             )}
-            {question?.question}
+
+            <div className="text-lg sm:text-xl font-bold text-purple-800">
+              <Markdown
+                options={{
+                  overrides: {
+                    table: {
+                      component: 'table',
+                      props: {
+                        className: 'w-full border-collapse border border-gray-300 my-4'
+                      }
+                    },
+                    th: {
+                      component: 'th',
+                      props: {
+                        className: 'border border-gray-300 px-3 py-2 bg-gray-100 text-center'
+                      }
+                    },
+                    td: {
+                      component: 'td',
+                      props: {
+                        className: 'border border-gray-300 px-3 py-2 text-center'
+                      }
+                    }
+                  }
+                }}
+              >
+                {question?.question}
+              </Markdown>
+            </div>
           </motion.div>
 
           {/* Options grid or Input bar */}
@@ -268,20 +297,18 @@ export const QuestionCard = () => {
               <button
                 disabled={!userAnswer}
                 onClick={onClearSelection}
-                className={`text-purple-600 hover:text-purple-800 bg-purple-100 rounded-full px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base transition-colors ${
-                  userAnswer ? "" : "cursor-not-allowed opacity-50"
-                }`}
+                className={`text-purple-600 hover:text-purple-800 bg-purple-100 rounded-full px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base transition-colors ${userAnswer ? "" : "cursor-not-allowed opacity-50"
+                  }`}
               >
                 Clear Response
               </button>
               <button
                 disabled={!userAnswer}
                 onClick={handleSubmitAnswer}
-                className={`text-purple-100 min-w-28 sm:min-w-36 hover:text-purple-200 bg-purple-700 sm:bg-purple-900 rounded-full px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base transition-colors ${
-                  userAnswer
-                    ? "cursor-pointer"
-                    : "cursor-not-allowed opacity-50"
-                }`}
+                className={`text-purple-100 min-w-28 sm:min-w-36 hover:text-purple-200 bg-purple-700 sm:bg-purple-900 rounded-full px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base transition-colors ${userAnswer
+                  ? "cursor-pointer"
+                  : "cursor-not-allowed opacity-50"
+                  }`}
               >
                 Submit Answer
               </button>

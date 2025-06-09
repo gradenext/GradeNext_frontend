@@ -17,6 +17,7 @@
     "framer-motion": "^12.6.2",
     "install": "^0.13.0",
     "lucide-react": "^0.484.0",
+    "markdown-to-jsx": "^7.7.6",
     "npm": "^11.3.0",
     "react": "^19.0.0",
     "react-circular-progressbar": "^2.2.0",
