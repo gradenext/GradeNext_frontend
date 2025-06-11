@@ -16,7 +16,7 @@ import toast from "react-hot-toast";
 
 function App() {
   const token = useStore((state) => state.token);
-  const isOpen = useStore((state) => state.showUpgradeModal);
+  const isOpen = useStore((state) => state.showUpgradeModal) ?? false;
   const toogleShowUpgradeModal = useStore(
     (state) => state.toogleShowUpgradeModal
   );
@@ -56,7 +56,7 @@ function App() {
         )}
 
         <Modal
-          isOpen={!isOpen}
+          isOpen={isOpen}
           title={"Upgrade you plan"}
           onClose={toogleShowUpgradeModal}
           closeOnOutsideClick={false}
