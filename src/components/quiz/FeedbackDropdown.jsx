@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import emailjs from "emailjs-com";
 import Modal from "../Modal";
-import useStore  from "../../store/store";
+import useStore from "../../store/store";
+import toast from "react-hot-toast";
 
 const FEEDBACK_OPTIONS = [
   {
@@ -40,23 +41,23 @@ const FeedbackModal = () => {
 
     emailjs
       .send(
-        "service_caexplf",
-        "template_hjcyaej",
+        "service_mo597zf",
+        "template_uzl8dzv",
         templateParams,
-        "KLWpCVb9-ESOAS4xx"
+        "lm8671wRuXNu8poP5"
       )
       .then(() => {
         setIsOpen(false);
         setSelectedFeedback("");
         setShowConfirmation(true);
-
+        toast.success("Feedback submitted!!");
         setTimeout(() => {
           setShowConfirmation(false);
         }, 3000);
       })
       .catch((error) => {
         console.error("EmailJS Error:", error);
-        alert("Failed to send feedback. Please try again.");
+        toast.error("Oops!! Something went wrong");
       });
   };
 

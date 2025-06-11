@@ -10,63 +10,65 @@ import ForgotPassword from "./pages/ForgotPassword";
 import UserProfile from "./components/user/UserProfile";
 import UserStats from "./components/user/UserStats";
 import QuizReport from "./components/quiz/QuizReport";
+import PlanRestriction from "./components/PlanRestriction";
+import Modal from "./components/Modal";
+import toast from "react-hot-toast";
 
 function App() {
-	try {
-		const token = useStore((state) => state.token);
+  const token = useStore((state) => state.token);
+  const isOpen = useStore((state) => state.showUpgradeModal);
+  const toogleShowUpgradeModal = useStore(
+    (state) => state.toogleShowUpgradeModal
+  );
+  try {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        {!token ? (
+          <Routes>
+            <Route path="*" element={<Navigate to="/login" replace />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+          </Routes>
+        ) : (
+          <Routes>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route
+              path="/treasurehunt/topics/:subject"
+              element={<TreasureHuntTopics />}
+            />
+            <Route
+              path="/treasurehunt/:session_id/:subject/:topic"
+              element={<Quiz />}
+            />
+            <Route path="/:mode/:session_id" element={<Quiz />} />
+            <Route path="/report" element={<QuizReport />} />
+            <Route path="/user" element={<User />}>
+              <Route path="profile" element={<UserProfile />} />
+              <Route path="stats" element={<UserStats />} />
+              <Route
+                path="*"
+                element={<Navigate to={"/user/profile"} replace />}
+              />
+            </Route>
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          </Routes>
+        )}
 
-		return (
-			<div
-				style={{ fontFamily: "'Bubblegum Sans', cursive" }}
-				className="min-h-screen bg-gray-50"
-			>
-				{!token ? (
-					<Routes>
-						<Route
-							path="*"
-							element={<Navigate to="/login" replace />}
-						/>
-						<Route path="/login" element={<Login />} />
-						<Route path="/signup" element={<Signup />} />
-						<Route path="/forgot-password" element={<ForgotPassword />} />
-					</Routes>
-				) : (
-					<Routes>
-						<Route path="/dashboard" element={<Dashboard />} />
-						<Route
-							path="/treasurehunt/topics/:subject"
-							element={<TreasureHuntTopics />}
-						/>
-						<Route
-							path="/treasurehunt/:session_id/:subject/:topic"
-							element={<Quiz />}
-						/>
-						<Route path="/:mode/:session_id" element={<Quiz />} />
-						<Route
-							path="/report"
-							element={<QuizReport />}
-						/>
-						<Route path="/user" element={<User />}>
-							<Route path="profile" element={<UserProfile />} />
-							<Route path="stats" element={<UserStats />} />
-							<Route
-								path="*"
-								element={
-									<Navigate to={"/user/profile"} replace />
-								}
-							/>
-						</Route>
-						<Route
-							path="*"
-							element={<Navigate to="/dashboard" replace />}
-						/>
-					</Routes>
-				)}
-			</div>
-		);
-	} catch (error) {
-		console.log(error);
-	}
+        <Modal
+          isOpen={!isOpen}
+          title={"Upgrade you plan"}
+          onClose={toogleShowUpgradeModal}
+          closeOnOutsideClick={false}
+        >
+          <PlanRestriction />
+        </Modal>
+      </div>
+    );
+  } catch (error) {
+    console.log(error);
+    toast.error("Something went wrong");
+  }
 }
 
 export default App;

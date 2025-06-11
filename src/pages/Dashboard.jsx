@@ -16,18 +16,31 @@ import useStore from "../store/store";
 import { useNavigate } from "react-router-dom";
 import { startSession } from ".././services/auth";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 const Dashboard = () => {
   const navigate = useNavigate();
 
   const setSession = useStore((state) => state.setSession);
+  const plan = useStore((state) => state.user.plan);
   const selectedMode = useStore((state) => state.selectedMode);
   const selectedSubject = useStore((state) => state.selectedSubject);
   const overallStats = useStore((state) => state.user_stats.overall);
   const [loading, setLoading] = useState(false);
 
-  const { logout, setSelectedSubject, setSelectedMode, generateQuestion } =
-    useStore();
+  function isFridayOrSaturday() {
+    const today = new Date();
+    const day = today.getDay(); // 0 = Sunday, 5 = Friday, 6 = Saturday
+    return day === 5 || day === 6;
+  }
+
+  const {
+    logout,
+    setSelectedSubject,
+    setSelectedMode,
+    generateQuestion,
+    toogleShowUpgradeModal,
+  } = useStore();
 
   // Color palette designed for kids
   const colors = {
@@ -82,7 +95,19 @@ const Dashboard = () => {
   const handleStart = async () => {
     if (!selectedSubject || !selectedMode) return;
 
-    // setSessionLoading(true);
+    if (
+      plan === "Basic" &&
+      (selectedMode === "revision" || selectedMode === "topic")
+    ) {
+      toogleShowUpgradeModal();
+      return;
+    }
+
+    if (plan === "Pro" && selectedMode === "topic") {
+      toogleShowUpgradeModal();
+      return;
+    }
+
     try {
       setLoading(true);
       const id = await startSession();
@@ -96,6 +121,9 @@ const Dashboard = () => {
       }
     } catch (error) {
       console.log("Error Occured", error);
+      if (error.response.data?.non_field_errors[0])
+        toast.error(error.response.data?.non_field_errors[0]);
+      else toast.error("Oops!! Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -117,8 +145,12 @@ const Dashboard = () => {
     },
     {
       label: "🎯 Accuracy",
-      value: ((overallStats.correct / overallStats?.total) * 100).toFixed(2),
-      progress: (overallStats.correct / overallStats?.total).toFixed(2) * 100,
+      value: overallStats?.total
+        ? ((overallStats.correct / overallStats?.total) * 100).toFixed(2)
+        : 0,
+      progress: overallStats?.total
+        ? ((overallStats.correct / overallStats?.total) * 100).toFixed(2)
+        : 0,
     },
   ];
 
@@ -264,9 +296,23 @@ const Dashboard = () => {
                 {actions.map((action) => (
                   <motion.div
                     key={action.id}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className={`p-6 rounded-2xl cursor-pointer transition-all ${
+                    whileHover={{
+                      scale:
+                        !isFridayOrSaturday() && action.id === "revision"
+                          ? 1
+                          : 1.05,
+                    }}
+                    whileTap={{
+                      scale:
+                        !isFridayOrSaturday() && action.id === "revision"
+                          ? 1
+                          : 0.95,
+                    }}
+                    className={`p-6 rounded-2xl transition-all relative ${
+                      !isFridayOrSaturday() && action.id === "revision"
+                        ? "opacity-50 cursor-not-allowed"
+                        : "cursor-pointer"
+                    } ${
                       selectedMode === action.id
                         ? "ring-4 shadow-xl"
                         : "shadow-lg hover:shadow-xl"
@@ -277,8 +323,16 @@ const Dashboard = () => {
                           ? `${action.color}20`
                           : "white",
                       borderColor: action.color,
+                      pointerEvents:
+                        !isFridayOrSaturday() && action.id === "revision"
+                          ? "none"
+                          : "auto",
                     }}
-                    onClick={() => setSelectedMode(action.id)}
+                    onClick={() =>
+                      !isFridayOrSaturday() && action.id === "revision"
+                        ? null
+                        : setSelectedMode(action.id)
+                    }
                   >
                     <div className="flex flex-col items-center gap-3">
                       <div
@@ -297,6 +351,14 @@ const Dashboard = () => {
                       </h3>
                       <p className="text-lg">{action.emoji}</p>
                     </div>
+
+                    {!isFridayOrSaturday() && action.id === "revision" && (
+                      <div className="absolute inset-0  flex items-end justify-center p-2 bg-black/50 rounded-2xl ">
+                        <p className="text-sm text-white bg-black font-medium w-2/3 text-center px-1 py-2 rounded-2xl">
+                          Available only on Fridays and Saturdays
+                        </p>
+                      </div>
+                    )}
                   </motion.div>
                 ))}
               </div>

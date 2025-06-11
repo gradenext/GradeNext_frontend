@@ -1,8 +1,12 @@
 import { AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import useStore from "../store/store";
 
 export default function PlanRestriction({ requiredPlan }) {
+  const toogleShowUpgradeModal = useStore(
+    (state) => state.toogleShowUpgradeModal
+  );
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -15,11 +19,12 @@ export default function PlanRestriction({ requiredPlan }) {
           Upgrade Required
         </h2>
         <p className="text-gray-600 mb-4">
-          This feature requires the {requiredPlan} plan. Upgrade your account
-          to unlock this and other premium features!
+          This feature requires the {requiredPlan} plan. Upgrade your account to
+          unlock this and other premium features!
         </p>
         <Link
           to="/user/profile"
+          onClick={toogleShowUpgradeModal}
           className="inline-block px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all"
         >
           Upgrade Now

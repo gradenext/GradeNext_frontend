@@ -29,6 +29,14 @@ const useStore = create(
       account_id: null,
       user: null,
       user_stats: null,
+      showUpgradeModal: false,
+
+      toogleShowUpgradeModal: () => {
+        set((state) => ({
+          ...state,
+          showUpgradeModal: !state.showUpgradeModal,
+        }));
+      },
 
       // Login function
       login: (token, account_id) => {
@@ -137,7 +145,6 @@ const useStore = create(
 
       setExpiryTime: (time) => set({ expiryTime: time }),
 
-    
       setExitModal: (a, b) => {
         const { exitModal } = get();
 
@@ -387,7 +394,7 @@ const useStore = create(
             current_streak: 0,
           },
           questionLoadedAt: null,
-          expiryTime: null
+          expiryTime: null,
         });
       },
     }),
@@ -416,6 +423,7 @@ const useStore = create(
         user_stats: state.user_stats,
         exitModal: state.exitModal,
         expiryTime: state.expiryTime,
+        showUpgradeModal: state.showUpgradeModal,
       }),
     }
   )

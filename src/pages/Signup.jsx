@@ -15,6 +15,7 @@ import {
   Rocket,
 } from "lucide-react";
 import { register, verifyOTP } from "../services/auth";
+import toast from "react-hot-toast";
 
 const plans = [
   {
@@ -253,6 +254,7 @@ const Signup = () => {
     }
 
     setLoading(true);
+    const id = toast.loading("Please wait...");
     try {
       const payload = {
         ...formData,
@@ -264,13 +266,16 @@ const Signup = () => {
       await register(payload);
       setError("");
       setStep(5);
+      toast.success("OTP sent");
     } catch (err) {
       setError(
         err.error ||
           "Registration failed. Please check all fields and try again."
       );
+      toast.error("Oops!! Something went wrong");
     } finally {
       setLoading(false);
+      toast.dismiss(id);
     }
   };
 
@@ -279,23 +284,26 @@ const Signup = () => {
 
     const otpValue = otp.join("");
 
-    console.log(otpValue);
-
     if (otpValue?.length !== 6) {
       setError("Please enter a valid 6 digit OTP");
       return;
     }
 
     setLoading(true);
+    const id = toast.loading("Please wait...");
     try {
       await verifyOTP(formData?.email, otpValue);
+
+      toast.success("Signup successfull");
       navigate("/login");
     } catch (error) {
       setError(
         error.error || "Verification failed. Please check otp and try again."
       );
+      toast.error("Oops!! Something went wrong");
     } finally {
       setLoading(false);
+      toast.dismiss(id);
     }
   };
 

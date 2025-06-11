@@ -14,6 +14,7 @@ import {
   CheckCircle,
 } from "lucide-react";
 import { forgetPassword, resetPassword } from "../services/auth";
+import toast from "react-hot-toast";
 
 const getStepTitle = (step) => {
   switch (step) {
@@ -26,7 +27,7 @@ const getStepTitle = (step) => {
   }
 };
 
-const Signup = () => {
+const ForgotPassword = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
@@ -197,14 +198,18 @@ const Signup = () => {
       return;
     }
     setLoading(true);
+    const id = toast.loading("Please wait...");
     try {
       await forgetPassword(formData?.email);
       setStep(2);
+      toast.success("Mail sent ");
     } catch (err) {
       console.log(err);
       setError(err?.data?.error);
+      toast.error("Oops!! Something went wrong");
     } finally {
       setLoading(false);
+      toast.dismiss(id);
     }
   };
 
@@ -217,14 +222,18 @@ const Signup = () => {
     }
 
     setLoading(true);
+    const id = toast.loading("Please wait...");
     try {
       await resetPassword(formData?.email, otp.join(""), formData?.password);
       setStep(3);
+      toast.success("Password reset successfull");
     } catch (err) {
       console.log(err);
       setError(err?.data?.error || err?.data?.password);
+      toast.error("Oops!! Something went wrong");
     } finally {
       setLoading(false);
+      toast.dismiss(id);
     }
   };
 
@@ -412,4 +421,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default ForgotPassword;
