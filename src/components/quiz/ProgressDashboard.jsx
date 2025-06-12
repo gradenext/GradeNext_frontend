@@ -178,19 +178,17 @@ function ProgressDashboard() {
 
         {/* Charts Section */}
         <div className="h-full">
-          {/* Pie Chart */}
-          {/* Pie Chart */}
           <div className="bg-pink-50 p-4 rounded-xl border border-pink-200">
-            <div className="h-40 xl:h-60">
+            <div className="h-48 sm:h-64 md:h-80 xl:h-96 w-full min-w-0">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={pieData}
                     cx="50%"
                     cy="50%"
-                    innerRadius={30}
-                    outerRadius={50}
-                    paddingAngle={3}
+                    innerRadius="40%"
+                    outerRadius="80%"
+                    paddingAngle={0}
                     dataKey="value"
                   >
                     {pieData.map((entry, index) => (

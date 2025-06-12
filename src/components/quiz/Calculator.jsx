@@ -192,11 +192,12 @@ const CalculatorComponent = () => {
     ["4", "5", "6", "×"],
     ["1", "2", "3", "-"],
     ["0", ".", "+"],
-    ["=","±"],
+    ["=", "±"],
   ];
 
   useEffect(() => {
     const handleKeyDown = (e) => {
+      if (!isOpen) return;
       const key = e.key;
 
       if (key >= "0" && key <= "9") {
@@ -223,7 +224,14 @@ const CalculatorComponent = () => {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [display, firstNumber, operation, newNumber, waitingForSecondNumber]);
+  }, [
+    display,
+    firstNumber,
+    operation,
+    newNumber,
+    waitingForSecondNumber,
+    isOpen,
+  ]);
 
   return (
     <>

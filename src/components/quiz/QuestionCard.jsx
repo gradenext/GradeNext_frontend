@@ -301,7 +301,10 @@ export const QuestionCard = () => {
               <input
                 type="text"
                 value={userAnswer || ""}
-                onChange={(e) => onSelectAnswer(e.target.value)}
+                onChange={(e) => {
+                  e.stopPropagation();
+                  onSelectAnswer(e.target.value);
+                }}
                 disabled={showExplanation}
                 className="w-full p-3 sm:p-4 text-base sm:text-lg rounded-lg sm:rounded-xl border border-purple-200 bg-white focus:outline-none focus:ring-2 focus:ring-blue-300 text-purple-800 font-medium transition-all"
                 placeholder="Type your answer..."
