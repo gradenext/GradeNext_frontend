@@ -24,12 +24,12 @@ export const QuestionFooter = ({
               {hint && (
                 <button
                   onClick={() =>
-                    isSpeaking ? stopSpeaking() : speakText(hint)
+                    isSpeaking.hint ? stopSpeaking() : speakText(hint, "hint")
                   }
                   className="flex items-center gap-1 px-2 py-1 text-xs sm:text-sm border border-blue-300 bg-blue-100 hover:bg-blue-200 rounded-md text-blue-800"
                 >
                   <SpeakerIcon className="w-4 h-4" />
-                  {isSpeaking ? "Stop" : "Read Aloud"}
+                  {isSpeaking.hint ? "Stop" : "Read Aloud"}
                 </button>
               )}
             </div>
@@ -46,12 +46,14 @@ export const QuestionFooter = ({
               {explanation && (
                 <button
                   onClick={() =>
-                    isSpeaking ? stopSpeaking() : speakText(explanation)
+                    isSpeaking.explanation
+                      ? stopSpeaking()
+                      : speakText(explanation, "explanation")
                   }
                   className="flex items-center gap-1 px-2 py-1 text-xs sm:text-sm border border-blue-300 bg-blue-100 hover:bg-blue-200 rounded-md text-blue-800"
                 >
                   <SpeakerIcon className="w-4 h-4" />
-                  {isSpeaking ? "Stop" : "Read Aloud"}
+                  {isSpeaking.explanation ? "Stop" : "Read Aloud"}
                 </button>
               )}
             </div>

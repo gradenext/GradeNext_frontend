@@ -61,7 +61,7 @@ const Dashboard = () => {
     },
     {
       id: "english",
-      label: "Word Kingdom",
+      label: "English Language Art",
       icon: <Languages className="w-12 h-12" />,
       color: colors.accent,
       emoji: "📚🌈",

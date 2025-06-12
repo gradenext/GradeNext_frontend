@@ -76,28 +76,38 @@ export const QuestionCard = () => {
     fire(0.2, { spread: 60, origin: { x: 0.5, y: 0.7 } });
   };
 
-  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState({
+    question: false,
+    hint: false,
+    explanation: false,
+  });
   const hintRef = useRef(null);
   const explanationRef = useRef(null);
 
+  // Helper to stop all speech and reset state
+  const stopAllSpeaking = () => {
+    window.speechSynthesis.cancel();
+    setIsSpeaking({ question: false, hint: false, explanation: false });
+  };
 
-  const speakText = (text) => {
+  // Generalized speakText function
+  const speakText = (text, type) => {
     if (!window.speechSynthesis) return;
 
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
+    stopAllSpeaking();
+    const utterance = new window.SpeechSynthesisUtterance(text);
+    utterance.onstart = () =>
+      setIsSpeaking({
+        question: type === "question",
+        hint: type === "hint",
+        explanation: type === "explanation",
+      });
+    utterance.onend = () =>
+      setIsSpeaking({ question: false, hint: false, explanation: false });
+    utterance.onerror = () =>
+      setIsSpeaking({ question: false, hint: false, explanation: false });
     window.speechSynthesis.speak(utterance);
   };
-
-
-  const stopSpeaking = () => {
-    window.speechSynthesis.cancel();
-    setIsSpeaking(false);
-  };
-
 
   if (isNextQuestionLoading) {
     return (
@@ -167,24 +177,27 @@ export const QuestionCard = () => {
                 options={{
                   overrides: {
                     table: {
-                      component: 'table',
+                      component: "table",
                       props: {
-                        className: 'w-full border-collapse border border-gray-300 my-4'
-                      }
+                        className:
+                          "w-full border-collapse border border-gray-300 my-4",
+                      },
                     },
                     th: {
-                      component: 'th',
+                      component: "th",
                       props: {
-                        className: 'border border-gray-300 px-3 py-2 bg-gray-100 text-center'
-                      }
+                        className:
+                          "border border-gray-300 px-3 py-2 bg-gray-100 text-center",
+                      },
                     },
                     td: {
-                      component: 'td',
+                      component: "td",
                       props: {
-                        className: 'border border-gray-300 px-3 py-2 text-center'
-                      }
-                    }
-                  }
+                        className:
+                          "border border-gray-300 px-3 py-2 text-center",
+                      },
+                    },
+                  },
                 }}
               >
                 {question?.question}
@@ -192,17 +205,19 @@ export const QuestionCard = () => {
               <div className="flex justify-end mb-2">
                 <button
                   onClick={() =>
-                    isSpeaking
-                      ? stopSpeaking()
-                      : speakText(question?.question?.replace(/<\/?[^>]+(>|$)/g, ""))
+                    isSpeaking.question
+                      ? stopAllSpeaking()
+                      : speakText(
+                          question?.question?.replace(/<\/?[^>]+(>|$)/g, ""),
+                          "question"
+                        )
                   }
                   className="flex items-center gap-1 px-3 py-1 rounded-full text-sm sm:text-base border border-purple-300 bg-purple-50 hover:bg-purple-100 text-purple-800 transition"
                 >
                   <SpeakerIcon className="w-4 h-4" />
-                  {isSpeaking ? "Stop" : "Read Aloud"}
+                  {isSpeaking.question ? "Stop" : "Read Aloud"}
                 </button>
               </div>
-
             </div>
           </motion.div>
 
@@ -334,18 +349,20 @@ export const QuestionCard = () => {
               <button
                 disabled={!userAnswer}
                 onClick={onClearSelection}
-                className={`text-purple-600 hover:text-purple-800 bg-purple-100 rounded-full px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base transition-colors ${userAnswer ? "" : "cursor-not-allowed opacity-50"
-                  }`}
+                className={`text-purple-600 hover:text-purple-800 bg-purple-100 rounded-full px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base transition-colors ${
+                  userAnswer ? "" : "cursor-not-allowed opacity-50"
+                }`}
               >
                 Clear Response
               </button>
               <button
                 disabled={!userAnswer}
                 onClick={handleSubmitAnswer}
-                className={`text-purple-100 min-w-28 sm:min-w-36 hover:text-purple-200 bg-purple-700 sm:bg-purple-900 rounded-full px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base transition-colors ${userAnswer
-                  ? "cursor-pointer"
-                  : "cursor-not-allowed opacity-50"
-                  }`}
+                className={`text-purple-100 min-w-28 sm:min-w-36 hover:text-purple-200 bg-purple-700 sm:bg-purple-900 rounded-full px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base transition-colors ${
+                  userAnswer
+                    ? "cursor-pointer"
+                    : "cursor-not-allowed opacity-50"
+                }`}
               >
                 Submit Answer
               </button>
@@ -360,11 +377,10 @@ export const QuestionCard = () => {
               showHint.current = false;
               moveToNext();
             }}
-            speakText={speakText}
-            stopSpeaking={stopSpeaking}
+            speakText={(text, type) => speakText(text, type)}
+            stopSpeaking={stopAllSpeaking}
             isSpeaking={isSpeaking}
           />
-
         </div>
       </div>
     </motion.div>
