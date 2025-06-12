@@ -94,7 +94,7 @@ export const QuestionCard = () => {
 
     stopAllSpeaking();
     const utterance = new window.SpeechSynthesisUtterance(text);
-    utterance.rate = 0.5;
+    utterance.rate = 0.65;
     utterance.onstart = () =>
       setIsSpeaking({
         question: type === "question",
