@@ -32,11 +32,11 @@ const Quiz = () => {
 
 			<div className=" mx-auto px-6 relative z-10">
 				<QuizNavbar />
-				<div className="flex gap-x-2 ">
-					<div className=" w-[60%] min-h-[50vh] mx-auto">
+				<div className="flex flex-col md:flex-row gap-x-2 gap-y-6 items-center md:items-start ">
+					<div className=" md:w-[60%] w-full min-h-[50vh] mx-auto">
 						<QuestionCard />
 					</div>
-					<div className="w-[40%] ">
+					<div className="md:w-[40%] w-full ">
 						<ProgessDashboard />
 					</div>
 				</div>
