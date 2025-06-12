@@ -81,8 +81,6 @@ export const QuestionCard = () => {
     hint: false,
     explanation: false,
   });
-  const hintRef = useRef(null);
-  const explanationRef = useRef(null);
 
   // Helper to stop all speech and reset state
   const stopAllSpeaking = () => {
@@ -96,6 +94,7 @@ export const QuestionCard = () => {
 
     stopAllSpeaking();
     const utterance = new window.SpeechSynthesisUtterance(text);
+    utterance.rate = 0.5;
     utterance.onstart = () =>
       setIsSpeaking({
         question: type === "question",
@@ -308,16 +307,31 @@ export const QuestionCard = () => {
                 placeholder="Type your answer..."
               />
               {showExplanation && (
-                <div className="mt-2 text-sm sm:text-base">
-                  {userAnswer === correctAnswer ? (
-                    <span className="text-green-700 font-bold">Correct ✅</span>
-                  ) : (
-                    <span className="text-red-700 font-bold">
-                      Incorrect ❌ (Correct:{" "}
-                      <span className="underline">{correctAnswer}</span>)
-                    </span>
+                <AnimatePresence mode="wait">
+                  {correctAnswer && (
+                    <motion.div
+                      key={
+                        userAnswer === correctAnswer ? "correct" : "incorrect"
+                      }
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      transition={{ duration: 0.3 }}
+                      className="mt-2 text-sm sm:text-base"
+                    >
+                      {userAnswer === correctAnswer ? (
+                        <span className="text-green-700 font-bold">
+                          Correct ✅
+                        </span>
+                      ) : (
+                        <span className="text-red-700 font-bold">
+                          Incorrect ❌ (Correct:{" "}
+                          <span className="underline">{correctAnswer}</span>)
+                        </span>
+                      )}
+                    </motion.div>
                   )}
-                </div>
+                </AnimatePresence>
               )}
             </div>
           ) : null}

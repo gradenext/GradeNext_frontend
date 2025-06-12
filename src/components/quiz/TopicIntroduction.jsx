@@ -77,10 +77,6 @@ const TopicIntroduction = ({ topicName }) => {
 				>
 					<div className="flex flex-row items-center justify-between mb-4 ">
 						<h2 className="text-2xl font-bold capitalize">
-							Show{" "}
-							<span className="capitalize underline">
-								{topicName}
-							</span>{" "}
 							Introduction
 						</h2>
 						<button
