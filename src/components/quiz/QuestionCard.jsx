@@ -76,6 +76,29 @@ export const QuestionCard = () => {
     fire(0.2, { spread: 60, origin: { x: 0.5, y: 0.7 } });
   };
 
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const hintRef = useRef(null);
+  const explanationRef = useRef(null);
+
+
+  const speakText = (text) => {
+    if (!window.speechSynthesis) return;
+
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+    window.speechSynthesis.speak(utterance);
+  };
+
+
+  const stopSpeaking = () => {
+    window.speechSynthesis.cancel();
+    setIsSpeaking(false);
+  };
+
+
   if (isNextQuestionLoading) {
     return (
       <motion.div
@@ -166,6 +189,20 @@ export const QuestionCard = () => {
               >
                 {question?.question}
               </Markdown>
+              <div className="flex justify-end mb-2">
+                <button
+                  onClick={() =>
+                    isSpeaking
+                      ? stopSpeaking()
+                      : speakText(question?.question?.replace(/<\/?[^>]+(>|$)/g, ""))
+                  }
+                  className="flex items-center gap-1 px-3 py-1 rounded-full text-sm sm:text-base border border-purple-300 bg-purple-50 hover:bg-purple-100 text-purple-800 transition"
+                >
+                  <SpeakerIcon className="w-4 h-4" />
+                  {isSpeaking ? "Stop" : "Read Aloud"}
+                </button>
+              </div>
+
             </div>
           </motion.div>
 
@@ -323,7 +360,11 @@ export const QuestionCard = () => {
               showHint.current = false;
               moveToNext();
             }}
+            speakText={speakText}
+            stopSpeaking={stopSpeaking}
+            isSpeaking={isSpeaking}
           />
+
         </div>
       </div>
     </motion.div>
