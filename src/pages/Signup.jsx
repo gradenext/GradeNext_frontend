@@ -53,7 +53,7 @@ const availableCourses = [
   { id: "mathematics", label: "Mathematics", emoji: "🧮" },
   { id: "english", label: "English", emoji: "📚" },
   // { id: "computer", label: "Computer Language", emoji: "📚" },
-  // { id: "science", label: "Science", emoji: "🧮" },
+  { id: "science", label: "Science", emoji: "🧪" }
 ];
 
 const getStepTitle = (step) => {

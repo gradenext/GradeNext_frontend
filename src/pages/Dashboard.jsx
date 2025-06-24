@@ -11,6 +11,7 @@ import {
   Gem,
   Puzzle,
   User,
+  FlaskConical
 } from "lucide-react";
 import useStore from "../store/store";
 import { useNavigate } from "react-router-dom";
@@ -65,6 +66,13 @@ const Dashboard = () => {
       icon: <Languages className="w-12 h-12" />,
       color: colors.accent,
       emoji: "📚🌈",
+    },
+    {
+      id: "science",
+      label: "Science Exploration",
+      icon: <FlaskConical className="w-12 h-12" />,
+      color: colors.secondary,
+      emoji: "🧪🔬",
     },
   ];
 
@@ -158,6 +166,41 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 relative">
+      <motion.div
+        initial={{ y: -50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 70, damping: 12 }}
+        className="w-full bg-gradient-to-r from-sky-200 via-indigo-100 to-purple-200 border-b border-blue-300 text-center py-4 px-4 shadow-md z-50 flex items-center justify-center gap-3"
+      >
+        <motion.span
+          initial={{ rotate: -10 }}
+          animate={{ rotate: [-10, 10, -10] }}
+          transition={{ repeat: Infinity, duration: 2 }}
+          className="text-2xl sm:text-3xl"
+        >
+          💻
+        </motion.span>
+
+        <motion.h2
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0, 0.5, 1], scale: [0.95, 1.05, 1] }}
+          transition={{ duration: 2 }}
+          className="text-base sm:text-lg md:text-xl font-semibold bg-gradient-to-r from-indigo-500 via-blue-500 to-purple-600 bg-clip-text text-transparent"
+        >
+          We're actively improving this platform — exciting updates coming soon!
+        </motion.h2>
+
+        <motion.span
+          initial={{ scale: 1 }}
+          animate={{ scale: [1, 1.2, 1] }}
+          transition={{ repeat: Infinity, duration: 1.5 }}
+          className="text-2xl sm:text-3xl"
+        >
+          🚀
+        </motion.span>
+      </motion.div>
+
+
       {/* Floating Logout Button */}
       <motion.button
         whileHover={{ scale: 1.05 }}
@@ -230,11 +273,10 @@ const Dashboard = () => {
                     key={subject.id}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className={`p-6 rounded-2xl cursor-pointer transition-all ${
-                      selectedSubject === subject.id
-                        ? "ring-4 shadow-xl"
-                        : "shadow-lg hover:shadow-xl"
-                    }`}
+                    className={`p-6 rounded-2xl cursor-pointer transition-all ${selectedSubject === subject.id
+                      ? "ring-4 shadow-xl"
+                      : "shadow-lg hover:shadow-xl"
+                      }`}
                     style={{
                       backgroundColor:
                         selectedSubject === subject.id
@@ -308,15 +350,13 @@ const Dashboard = () => {
                           ? 1
                           : 0.95,
                     }}
-                    className={`p-6 rounded-2xl transition-all relative ${
-                      !isFridayOrSaturday() && action.id === "revision"
-                        ? "opacity-50 cursor-not-allowed"
-                        : "cursor-pointer"
-                    } ${
-                      selectedMode === action.id
+                    className={`p-6 rounded-2xl transition-all relative ${!isFridayOrSaturday() && action.id === "revision"
+                      ? "opacity-50 cursor-not-allowed"
+                      : "cursor-pointer"
+                      } ${selectedMode === action.id
                         ? "ring-4 shadow-xl"
                         : "shadow-lg hover:shadow-xl"
-                    }`}
+                      }`}
                     style={{
                       backgroundColor:
                         selectedMode === action.id
@@ -456,10 +496,9 @@ const Dashboard = () => {
                 onClick={handleStart}
                 disabled={!selectedSubject || !selectedMode || loading}
                 className={`w-full py-5 text-xl font-bold rounded-2xl transition-all 
-                  ${
-                    selectedSubject && selectedMode
-                      ? "hover:scale-105 shadow-xl"
-                      : "opacity-50 cursor-not-allowed"
+                  ${selectedSubject && selectedMode
+                    ? "hover:scale-105 shadow-xl"
+                    : "opacity-50 cursor-not-allowed"
                   }
                   relative cursor-pointer overflow-hidden`}
                 style={{
