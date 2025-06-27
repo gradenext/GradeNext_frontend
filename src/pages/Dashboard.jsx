@@ -18,6 +18,7 @@ import { useNavigate } from "react-router-dom";
 import { startSession } from ".././services/auth";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import InfoModal from "../components/infoModal";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -28,6 +29,9 @@ const Dashboard = () => {
   const selectedSubject = useStore((state) => state.selectedSubject);
   const overallStats = useStore((state) => state.user_stats.overall);
   const [loading, setLoading] = useState(false);
+
+  const [showInfoModal, setShowInfoModal] = useState(true);
+
 
   function isFridayOrSaturday() {
     const today = new Date();
@@ -165,6 +169,8 @@ const Dashboard = () => {
   const handleLogout = () => logout();
 
   return (
+    <>
+    {showInfoModal && <InfoModal onClose={() => setShowInfoModal(false)} />}
     <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 relative">
       <motion.div
         initial={{ y: -50, opacity: 0 }}
@@ -539,6 +545,7 @@ const Dashboard = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 
