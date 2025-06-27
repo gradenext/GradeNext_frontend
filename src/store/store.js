@@ -74,7 +74,7 @@ const useStore = create(
           isNextQuestionLoading: false,
           question_id: null,
           quizQuestion: null,
-          nextQuizQuestion: null,
+          nextQuizQuestion: [],
           showExplanation: false,
           isSubmitting: false,
           userAnswer: null,
@@ -120,6 +120,7 @@ const useStore = create(
       quizQuestion: null,
       nextQuizQuestion: null,
       isNextQuestionLoading: false,
+      isFetchingMoreQuestions: false,
       showExplanation: false,
       isSubmitting: false,
       userAnswer: null,
@@ -168,111 +169,100 @@ const useStore = create(
           session_id,
           user,
           selectedSubject,
-          quizQuestion,
-          nextQuizQuestion,
           selectedMode,
           selectedTopic,
+          quizQuestion,
+          nextQuizQuestion,
         } = get();
 
-        set((state) => ({
-          ...state,
-          loading: true,
-          isNextQuestionLoading: nextQuizQuestion ? false : true,
-        }));
+        const setSafe = (update) => set((state) => ({ ...state, ...update }));
+
+        const generateFunction = getQuestionGenerator(selectedMode);
 
         try {
-          // Determine which API function to use based on mode
-          const generateFunction = getQuestionGenerator(selectedMode);
+          setSafe({ loading: true });
 
-          // Case 1: No current question - fetch both initial and next question
+          // Helper to fetch and append 10 questions
+          const fetchMoreQuestions = async () => {
+            if (get().isFetchingMoreQuestions) return;
+
+            setSafe({ isFetchingMoreQuestions: true });
+            const response = await generateFunction(
+              session_id,
+              user.grade,
+              selectedSubject,
+              selectedTopic?.topic_key
+            );
+
+            const moreQuestions = response.data?.questions || [];
+
+            set((state) => ({
+              nextQuizQuestion: [
+                ...(state.nextQuizQuestion || []),
+                ...moreQuestions,
+              ],
+              isFetchingMoreQuestions: false,
+            }));
+          };
+
+          // Case 1: First time — fetch 10 questions
           if (!quizQuestion) {
-            // Fetch initial question
-            const initialResponse = await generateFunction(
+            const response = await generateFunction(
               session_id,
               user.grade,
               selectedSubject,
               selectedTopic?.topic_key
             );
+            const questions = response.data?.questions || [];
 
-            // Fetch next question in parallel for efficiency
-            const nextResponse = await generateFunction(
-              session_id,
-              user.grade,
-              selectedSubject,
-              selectedTopic?.topic_key
-            );
+            if (questions.length === 0) {
+              throw new Error("No questions received");
+            }
 
-            set((state) => ({
-              ...state,
-              quizQuestion: initialResponse.data,
-              question_id: initialResponse.data?.question_id,
-              nextQuizQuestion: nextResponse.data,
+            const [first, ...rest] = questions;
+
+            setSafe({
+              quizQuestion: first,
+              question_id: first.question_id,
+              nextQuizQuestion: rest,
               loading: false,
-              isNextQuestionLoading: false,
-            }));
+            });
+
+            // Prefetch if low
+            if (rest.length < 3) await fetchMoreQuestions();
+
+            return;
           }
-          // Case 2: Current question exists but no next question - fetch next question
-          else if (!nextQuizQuestion) {
-            set((state) => ({
-              ...state,
-              isNextQuestionLoading: nextQuizQuestion ? false : true,
-            }));
 
-            const response = await generateFunction(
-              session_id,
-              user.grade,
-              selectedSubject,
-              selectedTopic?.topic_key
-            );
+          // Case 2: Use next question from array
+          const currentQueue = [...(nextQuizQuestion || [])];
 
-            set((state) => ({
-              ...state,
-              nextQuizQuestion: response.data,
-              isNextQuestionLoading: false,
-            }));
+          if (currentQueue.length === 0) {
+            throw new Error("No more questions available");
           }
-          // Case 3: Both questions exist - move next to current and fetch new next question
-          else {
-            set((state) => ({
-              ...state,
-              isNextQuestionLoading: nextQuizQuestion ? false : true,
-            }));
 
-            // First move next question to current
-            set((state) => ({
-              ...state,
-              quizQuestion: state.nextQuizQuestion,
-              question_id: state.nextQuizQuestion?.question_id,
-              nextQuizQuestion: null,
-            }));
+          const next = currentQueue.shift();
 
-            // Then fetch new next question
-            const response = await generateFunction(
-              session_id,
-              user.grade,
-              selectedSubject,
-              selectedTopic?.topic_key
-            );
+          setSafe({
+            quizQuestion: next,
+            question_id: next?.question_id,
+            nextQuizQuestion: currentQueue,
+            loading: false,
+          });
 
-            set((state) => ({
-              ...state,
-              nextQuizQuestion: response.data,
-              isNextQuestionLoading: false,
-            }));
+          // Refill queue if fewer than 3 left
+          if (currentQueue.length < 3) {
+            await fetchMoreQuestions();
           }
         } catch (error) {
-          set((state) => ({
-            ...state,
+          setSafe({
             loading: false,
             isNextQuestionLoading: false,
-          }));
-
+            isFetchingMoreQuestions: false,
+          });
           throw error;
         } finally {
-          set({
-            loading: false,
-            isNextQuestionLoading: false,
-          });
+          setSafe({ loading: false });
         }
       },
 
