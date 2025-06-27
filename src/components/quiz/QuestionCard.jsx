@@ -115,7 +115,7 @@ export const QuestionCard = () => {
     window.speechSynthesis.speak(utterance);
   };
 
-  if (isNextQuestionLoading || isFetchingMoreQuestions) {
+  if (isNextQuestionLoading) {
     return (
       <motion.div
         initial={{ y: 20, opacity: 0 }}

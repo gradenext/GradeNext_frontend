@@ -173,20 +173,19 @@ const useStore = create(
           selectedTopic,
           quizQuestion,
           nextQuizQuestion,
+          isFetchingMoreQuestions,
         } = get();
 
         const setSafe = (update) => set((state) => ({ ...state, ...update }));
-
         const generateFunction = getQuestionGenerator(selectedMode);
 
-        try {
-          setSafe({ loading: true });
+        // Internal helper: fetch 10 more questions safely
+        const fetchMoreQuestions = async () => {
+          if (get().isFetchingMoreQuestions) return;
 
-          // Helper to fetch and append 10 questions
-          const fetchMoreQuestions = async () => {
-            if (get().isFetchingMoreQuestions) return;
+          setSafe({ isFetchingMoreQuestions: true });
 
-            setSafe({ isFetchingMoreQuestions: true });
+          try {
             const response = await generateFunction(
               session_id,
               user.grade,
@@ -194,18 +193,29 @@ const useStore = create(
               selectedTopic?.topic_key
             );
 
-            const moreQuestions = response.data?.questions || [];
+            const moreQuestions = response?.data?.questions || [];
 
-            set((state) => ({
-              nextQuizQuestion: [
-                ...(state.nextQuizQuestion || []),
-                ...moreQuestions,
-              ],
-              isFetchingMoreQuestions: false,
-            }));
-          };
+            if (moreQuestions.length > 0) {
+              set((state) => ({
+                nextQuizQuestion: [
+                  ...(state.nextQuizQuestion || []),
+                  ...moreQuestions,
+                ],
+              }));
+            }
+          } catch (err) {
+            console.error("Error fetching more questions:", err);
+          } finally {
+            setSafe({ isFetchingMoreQuestions: false });
+          }
+        };
 
-          // Case 1: First time — fetch 10 questions
+        try {
+          setSafe({ loading: true });
+
+          const currentQueue = [...(nextQuizQuestion || [])];
+
+          // Case 1: First-time load — fetch initial batch
           if (!quizQuestion) {
             const response = await generateFunction(
               session_id,
@@ -213,9 +223,11 @@ const useStore = create(
               selectedSubject,
               selectedTopic?.topic_key
             );
-            const questions = response.data?.questions || [];
+
+            const questions = response?.data?.questions || [];
 
             if (questions.length === 0) {
+              setSafe({ loading: false });
               throw new Error("No questions received");
             }
 
@@ -228,19 +240,23 @@ const useStore = create(
               loading: false,
             });
 
-            // Prefetch if low
-            if (rest.length < 3) await fetchMoreQuestions();
-
+            if (rest.length < 4) fetchMoreQuestions(); // non-blocking
             return;
           }
 
-          // Case 2: Use next question from array
-          const currentQueue = [...(nextQuizQuestion || [])];
-
+          // Case 2: Queue is empty, but a fetch is ongoing
           if (currentQueue.length === 0) {
-            throw new Error("No more questions available");
+            if (isFetchingMoreQuestions) {
+              setSafe({ loading: false, isNextQuestionLoading: true });
+              return;
+            } else {
+              await fetchMoreQuestions();
+              setSafe({ loading: false, isNextQuestionLoading: true });
+              return;
+            }
           }
 
+          // Case 3: Normal — shift next question into current
           const next = currentQueue.shift();
 
           setSafe({
@@ -248,21 +264,20 @@ const useStore = create(
             question_id: next?.question_id,
             nextQuizQuestion: currentQueue,
             loading: false,
+            isNextQuestionLoading: false,
           });
 
-          // Refill queue if fewer than 3 left
-          if (currentQueue.length < 3) {
-            await fetchMoreQuestions();
+          // Refill if queue is running low
+          if (currentQueue.length < 4 && !get().isFetchingMoreQuestions) {
+            fetchMoreQuestions(); // don't await — just queue up
           }
         } catch (error) {
           setSafe({
             loading: false,
-            isNextQuestionLoading: false,
             isFetchingMoreQuestions: false,
+            isNextQuestionLoading: false,
           });
           throw error;
-        } finally {
-          setSafe({ loading: false });
         }
       },
 
