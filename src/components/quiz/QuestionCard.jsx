@@ -9,6 +9,10 @@ import Caclulator from "./Calculator";
 import Modal from "../Modal";
 import QuestionImage from "./QuestionImage";
 import Markdown from "markdown-to-jsx";
+import ReactMarkdown from 'react-markdown';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import Latex from 'react-latex';
 
 export const QuestionCard = () => {
   const [hoverOption, setHoverOption] = useState(null);
@@ -172,44 +176,32 @@ export const QuestionCard = () => {
             )}
 
             <div className="text-lg sm:text-xl font-bold text-purple-800">
-              <Markdown
-                options={{
-                  overrides: {
-                    table: {
-                      component: "table",
-                      props: {
-                        className:
-                          "w-full border-collapse border border-gray-300 my-4",
-                      },
-                    },
-                    th: {
-                      component: "th",
-                      props: {
-                        className:
-                          "border border-gray-300 px-3 py-2 bg-gray-100 text-center",
-                      },
-                    },
-                    td: {
-                      component: "td",
-                      props: {
-                        className:
-                          "border border-gray-300 px-3 py-2 text-center",
-                      },
-                    },
-                  },
+              <ReactMarkdown
+                remarkPlugins={[remarkMath]}
+                rehypePlugins={[rehypeKatex]}
+                components={{
+                  table: ({ node, ...props }) => (
+                    <table className="w-full border-collapse border border-gray-300 my-4" {...props} />
+                  ),
+                  th: ({ node, ...props }) => (
+                    <th className="border border-gray-300 px-3 py-2 bg-gray-100 text-center" {...props} />
+                  ),
+                  td: ({ node, ...props }) => (
+                    <td className="border border-gray-300 px-3 py-2 text-center" {...props} />
+                  ),
                 }}
               >
                 {question?.question}
-              </Markdown>
+              </ReactMarkdown>
               <div className="flex justify-end mb-2">
                 <button
                   onClick={() =>
                     isSpeaking.question
                       ? stopAllSpeaking()
                       : speakText(
-                          question?.question?.replace(/<\/?[^>]+(>|$)/g, ""),
-                          "question"
-                        )
+                        question?.question?.replace(/<\/?[^>]+(>|$)/g, ""),
+                        "question"
+                      )
                   }
                   className="flex items-center gap-1 px-3 py-1 rounded-full text-sm sm:text-base border border-purple-300 bg-purple-50 hover:bg-purple-100 text-purple-800 transition"
                 >
@@ -274,7 +266,7 @@ export const QuestionCard = () => {
                         <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gradient-to-r from-purple-400 to-blue-400 flex items-center justify-center text-white font-bold mr-2 sm:mr-3 flex-shrink-0 text-xs sm:text-sm">
                           {String.fromCharCode(65 + index)}
                         </div>
-                        <span dangerouslySetInnerHTML={{ __html: option }} />
+                        <Latex>{option}</Latex>
                       </div>
 
                       {showExplanation && correctAnswer && (
@@ -366,20 +358,18 @@ export const QuestionCard = () => {
               <button
                 disabled={!userAnswer}
                 onClick={onClearSelection}
-                className={`text-purple-600 hover:text-purple-800 bg-purple-100 rounded-full px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base transition-colors ${
-                  userAnswer ? "" : "cursor-not-allowed opacity-50"
-                }`}
+                className={`text-purple-600 hover:text-purple-800 bg-purple-100 rounded-full px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base transition-colors ${userAnswer ? "" : "cursor-not-allowed opacity-50"
+                  }`}
               >
                 Clear Response
               </button>
               <button
                 disabled={!userAnswer}
                 onClick={handleSubmitAnswer}
-                className={`text-purple-100 min-w-28 sm:min-w-36 hover:text-purple-200 bg-purple-700 sm:bg-purple-900 rounded-full px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base transition-colors ${
-                  userAnswer
+                className={`text-purple-100 min-w-28 sm:min-w-36 hover:text-purple-200 bg-purple-700 sm:bg-purple-900 rounded-full px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base transition-colors ${userAnswer
                     ? "cursor-pointer"
                     : "cursor-not-allowed opacity-50"
-                }`}
+                  }`}
               >
                 Submit Answer
               </button>
