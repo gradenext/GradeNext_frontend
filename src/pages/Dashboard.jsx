@@ -169,7 +169,7 @@ const Dashboard = () => {
 
   return (
     <>
-      {showInfoModal && <InfoModal onClose={() => setShowInfoModal(false)} />}
+      {/* {showInfoModal && <InfoModal onClose={() => setShowInfoModal(false)} />} */}
       <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 relative">
         <motion.div
           initial={{ y: -50, opacity: 0 }}
