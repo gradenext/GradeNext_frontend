@@ -88,7 +88,7 @@ export const QuestionFooter = ({ showHint, showExplanation, onContinue }) => {
           <button
             onClick={onContinue}
             disabled={isSubmitting}
-            className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition-colors disabled:opacity-50"
+            className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 cursor-pointer rounded-lg transition-colors disabled:opacity-50"
           >
             {isSubmitting ? (
               <div className="flex items-center justify-center gap-2">

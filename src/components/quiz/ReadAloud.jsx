@@ -39,7 +39,7 @@ const ReadAloud = ({ place, text }) => {
         onClick={() =>
           isSpeaking[place] ? stopAllSpeaking() : speakText(text, place)
         }
-        className="flex items-center gap-1 px-2 py-1 text-xs sm:text-sm border border-blue-300 bg-blue-100 hover:bg-blue-200 rounded-md text-blue-800"
+        className="flex items-center gap-1 px-2 py-1 text-xs sm:text-sm border border-blue-300 bg-blue-100 hover:bg-blue-200 rounded-md text-blue-800 cursor-pointer transition-colors duration-200"
       >
         {isSpeaking[place] ? (
           <div className="flex justify-center items-center gap-x-2">
