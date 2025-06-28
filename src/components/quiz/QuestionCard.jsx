@@ -6,13 +6,12 @@ import useStore from "../../store/store";
 import { QuestionFooter } from "./QuizFooter";
 import Timer from "./Timer";
 import Caclulator from "./Calculator";
-import Modal from "../Modal";
 import QuestionImage from "./QuestionImage";
-import Markdown from "markdown-to-jsx";
 import ReactMarkdown from "react-markdown";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import Latex from "react-latex";
+import ReadAloud from "./ReadAloud";
 
 export const QuestionCard = () => {
   const [hoverOption, setHoverOption] = useState(null);
@@ -81,38 +80,6 @@ export const QuestionCard = () => {
       origin: { x: 0.2, y: 0.7 },
     });
     fire(0.2, { spread: 60, origin: { x: 0.5, y: 0.7 } });
-  };
-
-  const [isSpeaking, setIsSpeaking] = useState({
-    question: false,
-    hint: false,
-    explanation: false,
-  });
-
-  // Helper to stop all speech and reset state
-  const stopAllSpeaking = () => {
-    window.speechSynthesis.cancel();
-    setIsSpeaking({ question: false, hint: false, explanation: false });
-  };
-
-  // Generalized speakText function
-  const speakText = (text, type) => {
-    if (!window.speechSynthesis) return;
-
-    stopAllSpeaking();
-    const utterance = new window.SpeechSynthesisUtterance(text);
-    utterance.rate = 0.65;
-    utterance.onstart = () =>
-      setIsSpeaking({
-        question: type === "question",
-        hint: type === "hint",
-        explanation: type === "explanation",
-      });
-    utterance.onend = () =>
-      setIsSpeaking({ question: false, hint: false, explanation: false });
-    utterance.onerror = () =>
-      setIsSpeaking({ question: false, hint: false, explanation: false });
-    window.speechSynthesis.speak(utterance);
   };
 
   if (isNextQuestionLoading) {
@@ -206,20 +173,10 @@ export const QuestionCard = () => {
                 {question?.question}
               </ReactMarkdown>
               <div className="flex justify-end mb-2">
-                <button
-                  onClick={() =>
-                    isSpeaking.question
-                      ? stopAllSpeaking()
-                      : speakText(
-                          question?.question?.replace(/<\/?[^>]+(>|$)/g, ""),
-                          "question"
-                        )
-                  }
-                  className="flex items-center gap-1 px-3 py-1 rounded-full text-sm sm:text-base border border-purple-300 bg-purple-50 hover:bg-purple-100 text-purple-800 transition"
-                >
-                  <SpeakerIcon className="w-4 h-4" />
-                  {isSpeaking.question ? "Stop" : "Read Aloud"}
-                </button>
+                <ReadAloud
+                  place={"question"}
+                  text={question?.question?.replace(/<\/?[^>]+(>|$)/g, "")}
+                />
               </div>
             </div>
           </motion.div>
@@ -398,9 +355,6 @@ export const QuestionCard = () => {
               showHint.current = false;
               moveToNext();
             }}
-            speakText={(text, type) => speakText(text, type)}
-            stopSpeaking={stopAllSpeaking}
-            isSpeaking={isSpeaking}
           />
         </div>
       </div>
