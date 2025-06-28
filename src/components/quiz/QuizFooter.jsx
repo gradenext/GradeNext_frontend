@@ -1,19 +1,11 @@
-import React from "react";
 import useStore from "../../store/store";
-import { Loader, SpeakerIcon } from "lucide-react";
+import { Loader } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import ReadAloud from "./ReadAloud";
 
-export const QuestionFooter = ({
-  showHint,
-  showExplanation,
-  onContinue,
-  speakText,
-  stopSpeaking,
-  isSpeaking,
-}) => {
+export const QuestionFooter = ({ showHint, showExplanation, onContinue }) => {
   const { hint } = useStore((state) => state?.quizQuestion);
   const { explanation } = useStore((state) => state?.quizQuestion);
   const isSubmitting = useStore((state) => state?.isSubmitting);
@@ -61,7 +53,9 @@ export const QuestionFooter = ({
         <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
           <div className="flex justify-between items-start mb-2">
             <span className="font-bold text-green-800">Explanation:</span>
-            {explanation && <ReadAloud place={"explanation"} text={explanation} />}
+            {explanation && (
+              <ReadAloud place={"explanation"} text={explanation} />
+            )}
           </div>
           <div className="text-green-700 mb-4">
             <ReactMarkdown

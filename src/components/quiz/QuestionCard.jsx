@@ -1,21 +1,15 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Lightbulb, Speaker, SpeakerIcon, Speech } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
 import useStore from "../../store/store";
 import { QuestionFooter } from "./QuizFooter";
 import Timer from "./Timer";
 import Caclulator from "./Calculator";
-import QuestionImage from "./QuestionImage";
-import ReactMarkdown from "react-markdown";
-import remarkMath from "remark-math";
-import rehypeKatex from "rehype-katex";
-import Latex from "react-latex";
-import ReadAloud from "./ReadAloud";
+import QuestionText from "./QuestionText";
+import QuestionAnswer from "./QuestionAnswer";
+import QuestionActionButton from "./QuestionActionButton";
 
 export const QuestionCard = () => {
-  const [hoverOption, setHoverOption] = useState(null);
-  const [showHintTooltip, setShowHintTooltip] = useState(false);
   const showHint = useRef(false);
 
   const question = useStore((state) => state.quizQuestion);
@@ -24,9 +18,6 @@ export const QuestionCard = () => {
   const showExplanation = useStore((state) => state.showExplanation);
   const isNextQuestionLoading = useStore(
     (state) => state.isNextQuestionLoading
-  );
-  const isFetchingMoreQuestions = useStore(
-    (state) => state.isFetchingMoreQuestions
   );
   const setQuestionLoadedAt = useStore((state) => state.setQuestionLoadedAt);
 
@@ -41,19 +32,7 @@ export const QuestionCard = () => {
     }
   }, [question, setQuestionLoadedAt]);
 
-  const {
-    setUserAnswer,
-    clearUserAnswer,
-    submitAnswer,
-    moveToNext,
-    setUsedHints,
-  } = useStore();
-
-  const onSelectAnswer = (value) => setUserAnswer(value);
-  const onClearSelection = () => clearUserAnswer();
-  const handleSubmitAnswer = () => {
-    submitAnswer();
-  };
+  const { moveToNext } = useStore();
 
   useEffect(() => {
     userAnswer &&
@@ -132,220 +111,13 @@ export const QuestionCard = () => {
         {/* Main content area with flexible height */}
         <div className="flex flex-col gap-3 sm:gap-4 flex-1">
           {/* Question section */}
-          <motion.div
-            className="flex-1 min-h-[20vh] overflow-y-auto bg-gradient-to-r from-purple-50 to-blue-50 p-3 sm:p-4 rounded-lg sm:rounded-xl border border-purple-100 sm:border-2 sm:border-purple-200"
-            initial={{ scale: 0.95 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 0.3 }}
-          >
-            {question?.image_generated && question?.image_url && (
-              <QuestionImage
-                imageUrl={question.image_url}
-                alt="Question Illustration"
-              />
-            )}
-
-            <div className="text-lg sm:text-xl font-bold text-purple-800">
-              <ReactMarkdown
-                remarkPlugins={[remarkMath]}
-                rehypePlugins={[rehypeKatex]}
-                components={{
-                  table: ({ node, ...props }) => (
-                    <table
-                      className="w-full border-collapse border border-gray-300 my-4"
-                      {...props}
-                    />
-                  ),
-                  th: ({ node, ...props }) => (
-                    <th
-                      className="border border-gray-300 px-3 py-2 bg-gray-100 text-center"
-                      {...props}
-                    />
-                  ),
-                  td: ({ node, ...props }) => (
-                    <td
-                      className="border border-gray-300 px-3 py-2 text-center"
-                      {...props}
-                    />
-                  ),
-                }}
-              >
-                {question?.question}
-              </ReactMarkdown>
-              <div className="flex justify-end mb-2">
-                <ReadAloud
-                  place={"question"}
-                  text={question?.question?.replace(/<\/?[^>]+(>|$)/g, "")}
-                />
-              </div>
-            </div>
-          </motion.div>
+          <QuestionText question={question} />
 
           {/* Options grid or Input bar */}
-          {question?.question_type === "multiple" ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-3">
-              <AnimatePresence>
-                {question?.options?.map((option, index) => {
-                  const buttonClasses =
-                    "p-3 sm:p-4 text-base sm:text-lg w-full rounded-lg sm:rounded-xl font-medium border transition-all relative";
-                  let bgColor = "bg-white";
-                  let borderColor = "border-gray-200";
-                  let textColor = "text-gray-700";
-
-                  if (showExplanation) {
-                    if (option === correctAnswer) {
-                      bgColor = "bg-green-50";
-                      borderColor = "border-green-300";
-                      textColor = "text-green-700";
-                    } else if (option === userAnswer) {
-                      bgColor = "bg-red-50";
-                      borderColor = "border-red-300";
-                      textColor = "text-red-700";
-                    }
-                  } else if (userAnswer === option) {
-                    bgColor = "bg-blue-50";
-                    borderColor = "border-blue-300";
-                    textColor = "text-blue-700";
-                  } else if (hoverOption === option) {
-                    bgColor = "bg-purple-50";
-                    borderColor = "border-purple-200";
-                  }
-
-                  const fullClasses = `${buttonClasses} ${bgColor} ${borderColor} ${textColor}`;
-
-                  return (
-                    <motion.button
-                      key={index}
-                      onClick={() => onSelectAnswer(option)}
-                      disabled={showExplanation}
-                      className={`${fullClasses} cursor-pointer`}
-                      onMouseEnter={() => setHoverOption(option)}
-                      onMouseLeave={() => setHoverOption(null)}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.2, delay: index * 0.05 }}
-                      whileHover={{
-                        scale: showExplanation ? 1 : 1.02,
-                        boxShadow: showExplanation
-                          ? "none"
-                          : "0 2px 8px rgba(0,0,0,0.1)",
-                      }}
-                    >
-                      <div className="flex items-center">
-                        <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gradient-to-r from-purple-400 to-blue-400 flex items-center justify-center text-white font-bold mr-2 sm:mr-3 flex-shrink-0 text-xs sm:text-sm">
-                          {String.fromCharCode(65 + index)}
-                        </div>
-                        <Latex>{option}</Latex>
-                      </div>
-
-                      {showExplanation && correctAnswer && (
-                        <motion.div
-                          className="absolute right-2 sm:right-3 text-xl sm:text-2xl"
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          transition={{
-                            type: "spring",
-                            stiffness: 300,
-                            damping: 10,
-                          }}
-                        >
-                          {option === correctAnswer ? "✅" : "❌"}
-                        </motion.div>
-                      )}
-                    </motion.button>
-                  );
-                })}
-              </AnimatePresence>
-            </div>
-          ) : question?.question_type === "input" ? (
-            <div className="flex flex-col items-center">
-              <input
-                type="text"
-                value={userAnswer || ""}
-                onChange={(e) => {
-                  e.stopPropagation();
-                  onSelectAnswer(e.target.value);
-                }}
-                disabled={showExplanation}
-                className="w-full p-3 sm:p-4 text-base sm:text-lg rounded-lg sm:rounded-xl border border-purple-200 bg-white focus:outline-none focus:ring-2 focus:ring-blue-300 text-purple-800 font-medium transition-all"
-                placeholder="Type your answer..."
-              />
-              {showExplanation && (
-                <AnimatePresence mode="wait">
-                  {correctAnswer && (
-                    <motion.div
-                      key={
-                        userAnswer === correctAnswer ? "correct" : "incorrect"
-                      }
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.9 }}
-                      transition={{ duration: 0.3 }}
-                      className="mt-2 text-sm sm:text-base"
-                    >
-                      {userAnswer === correctAnswer ? (
-                        <span className="text-green-700 font-bold">
-                          Correct ✅
-                        </span>
-                      ) : (
-                        <span className="text-red-700 font-bold">
-                          Incorrect ❌ (Correct:{" "}
-                          <span className="underline">{correctAnswer}</span>)
-                        </span>
-                      )}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              )}
-            </div>
-          ) : null}
+          <QuestionAnswer />
 
           {/* Action Buttons */}
-          {!showExplanation && (
-            <motion.div
-              className="mt-2 sm:mt-3 flex flex-wrap justify-center gap-2 sm:gap-3"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.2 }}
-            >
-              <button
-                onMouseEnter={() => setShowHintTooltip(true)}
-                onMouseLeave={() => setShowHintTooltip(false)}
-                onClick={() => {
-                  showHint.current = true;
-                  setUsedHints();
-                }}
-                className="relative bg-yellow-100 hover:bg-yellow-200 text-yellow-700 rounded-full h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center cursor-pointer"
-              >
-                <Lightbulb className="h-4 w-4 sm:h-5 sm:w-5" />
-                {showHintTooltip && (
-                  <div className="absolute w-32 sm:w-40 right-1/2 translate-x-[50%] bottom-[120%] bg-yellow-100 border border-yellow-300 text-yellow-800 text-xs sm:text-sm font-medium p-1 sm:p-2 rounded-md z-50">
-                    Click to show hint
-                  </div>
-                )}
-              </button>
-              <button
-                disabled={!userAnswer}
-                onClick={onClearSelection}
-                className={`text-purple-600 hover:text-purple-800 bg-purple-100 rounded-full px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base transition-colors ${
-                  userAnswer ? "" : "cursor-not-allowed opacity-50"
-                }`}
-              >
-                Clear Response
-              </button>
-              <button
-                disabled={!userAnswer}
-                onClick={handleSubmitAnswer}
-                className={`text-purple-100 min-w-28 sm:min-w-36 hover:text-purple-200 bg-purple-700 sm:bg-purple-900 rounded-full px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base transition-colors ${
-                  userAnswer
-                    ? "cursor-pointer"
-                    : "cursor-not-allowed opacity-50"
-                }`}
-              >
-                Submit Answer
-              </button>
-            </motion.div>
-          )}
+          {!showExplanation && <QuestionActionButton showHint={showHint} />}
 
           {/* Hint and Explanation */}
           <QuestionFooter
