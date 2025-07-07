@@ -102,8 +102,19 @@ export const QuestionCard = () => {
         {/* Header with timer and topic */}
         <div className="h-14 sm:h-16 w-full flex justify-between items-center mb-2 sm:mb-4">
           <Timer className="w-6 h-6" />
-          <div className="text-lg sm:text-xl bg-blue-500 capitalize bg-clip-text text-transparent font-bold text-center overflow-hidden px-1 sm:px-2 truncate">
-            {question?.progress?.current_topic?.split("_").join(" ")}
+          <div className="flex flex-col justify-center items-center">
+            <div className="text-sm sm:text-base bg-blue-500 capitalize bg-clip-text text-transparent text-wrap font-bold text-center overflow-hidden px-1 sm:px-2 truncate">
+              Current Level:{" "}
+              <span className="italic font-extrabold">
+                {question?.current_level}
+              </span>
+            </div>
+            <div className="text-xs sm:text-base bg-blue-500 capitalize bg-clip-text text-transparent text-wrap font-bold text-center overflow-hidden px-1 sm:px-2 truncate">
+              Current Topic:{" "}
+              <span className="italic font-extrabold ">
+                {question?.current_topic?.split("_").join(" ")}
+              </span>
+            </div>
           </div>
           <Caclulator className="w-5 h-5 sm:w-6 sm:h-6" />
         </div>

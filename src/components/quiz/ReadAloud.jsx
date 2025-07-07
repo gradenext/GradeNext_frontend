@@ -1,4 +1,4 @@
-import { SpeakerIcon, Volume2, VolumeOff } from "lucide-react";
+import { Volume2, VolumeOff } from "lucide-react";
 import React, { useState } from "react";
 
 const ReadAloud = ({ place, text }) => {
@@ -6,33 +6,46 @@ const ReadAloud = ({ place, text }) => {
     question: false,
     hint: false,
     explanation: false,
+    topicName: false,
+    topicIntro: false,
+    topicConcepts: false,
+    topicExamples: false,
   });
 
-  // Helper to stop all speech and reset state
-  const stopAllSpeaking = () => {
-    window.speechSynthesis.cancel();
-    setIsSpeaking({ question: false, hint: false, explanation: false });
+  const initialState = {
+    question: false,
+    hint: false,
+    explanation: false,
+    topicName: false,
+    topicIntro: false,
+    topicConcepts: false,
+    topicExamples: false,
   };
 
-  // Generalized speakText function
+  // Stop all ongoing speech and reset state
+  const stopAllSpeaking = () => {
+    window.speechSynthesis.cancel();
+    setIsSpeaking({ ...initialState });
+  };
+
   const speakText = (text, place) => {
     if (!window.speechSynthesis) return;
 
     stopAllSpeaking();
+
     const utterance = new window.SpeechSynthesisUtterance(text);
     utterance.rate = 0.65;
+
     utterance.onstart = () =>
-      setIsSpeaking({
-        question: place === "question",
-        hint: place === "hint",
-        explanation: place === "explanation",
-      });
-    utterance.onend = () =>
-      setIsSpeaking({ question: false, hint: false, explanation: false });
-    utterance.onerror = () =>
-      setIsSpeaking({ question: false, hint: false, explanation: false });
+      setIsSpeaking(() => ({ ...initialState, [place]: true }));
+
+    utterance.onend = () => setIsSpeaking(() => ({ ...initialState }));
+
+    utterance.onerror = () => setIsSpeaking(() => ({ ...initialState }));
+
     window.speechSynthesis.speak(utterance);
   };
+
   return (
     <div>
       <button
