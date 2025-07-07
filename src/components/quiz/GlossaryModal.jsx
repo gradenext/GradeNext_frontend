@@ -17,14 +17,14 @@ const GlossaryModal = ({ onClose }) => {
         {/* Header */}
         <div className="flex justify-between items-center bg-yellow-300 px-4 py-3 rounded-t-3xl border-b-2 border-yellow-500">
           <h2 className="text-xl sm:text-2xl font-bold text-blue-900">📖 Glossary</h2>
-          <button onClick={onClose} className="text-blue-800 hover:text-red-500 transition-all">
+          <button onClick={onClose} className="text-blue-800 hover:text-red-500 transition-all cursor-pointer">
             <X size={28} />
           </button>
         </div>
 
         {/* Tabs — only for Mathematics */}
         {isMath && (
-          <div className="flex justify-center gap-4 bg-yellow-100 px-4 py-2 text-blue-900 font-semibold text-sm sm:text-base">
+          <div className="flex  justify-center gap-4 bg-yellow-100 px-4 py-2 text-blue-900 font-semibold text-sm sm:text-base">
             <button
               onClick={() => setActiveTab("formulas")}
               className={`px-3 py-1 rounded-full transition-all ${
@@ -37,7 +37,7 @@ const GlossaryModal = ({ onClose }) => {
             </button>
             <button
               onClick={() => setActiveTab("tables")}
-              className={`px-3 py-1 rounded-full transition-all ${
+              className={`px-3 py-1 rounded-full transition-all cursor-pointer ${
                 activeTab === "tables"
                   ? "bg-blue-500 text-white"
                   : "hover:bg-blue-200"

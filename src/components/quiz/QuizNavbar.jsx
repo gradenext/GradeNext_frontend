@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import useStore from "../../store/store";
 import FeedbackDropdown from "./FeedbackDropdown";
-import GlossaryModal from "./GlossaryModal";
+
 
 const QuizNavbar = () => {
-  const [showGlossary, setShowGlossary] = useState(false);
+  
   const grade = useStore((state) => state.user.grade);
   const selectedSubject = useStore((state) => state.selectedSubject);
   const setExitModal = useStore((state) => state.setExitModal);
@@ -42,21 +42,7 @@ const QuizNavbar = () => {
         </div>
       </div>
 
-      {/* Floating Glossary Button */}
-      <button
-        onClick={() => setShowGlossary(true)}
-        className="fixed bottom-5 right-5 z-40 bg-yellow-300 hover:bg-yellow-400 text-blue-800 font-bold py-2 px-4 rounded-full shadow-lg border-2 border-yellow-500 transition-all duration-300"
-      >
-        📚 Glossary
-      </button>
-
-      {/* Glossary Modal */}
-      {showGlossary && (
-        <GlossaryModal
-          onClose={() => setShowGlossary(false)}
-          currentTopic={selectedTopic?.topic_name || "addition"}
-        />
-      )}
+      
     </>
   );
 };

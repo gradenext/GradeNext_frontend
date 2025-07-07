@@ -1,10 +1,20 @@
 import React, { useState } from "react";
 import useStore from "../store/store";
-import { GRADE_TOPICS, TOPIC_FORMULAS, TOPIC_EXAMPLES } from "../constants/formulas";
+import {
+  GRADE_TOPICS,
+  TOPIC_FORMULAS,
+  TOPIC_EXAMPLES,
+} from "../constants/formulas";
 
 const bgColors = [
-  "bg-red-100", "bg-green-100", "bg-blue-100", "bg-yellow-100",
-  "bg-purple-100", "bg-pink-100", "bg-teal-100", "bg-orange-100"
+  "bg-red-100",
+  "bg-green-100",
+  "bg-blue-100",
+  "bg-yellow-100",
+  "bg-purple-100",
+  "bg-pink-100",
+  "bg-teal-100",
+  "bg-orange-100",
 ];
 
 const FormulaViewer = () => {
@@ -37,10 +47,11 @@ const FormulaViewer = () => {
                 setSelectedTopic(topic.key);
                 setExpandedCards({});
               }}
-              className={`px-4 py-2 rounded-full font-semibold text-sm transition-all ${selectedTopic === topic.key
+              className={`px-4 py-2 rounded-full font-semibold text-sm transition-all ${
+                selectedTopic === topic.key
                   ? "bg-blue-500 text-white"
                   : "bg-yellow-200 text-blue-900 hover:bg-yellow-300"
-                }`}
+              }`}
             >
               {topic.name}
             </button>
@@ -52,7 +63,9 @@ const FormulaViewer = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {(TOPIC_FORMULAS[selectedTopic] || []).map((formula, idx) => {
               const isExpanded = expandedCards[idx];
-              const hasExample = TOPIC_EXAMPLES[selectedTopic] && TOPIC_EXAMPLES[selectedTopic][idx];
+              const hasExample =
+                TOPIC_EXAMPLES[selectedTopic] &&
+                TOPIC_EXAMPLES[selectedTopic][idx];
               const bg = bgColors[idx % bgColors.length];
 
               return (
@@ -74,11 +87,17 @@ const FormulaViewer = () => {
                     {isExpanded && hasExample && (
                       <div className="mt-3 text-sm text-blue-900">
                         <hr className="border-blue-300 mb-2" />
-                        <h4 className="font-bold text-blue-800 mb-1">🧠 Example</h4>
+                        <h4 className="font-bold text-blue-800 mb-1">
+                          🧠 Example
+                        </h4>
                         <div className="space-y-2">
-                          <p className="text-purple-800 font-semibold">❓ Question:</p>
+                          <p className="text-purple-800 font-semibold">
+                            ❓ Question:
+                          </p>
                           <p>{TOPIC_EXAMPLES[selectedTopic][idx].question}</p>
-                          <p className="text-green-800 font-semibold mt-2">✅ Solution:</p>
+                          <p className="text-green-800 font-semibold mt-2">
+                            ✅ Solution:
+                          </p>
                           <p>{TOPIC_EXAMPLES[selectedTopic][idx].solution}</p>
                         </div>
 

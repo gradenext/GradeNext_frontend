@@ -7,12 +7,15 @@ import TopicIntroduction from "../components/quiz/TopicIntroduction";
 import ProgessDashboard from "../components/quiz/ProgressDashboard";
 import { QuestionCard } from "../components/quiz/QuestionCard";
 import ExitModal from "../components/quiz/ExitModal";
+import GlossaryModal from "../components/quiz/GlossaryModal";
 
 const Quiz = () => {
   const quizQuestion = useStore((state) => state.quizQuestion);
+  const selectedTopic = useStore((state) => state.selectedTopic);
 
   const { width, height } = useWindowSize();
   const [showConfetti, setShowConfetti] = useState(false);
+  const [showGlossary, setShowGlossary] = useState(false);
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 overflow-hidden relative">
@@ -46,6 +49,22 @@ const Quiz = () => {
       <TopicIntroduction
         topicName={quizQuestion?.current_topic?.split("_").join(" ")}
       />
+
+      {/* Floating Glossary Button */}
+      <button
+        onClick={() => setShowGlossary(true)}
+        className="fixed bottom-16 right-4 z-40 cursor-pointer bg-yellow-300 hover:bg-yellow-400 text-blue-800 font-bold py-2 px-4 rounded-full shadow-lg border-2 border-yellow-500 transition-all duration-300"
+      >
+        📚 Glossary
+      </button>
+
+      {/* Glossary Modal */}
+      {showGlossary && (
+        <GlossaryModal
+          onClose={() => setShowGlossary(false)}
+          currentTopic={selectedTopic?.topic_name || "addition"}
+        />
+      )}
       <ExitModal />
     </div>
   );
