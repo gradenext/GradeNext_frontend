@@ -13,6 +13,10 @@ import QuizReport from "./components/quiz/QuizReport";
 import PlanRestriction from "./components/PlanRestriction";
 import Modal from "./components/Modal";
 import toast from "react-hot-toast";
+import Pricing from "./pages/Pricing";
+import StripeResult from "./pages/StripeResult";
+import PricingSuccess from "./pages/PricingSuccess";
+
 
 function App() {
   const token = useStore((state) => state.token);
@@ -33,6 +37,9 @@ function App() {
         ) : (
           <Routes>
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/pricing" element={<Pricing />} />
+            <Route path="/stripe-result" element={<StripeResult />} />
+            <Route path="/pricing-success" element={<PricingSuccess />} />
             <Route
               path="/treasurehunt/topics/:subject"
               element={<TreasureHuntTopics />}

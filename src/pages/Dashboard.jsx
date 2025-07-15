@@ -21,6 +21,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import InfoModal from "../components/infoModal";
 
+
 const Dashboard = () => {
   const navigate = useNavigate();
 
@@ -46,7 +47,7 @@ const Dashboard = () => {
     setSelectedSubject,
     setSelectedMode,
     generateQuestion,
-    toogleShowUpgradeModal,
+    // toogleShowUpgradeModal,
   } = useStore();
 
   // Color palette designed for kids
@@ -117,18 +118,16 @@ const Dashboard = () => {
   const handleStart = async () => {
     if (!selectedSubject || !selectedMode) return;
 
-    if (
-      plan === "Basic" &&
-      (selectedMode === "revision" || selectedMode === "topic")
-    ) {
-      toogleShowUpgradeModal();
+    if (plan === "Basic" && (selectedMode === "revision" || selectedMode === "topic")) {
+      navigate("/pricing");
       return;
     }
 
     if (plan === "Pro" && selectedMode === "topic") {
-      toogleShowUpgradeModal();
+      navigate("/pricing");
       return;
     }
+
 
     try {
       setLoading(true);
@@ -292,8 +291,8 @@ const Dashboard = () => {
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         className={`relative p-6 rounded-2xl cursor-pointer transition-all ${selectedSubject === subject.id
-                            ? "ring-4 shadow-xl"
-                            : "shadow-lg hover:shadow-xl"
+                          ? "ring-4 shadow-xl"
+                          : "shadow-lg hover:shadow-xl"
                           }`}
                         style={{
                           backgroundColor:

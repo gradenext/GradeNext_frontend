@@ -100,24 +100,31 @@ export const QuestionCard = () => {
         <div className="absolute -left-6 -bottom-6 w-12 h-12 sm:w-16 sm:h-16 bg-purple-200 rounded-full opacity-30"></div>
 
         {/* Header with timer and topic */}
-        <div className="h-14 sm:h-16 w-full flex justify-between items-center mb-2 sm:mb-4">
-          <Timer className="w-6 h-6" />
-          <div className="flex flex-col justify-center items-center">
-            <div className="text-sm sm:text-base bg-blue-500 capitalize bg-clip-text text-transparent text-wrap font-bold text-center overflow-hidden px-1 sm:px-2 truncate">
-              Current Level:{" "}
-              <span className="italic font-extrabold">
-                {question?.current_level}
-              </span>
-            </div>
-            <div className="text-xs sm:text-base bg-blue-500 capitalize bg-clip-text text-transparent text-wrap font-bold text-center overflow-hidden px-1 sm:px-2 truncate">
-              Current Topic:{" "}
-              <span className="italic font-extrabold ">
-                {question?.current_topic?.split("_").join(" ")}
-              </span>
+        <div className="w-full px-4 py-3 bg-[#FFF8F0] rounded-2xl shadow-lg flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+          {/* Left: Timer + Level */}
+          <div className="flex items-center gap-3 justify-center sm:justify-start w-full sm:w-auto">
+            <Timer />
+
+            <div className="bg-[#FF8AAE] text-white text-xs sm:text-sm px-3 py-1 rounded-full shadow font-bold uppercase">
+              {question?.current_level?.split("_").join(" ")}
             </div>
           </div>
-          <Caclulator className="w-5 h-5 sm:w-6 sm:h-6" />
+
+          {/* Center: Topic */}
+          <div className="text-center w-full sm:w-auto">
+            <div className="text-base sm:text-xl font-extrabold italic bg-gradient-to-r from-[#FF7F50] via-[#FFD700] to-[#40E0D0] bg-clip-text text-transparent tracking-wide truncate px-1">
+              {question?.current_topic?.split("_").join(" ")}
+            </div>
+          </div>
+
+          {/* Right: Calculator Icon */}
+          <div className="flex justify-center sm:justify-end w-full sm:w-auto">
+            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-[#C2F2D0] flex items-center justify-center shadow-md border border-green-300">
+              <Caclulator className="w-5 h-5 text-green-700" />
+            </div>
+          </div>
         </div>
+
 
         {/* Main content area with flexible height */}
         <div className="flex flex-col gap-3 sm:gap-4 flex-1">

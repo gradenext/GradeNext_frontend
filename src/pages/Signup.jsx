@@ -17,37 +17,37 @@ import {
 import { register, verifyOTP } from "../services/auth";
 import toast from "react-hot-toast";
 
-const plans = [
-  {
-    id: "basic",
-    title: "Basic Plan",
-    price: "Free",
-    features: ["Limited practice", "Progress Tracking", "Email support"],
-  },
-  {
-    id: "pro",
-    title: "Pro Plan",
-    price: "$49/mo",
-    features: [
-      "Unlimited Questions",
-      "Revision Mode",
-      "Advanced Analytics",
-      "Priority email support",
-    ],
-  },
-  {
-    id: "enterprise",
-    title: "Enterprise",
-    price: "Custom",
-    features: [
-      "All Pro Features",
-      "Topic Practice",
-      "1-on-1 student mentoring",
-      "Custom Reports",
-      "Tutor support",
-    ],
-  },
-];
+// const plans = [
+//   {
+//     id: "basic",
+//     title: "Basic Plan",
+//     price: "Free",
+//     features: ["Limited practice", "Progress Tracking", "Email support"],
+//   },
+//   {
+//     id: "pro",
+//     title: "Pro Plan",
+//     price: "$49/mo",
+//     features: [
+//       "Unlimited Questions",
+//       "Revision Mode",
+//       "Advanced Analytics",
+//       "Priority email support",
+//     ],
+//   },
+//   {
+//     id: "enterprise",
+//     title: "Enterprise",
+//     price: "Custom",
+//     features: [
+//       "All Pro Features",
+//       "Topic Practice",
+//       "1-on-1 student mentoring",
+//       "Custom Reports",
+//       "Tutor support",
+//     ],
+//   },
+// ];
 
 const availableCourses = [
   { id: "mathematics", label: "Mathematics", emoji: "🧮" },
@@ -63,11 +63,11 @@ const getStepTitle = (step) => {
       return "Tell Us About You";
     case 2:
       return "Where Are You From?";
+    // case 3:
+    //   return "Choose Your Plan";
     case 3:
-      return "Choose Your Plan";
-    case 4:
       return "Create Your Account";
-    case 5:
+    case 4:
       return "Verify Your Account";
     default:
       return "Sign Up";
@@ -153,7 +153,7 @@ const Signup = () => {
     zip_code: "",
     address: "",
     mobileNo: "",
-    plan: "basic",
+    // plan: "basic",
     coupon_code: "",
   });
   const [error, setError] = useState("");
@@ -215,12 +215,14 @@ const Signup = () => {
       if (!formData.country) return "Country is required";
       if (!formData.state) return "State is required";
       if (!formData.zip_code) return "Zip code is required";
-    } else if (step === 3) {
-      if (!formData.plan) return "Please select a plan";
-      if (formData.coupon_code && formData.coupon_code !== "NG100") {
-        return "Invalid coupon code";
-      }
-    } else if (step === 4) {
+    } 
+    // else if (step === 3) {
+    //   if (!formData.plan) return "Please select a plan";
+    //   if (formData.coupon_code && formData.coupon_code !== "NG100") {
+    //     return "Invalid coupon code";
+    //   }
+    // }
+     else if (step === 3) {
       if (!formData.email) return "Email is required";
       if (!formData.password) return "Password is required";
       if (formData.password.length < 6)
@@ -238,7 +240,7 @@ const Signup = () => {
       return;
     }
     setError("");
-    setStep(Math.min(step + 1, 4));
+    setStep(Math.min(step + 1, 3));
   };
 
   const prevStep = () => {
@@ -260,13 +262,13 @@ const Signup = () => {
       const payload = {
         ...formData,
         grade: parseInt(formData.grade),
-        coupon_code: formData.coupon_code || undefined,
-        plan: formData.coupon_code === "NG100" ? "enterprise" : formData.plan,
+        // coupon_code: formData.coupon_code || undefined,
+        // plan: formData.coupon_code === "NG100" ? "enterprise" : formData.plan,
       };
 
       await register(payload);
       setError("");
-      setStep(5);
+      setStep(4);
       toast.success("OTP sent");
     } catch (err) {
       setError(
@@ -495,31 +497,31 @@ const Signup = () => {
           </div>
         );
 
-      case 3:
-        return (
-          <div className="space-y-6">
-            <PlanAccordion formData={formData} setFormData={setFormData} />
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-purple-700">
-                Have a coupon code?
-              </label>
-              <input
-                name="coupon_code"
-                value={formData.coupon_code}
-                onChange={handleChange}
-                className="w-full px-4 py-3 bg-purple-50 border-2 border-purple-200 text-purple-900 rounded-xl"
-                placeholder="Enter coupon code"
-              />
-              {formData.coupon_code === "NG100" && (
-                <p className="text-green-600 text-sm mt-2">
-                  🎉 NG100 applied! Enjoy Enterprise features!
-                </p>
-              )}
-            </div>
-          </div>
-        );
+      // case 3:
+      //   return (
+      //     <div className="space-y-6">
+      //       <PlanAccordion formData={formData} setFormData={setFormData} />
+      //       <div className="space-y-2">
+      //         <label className="text-sm font-medium text-purple-700">
+      //           Have a coupon code?
+      //         </label>
+      //         <input
+      //           name="coupon_code"
+      //           value={formData.coupon_code}
+      //           onChange={handleChange}
+      //           className="w-full px-4 py-3 bg-purple-50 border-2 border-purple-200 text-purple-900 rounded-xl"
+      //           placeholder="Enter coupon code"
+      //         />
+      //         {formData.coupon_code === "NG100" && (
+      //           <p className="text-green-600 text-sm mt-2">
+      //             🎉 NG100 applied! Enjoy Enterprise features!
+      //           </p>
+      //         )}
+      //       </div>
+      //     </div>
+      //   );
 
-      case 4:
+      case 3:
         return (
           <div className="grid grid-cols-1 gap-4">
             <div className="space-y-2">
@@ -605,7 +607,7 @@ const Signup = () => {
           </div>
         );
 
-      case 5:
+      case 4:
         return (
           <div className="grid grid-cols-1 gap-4 w-full max-w-md mx-auto">
             <p className="text-sm sm:text-base text-center sm:text-left text-purple-700">
@@ -713,13 +715,13 @@ const Signup = () => {
                 {getStepTitle(step)}
               </h2>
               <p className="text-center text-purple-600 mt-2">
-                Step {step} of 5
+                Step {step} of 4
               </p>
 
               <div className="w-full bg-purple-100 rounded-full h-2.5 mt-4">
                 <div
                   className="bg-gradient-to-r from-purple-600 to-blue-600 h-2.5 rounded-full transition-all"
-                  style={{ width: `${(step / 5) * 100}%` }}
+                  style={{ width: `${(step / 4) * 100}%` }}
                 />
               </div>
             </div>
@@ -755,7 +757,7 @@ const Signup = () => {
                     </button>
                   )}
 
-                  {step < 4 && (
+                  {step < 3 && (
                     <button
                       type="button"
                       onClick={nextStep}
@@ -764,7 +766,7 @@ const Signup = () => {
                       Next 👉
                     </button>
                   )}
-                  {step === 4 && (
+                  {step === 3 && (
                     <button
                       type="submit"
                       disabled={loading}
@@ -782,7 +784,7 @@ const Signup = () => {
                     </button>
                   )}
 
-                  {step === 5 && (
+                  {step === 4 && (
                     <button
                       type="submit"
                       disabled={loading}
