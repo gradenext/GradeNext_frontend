@@ -12,21 +12,22 @@ import {
   Puzzle,
   User,
   FlaskConical,
-  Laptop
+  Laptop,
 } from "lucide-react";
 import useStore from "../store/store";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { startSession } from ".././services/auth";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import InfoModal from "../components/infoModal";
-
 
 const Dashboard = () => {
   const navigate = useNavigate();
 
   const setSession = useStore((state) => state.setSession);
   const plan = useStore((state) => state.user.plan);
+  const showPricing = useStore((state) => state.showPricing);
+  const showUpgradeModal = useStore((state) => state.showUpgradeModal);
   const selectedMode = useStore((state) => state.selectedMode);
   const selectedSubject = useStore((state) => state.selectedSubject);
   const overallStats = useStore((state) => state.user_stats.overall);
@@ -35,20 +36,14 @@ const Dashboard = () => {
   const [showInfoModal, setShowInfoModal] = useState(true);
   const [showProgrammingOverlay, setShowProgrammingOverlay] = useState(false);
 
-
   function isFridayOrSaturday() {
     const today = new Date();
     const day = today.getDay(); // 0 = Sunday, 5 = Friday, 6 = Saturday
     return day === 5 || day === 6;
   }
 
-  const {
-    logout,
-    setSelectedSubject,
-    setSelectedMode,
-    generateQuestion,
-    // toogleShowUpgradeModal,
-  } = useStore();
+  const { logout, setSelectedSubject, setSelectedMode, generateQuestion } =
+    useStore();
 
   // Color palette designed for kids
   const colors = {
@@ -87,8 +82,7 @@ const Dashboard = () => {
       icon: <Laptop className="w-12 h-12" />,
       color: colors.primary,
       emoji: "💻🚀",
-    }
-
+    },
   ];
 
   const actions = [
@@ -118,7 +112,10 @@ const Dashboard = () => {
   const handleStart = async () => {
     if (!selectedSubject || !selectedMode) return;
 
-    if (plan === "Basic" && (selectedMode === "revision" || selectedMode === "topic")) {
+    if (
+      plan === "Basic" &&
+      (selectedMode === "revision" || selectedMode === "topic")
+    ) {
       navigate("/pricing");
       return;
     }
@@ -127,7 +124,6 @@ const Dashboard = () => {
       navigate("/pricing");
       return;
     }
-
 
     try {
       setLoading(true);
@@ -176,6 +172,8 @@ const Dashboard = () => {
   ];
 
   const handleLogout = () => logout();
+
+  if (plan === "Basic" && showPricing) return <Navigate to={"/pricing"} />;
 
   return (
     <>
@@ -290,10 +288,11 @@ const Dashboard = () => {
                         key={subject.id}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        className={`relative p-6 rounded-2xl cursor-pointer transition-all ${selectedSubject === subject.id
-                          ? "ring-4 shadow-xl"
-                          : "shadow-lg hover:shadow-xl"
-                          }`}
+                        className={`relative p-6 rounded-2xl cursor-pointer transition-all ${
+                          selectedSubject === subject.id
+                            ? "ring-4 shadow-xl"
+                            : "shadow-lg hover:shadow-xl"
+                        }`}
                         style={{
                           backgroundColor:
                             selectedSubject === subject.id
@@ -304,7 +303,10 @@ const Dashboard = () => {
                         onClick={() => {
                           if (subject.id === "programming") {
                             setShowProgrammingOverlay(true);
-                            setTimeout(() => setShowProgrammingOverlay(false), 2500);
+                            setTimeout(
+                              () => setShowProgrammingOverlay(false),
+                              2500
+                            );
                           } else {
                             setSelectedSubject(subject.id);
                           }
@@ -340,16 +342,20 @@ const Dashboard = () => {
                         </div>
 
                         {/* 👇 Overlay for programming card when clicked */}
-                        {subject.id === "programming" && showProgrammingOverlay && (
-                          <div className="absolute inset-0 bg-black/70 text-white rounded-2xl flex flex-col items-center justify-center p-4 text-center">
-                            <p className="text-base font-semibold">👨‍💻 Computer Coding Quest</p>
-                            <p className="text-sm mt-1">This subject is under development!</p>
-                          </div>
-                        )}
+                        {subject.id === "programming" &&
+                          showProgrammingOverlay && (
+                            <div className="absolute inset-0 bg-black/70 text-white rounded-2xl flex flex-col items-center justify-center p-4 text-center">
+                              <p className="text-base font-semibold">
+                                👨‍💻 Computer Coding Quest
+                              </p>
+                              <p className="text-sm mt-1">
+                                This subject is under development!
+                              </p>
+                            </div>
+                          )}
                       </motion.div>
                     );
                   })}
-
                 </div>
               </motion.div>
 
@@ -384,13 +390,15 @@ const Dashboard = () => {
                             ? 1
                             : 0.95,
                       }}
-                      className={`p-6 rounded-2xl transition-all relative ${!isFridayOrSaturday() && action.id === "revision"
-                        ? "opacity-50 cursor-not-allowed"
-                        : "cursor-pointer"
-                        } ${selectedMode === action.id
+                      className={`p-6 rounded-2xl transition-all relative ${
+                        !isFridayOrSaturday() && action.id === "revision"
+                          ? "opacity-50 cursor-not-allowed"
+                          : "cursor-pointer"
+                      } ${
+                        selectedMode === action.id
                           ? "ring-4 shadow-xl"
                           : "shadow-lg hover:shadow-xl"
-                        }`}
+                      }`}
                       style={{
                         backgroundColor:
                           selectedMode === action.id
@@ -530,10 +538,11 @@ const Dashboard = () => {
                   onClick={handleStart}
                   disabled={!selectedSubject || !selectedMode || loading}
                   className={`w-full py-5 text-xl font-bold rounded-2xl transition-all 
-                  ${selectedSubject && selectedMode
+                  ${
+                    selectedSubject && selectedMode
                       ? "hover:scale-105 shadow-xl"
                       : "opacity-50 cursor-not-allowed"
-                    }
+                  }
                   relative cursor-pointer overflow-hidden`}
                   style={{
                     backgroundColor: colors.primary,
