@@ -8,7 +8,7 @@ const plans = [
         name: "Basic",
         description: "Access to Practice Quest",
         prices: {
-            monthly: { amount: 1900, stripe_price_id: "price_1_month_basic" },
+            monthly: { amount: 1900, stripe_price_id: "price_1RlTPkGb17a8LOzTlRnxd1WN" },
             quarterly: { amount: 5100, stripe_price_id: "price_1_quarter_basic" },
             yearly: { amount: 19000, stripe_price_id: "price_1_year_basic" },
         },
@@ -24,11 +24,11 @@ const plans = [
         },
     },
     {
-        id: "advanced",
+        id: "enterprise",
         name: "Advanced",
         description: "Full access: Practice, Time Travel & Treasure Hunt",
         prices: {
-            monthly: { amount: 9900, stripe_price_id: "price_1_month_advanced" },
+            monthly: { amount: 9900, stripe_price_id: "price_1RlRKLGb17a8LOzTXqWNb6wN" },
             quarterly: { amount: 27000, stripe_price_id: "price_1_quarter_advanced" },
             yearly: { amount: 99000, stripe_price_id: "price_1_year_advanced" },
         },
