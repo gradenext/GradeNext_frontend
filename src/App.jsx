@@ -17,7 +17,6 @@ import Pricing from "./pages/Pricing";
 import StripeResult from "./pages/StripeResult";
 import PricingSuccess from "./pages/PricingSuccess";
 
-
 function App() {
   const token = useStore((state) => state.token);
   const isOpen = useStore((state) => state.showUpgradeModal) ?? false;
@@ -29,10 +28,10 @@ function App() {
       <div className="min-h-screen bg-gray-50">
         {!token ? (
           <Routes>
-            <Route path="*" element={<Navigate to="/login" replace />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>
         ) : (
           <Routes>
@@ -65,7 +64,7 @@ function App() {
         <Modal
           isOpen={isOpen}
           title={"Upgrade you plan"}
-          onClose={toogleShowUpgradeModal}
+          onClose={() => toogleShowUpgradeModal(false)}
           closeOnOutsideClick={false}
         >
           <PlanRestriction />

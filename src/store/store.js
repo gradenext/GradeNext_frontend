@@ -30,11 +30,19 @@ const useStore = create(
       user: null,
       user_stats: null,
       showUpgradeModal: false,
+      showPricing: true,
 
-      toogleShowUpgradeModal: () => {
+      setTooglePricing: (showPricing) => {
         set((state) => ({
           ...state,
-          showUpgradeModal: !state.showUpgradeModal,
+          showPricing,
+        }));
+      },
+
+      toogleShowUpgradeModal: (showUpgradeModal) => {
+        set((state) => ({
+          ...state,
+          showUpgradeModal: showUpgradeModal,
         }));
       },
 
@@ -429,6 +437,7 @@ const useStore = create(
         exitModal: state.exitModal,
         expiryTime: state.expiryTime,
         showUpgradeModal: state.showUpgradeModal,
+        showPricing: state.showPricing,
       }),
     }
   )
