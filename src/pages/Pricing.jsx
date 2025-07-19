@@ -1,50 +1,49 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PlanCard from "../components/PlanCard";
-import { AnimatePresence, motion } from "framer-motion";
 import useStore from "../store/store";
-
-const plans = [
-  {
-    id: "basic",
-    name: "Basic",
-    description: "Access to Practice Quest",
-    prices: {
-      monthly: { amount: 1900, stripe_price_id: "price_1_month_basic" },
-      quarterly: { amount: 5100, stripe_price_id: "price_1_quarter_basic" },
-      yearly: { amount: 19000, stripe_price_id: "price_1_year_basic" },
-    },
-  },
-  {
-    id: "pro",
-    name: "Pro",
-    description: "Practice + Time Travel access",
-    prices: {
-      monthly: {
-        amount: 4900,
-        stripe_price_id: "price_1RlxaUGb17a8LOzTQyhxORgb",
-      },
-      quarterly: { amount: 13500, stripe_price_id: "price_1_quarter_pro" },
-      yearly: { amount: 49000, stripe_price_id: "price_1_year_pro" },
-    },
-  },
-  {
-    id: "advanced",
-    name: "Advanced",
-    description: "Full access: Practice, Time Travel & Treasure Hunt",
-    prices: {
-      monthly: { amount: 9900, stripe_price_id: "price_1_month_advanced" },
-      quarterly: { amount: 27000, stripe_price_id: "price_1_quarter_advanced" },
-      yearly: { amount: 99000, stripe_price_id: "price_1_year_advanced" },
-    },
-  },
-];
+import { createCheckoutSession } from "../services/stripe";
+import toast from "react-hot-toast";
+import { AnimatePresence, motion } from "framer-motion";
+import plans from "../constants/plan";
+import CheckoutModal from "../components/CheckoutModal";
 
 const Pricing = () => {
   const [selectedCycle, setSelectedCycle] = useState("monthly");
-  const navigate = useNavigate();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState(null);
 
+  const navigate = useNavigate();
   const { setTooglePricing, toogleShowUpgradeModal } = useStore();
+
+  const handlePlanSelect = (plan) => {
+    setSelectedPlan(plan);
+    setModalOpen(true);
+  };
+
+  const handleCheckout = async () => {
+    if (!selectedPlan) return;
+    const duration =
+      selectedCycle === "monthly" ? 1 : selectedCycle === "quarterly" ? 3 : 12;
+    const platform_fee_applied = true;
+
+    try {
+      const res = await createCheckoutSession({
+        plan: selectedPlan.id,
+        duration,
+        platform_fee_applied,
+      });
+
+      if (res.checkout_url) {
+        window.location.href = res.checkout_url;
+      } else {
+        toast.error("Could not redirect to payment.");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Payment error");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-10 md:py-16">
@@ -52,13 +51,12 @@ const Pricing = () => {
         Choose Your Plan
       </h1>
 
-      {/* Cycle Tabs */}
       <div className="flex flex-wrap justify-center gap-3 mb-10">
-        {["monthly", "quarterly", "yearly"].map((cycle) => (
+        {["monthly", "quarterly", "half-yearly", "yearly"].map((cycle) => (
           <button
             key={cycle}
             onClick={() => setSelectedCycle(cycle)}
-            className={`px-5 py-2 rounded-full border text-sm md:text-base font-medium transition cursor-pointer ${
+            className={`px-5 py-2 rounded-full capitalize border text-sm md:text-base font-medium transition cursor-pointer ${
               selectedCycle === cycle
                 ? "bg-indigo-600 text-white border-indigo-600 shadow"
                 : "bg-white text-gray-800 border-gray-300 hover:bg-gray-100"
@@ -69,30 +67,32 @@ const Pricing = () => {
         ))}
       </div>
 
-      {/* Plan Cards with Animation */}
       <AnimatePresence mode="wait">
         <motion.div
           key={selectedCycle}
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.3 }}
-          className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto px-4"
+          exit={{ opacity: 0, y: -30 }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
+          className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 w-full mx-auto px-4"
         >
-          {plans.map((plan) => (
+          {plans[selectedCycle].map((plan) => (
             <motion.div
               key={plan.id}
               whileHover={{ scale: 1.03 }}
-              transition={{ type: "spring", stiffness: 300 }}
+              transition={{ duration: 0.2 }}
               className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 md:p-8"
             >
-              <PlanCard plan={plan} selectedCycle={selectedCycle} />
+              <PlanCard
+                plan={plan}
+                selectedCycle={selectedCycle}
+                onClick={() => handlePlanSelect(plan)}
+              />
             </motion.div>
           ))}
         </motion.div>
       </AnimatePresence>
 
-      {/* Dismiss Button */}
       <div className="mt-16 flex justify-center">
         <button
           onClick={() => {
@@ -105,6 +105,16 @@ const Pricing = () => {
           Dismiss and Go to Dashboard
         </button>
       </div>
+
+      {/* Plan Modal */}
+      <CheckoutModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title={`Buy ${selectedPlan?.name} - ${selectedCycle} Plan`}
+        selectedPlan={selectedPlan}
+        selectedCycle={selectedCycle}
+        handleCheckout={handleCheckout}
+      />
     </div>
   );
 };

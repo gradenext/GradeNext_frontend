@@ -41,7 +41,7 @@ const Modal = ({
 
   return (
     <div
-      className={`fixed inset-0 z-50 bg-black/80 flex items-center justify-center transition-opacity duration-300 p-4 ${
+      className={`fixed inset-0 z-50 h-screen w-screen bg-black/80 flex items-center justify-center transition-opacity duration-300 p-4 ${
         isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
       }`}
     >
@@ -53,7 +53,7 @@ const Modal = ({
       >
         {title && (
           <div className="flex justify-between items-center p-3 sm:p-4 border-b">
-            <h3 className="text-base sm:text-lg font-medium">{title}</h3>
+            <h3 className="text-base sm:text-lg font-medium capitalize">{title}</h3>
             <button
               onClick={onClose}
               className="text-gray-500 hover:text-gray-700 transition-colors cursor-pointer p-1"

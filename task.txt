@@ -1,0 +1,15 @@
+Card design gradenext kind off
+
+plan_type - trial -> modal each valid_for > 0
+
+plan_type - trial -> valid_for = 0 , modal will not go.
+
+Button1 - cancel plan ----
+api add
+Button 2 - change plan -----
+api add
+
+whenever those api hit refetch profile.
+
+
+First modal, then navigate to pricing
