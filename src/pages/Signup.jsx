@@ -54,7 +54,7 @@ const availableCourses = [
   { id: "english", label: "English", emoji: "📚" },
   // { id: "computer", label: "Computer Language", emoji: "📚" },
   { id: "science", label: "Science", emoji: "🧪" },
-  { id: "programming", label: "Computer Programming", emoji: "💻" }
+  { id: "programming", label: "Computer Programming", emoji: "💻" },
 ];
 
 const getStepTitle = (step) => {
@@ -215,14 +215,14 @@ const Signup = () => {
       if (!formData.country) return "Country is required";
       if (!formData.state) return "State is required";
       if (!formData.zip_code) return "Zip code is required";
-    } 
+    }
     // else if (step === 3) {
     //   if (!formData.plan) return "Please select a plan";
     //   if (formData.coupon_code && formData.coupon_code !== "NG100") {
     //     return "Invalid coupon code";
     //   }
     // }
-     else if (step === 3) {
+    else if (step === 3) {
       if (!formData.email) return "Email is required";
       if (!formData.password) return "Password is required";
       if (formData.password.length < 6)
@@ -272,10 +272,10 @@ const Signup = () => {
       toast.success("OTP sent");
     } catch (err) {
       setError(
-        err.error ||
+        err?.email[0] ||
           "Registration failed. Please check all fields and try again."
       );
-      toast.error("Oops!! Something went wrong");
+      toast.error(err?.email[0] || "Oops!! Something went wrong");
     } finally {
       setLoading(false);
       toast.dismiss(id);
