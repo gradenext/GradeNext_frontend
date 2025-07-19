@@ -16,6 +16,7 @@ import toast from "react-hot-toast";
 import Pricing from "./pages/Pricing";
 import StripeResult from "./pages/StripeResult";
 import PricingSuccess from "./pages/PricingSuccess";
+import Subscription from "./components/user/Subscription";
 
 function App() {
   const token = useStore((state) => state.token);
@@ -52,6 +53,7 @@ function App() {
             <Route path="/user" element={<User />}>
               <Route path="profile" element={<UserProfile />} />
               <Route path="stats" element={<UserStats />} />
+              <Route path="plan" element={<Subscription />} />
               <Route
                 path="*"
                 element={<Navigate to={"/user/profile"} replace />}

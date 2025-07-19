@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { BarChart2, LayoutDashboard, User, Loader2 } from "lucide-react";
+import { BarChart2, LayoutDashboard, User, Loader2, Wallet } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { profile } from "../services/auth";
@@ -55,44 +55,48 @@ export default function Dashboard() {
       icon: <BarChart2 className="w-5 h-5 flex-shrink-0" />,
       path: "/user/stats",
     },
+    {
+      name: "plan",
+      label: "Subscription",
+      icon: <Wallet className="w-5 h-5 flex-shrink-0" />,
+      path: "/user/plan",
+    },
   ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-4 sm:px-12 py-6">
       {/* Navigation Bar */}
       <motion.div
-        className="mx-auto bg-white rounded-2xl shadow-lg overflow-hidden"
+        className="mx-auto bg-white rounded-2xl shadow-lg overflow-hidden sticky top-0 z-50"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1, duration: 0.4 }}
       >
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4">
-          <div className="flex-1 min-w-0 mb-4 sm:mb-0">
-            <div className="flex space-x-1 overflow-x-auto pb-2 scrollbar-hide w-full">
-              {navItems.map((item) => (
-                <motion.button
-                  key={item.name}
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
-                  className={`px-4 sm:px-6 py-3 rounded-lg font-medium transition-all flex items-center space-x-2 flex-shrink-0 cursor-pointer ${
-                    tab === item.name
-                      ? "text-white shadow-md"
-                      : "text-gray-700 hover:bg-gray-100"
-                  }`}
-                  style={{
-                    backgroundColor:
-                      tab === item.name ? colors.primary : "transparent",
-                    minWidth: "120px",
-                    maxWidth: "200px",
-                  }}
-                  onClick={() => navigate(item.path)}
-                  layout
-                >
-                  {item.icon}
-                  <span className="truncate">{item.label}</span>
-                </motion.button>
-              ))}
-            </div>
+        <div className="flex flex-col lg:flex-row justify-between items-center sm:items-center gap-y-4 p-4">
+          <div className="flex  flex-wrap justify-center md:justify-between lg:justify-start items-center space-x-1 scrollbar-hide w-full">
+            {navItems.map((item) => (
+              <motion.button
+                key={item.name}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                className={`px-4 sm:px-6 py-3 rounded-lg font-medium transition-all flex items-center space-x-2 flex-shrink-0 cursor-pointer ${
+                  tab === item.name
+                    ? "text-white shadow-md"
+                    : "text-gray-700 hover:bg-gray-100"
+                }`}
+                style={{
+                  backgroundColor:
+                    tab === item.name ? colors.primary : "transparent",
+                  minWidth: "120px",
+                  maxWidth: "200px",
+                }}
+                onClick={() => navigate(item.path)}
+                layout
+              >
+                {item.icon}
+                <span className="truncate">{item.label}</span>
+              </motion.button>
+            ))}
           </div>
 
           <motion.button
