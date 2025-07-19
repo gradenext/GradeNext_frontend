@@ -13,6 +13,9 @@ const StartButton = () => {
   const setSession = useStore((state) => state.setSession);
   const selectedSubject = useStore((state) => state.selectedSubject);
   const selectedMode = useStore((state) => state.selectedMode);
+  const toogleShowUpgradeModal = useStore(
+    (state) => state.toogleShowUpgradeModal
+  );
   const { generateQuestion } = useStore();
 
   const [loading, setLoading] = useState(false);
@@ -24,12 +27,12 @@ const StartButton = () => {
       plan === "Basic" &&
       (selectedMode === "revision" || selectedMode === "topic")
     ) {
-      navigate("/pricing");
+      toogleShowUpgradeModal(true);
       return;
     }
 
     if (plan === "Pro" && selectedMode === "topic") {
-      navigate("/pricing");
+      toogleShowUpgradeModal(true);
       return;
     }
 
