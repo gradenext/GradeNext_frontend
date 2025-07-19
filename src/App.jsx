@@ -20,10 +20,13 @@ import Subscription from "./components/user/Subscription";
 
 function App() {
   const token = useStore((state) => state.token);
-  const isOpen = useStore((state) => state.showUpgradeModal) ?? false;
+  const isOpen = useStore((state) => state.showUpgradeModal);
+  const plan_type = useStore((state) => state?.user?.subscription?.plan_type);
+  const valid_for = useStore((state) => state?.user?.subscription?.valid_for);
   const toogleShowUpgradeModal = useStore(
     (state) => state.toogleShowUpgradeModal
   );
+
   try {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -40,6 +43,16 @@ function App() {
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/stripe-result" element={<StripeResult />} />
             <Route path="/pricing-success" element={<PricingSuccess />} />
+
+            <Route path="/user" element={<User />}>
+              <Route path="profile" element={<UserProfile />} />
+              <Route path="stats" element={<UserStats />} />
+              <Route path="plan" element={<Subscription />} />
+              <Route
+                path="*"
+                element={<Navigate to={"/user/profile"} replace />}
+              />
+            </Route>
             <Route
               path="/treasurehunt/topics/:subject"
               element={<TreasureHuntTopics />}
@@ -50,15 +63,6 @@ function App() {
             />
             <Route path="/:mode/:session_id" element={<Quiz />} />
             <Route path="/report" element={<QuizReport />} />
-            <Route path="/user" element={<User />}>
-              <Route path="profile" element={<UserProfile />} />
-              <Route path="stats" element={<UserStats />} />
-              <Route path="plan" element={<Subscription />} />
-              <Route
-                path="*"
-                element={<Navigate to={"/user/profile"} replace />}
-              />
-            </Route>
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         )}
@@ -66,7 +70,10 @@ function App() {
         <Modal
           isOpen={isOpen}
           title={"Upgrade you plan"}
-          onClose={() => toogleShowUpgradeModal(false)}
+          onClose={() => {
+            if (plan_type === "trial" && valid_for > 0)
+              toogleShowUpgradeModal(false);
+          }}
           closeOnOutsideClick={false}
         >
           <PlanRestriction />

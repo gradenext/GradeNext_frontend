@@ -9,12 +9,10 @@ import plans from "../constants/plan";
 import CheckoutModal from "../components/CheckoutModal";
 
 const Pricing = () => {
+  const navigate = useNavigate();
   const [selectedCycle, setSelectedCycle] = useState("monthly");
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);
-
-  const navigate = useNavigate();
-  const { setTooglePricing, toogleShowUpgradeModal } = useStore();
 
   const handlePlanSelect = (plan) => {
     setSelectedPlan(plan);
@@ -96,8 +94,6 @@ const Pricing = () => {
       <div className="mt-16 flex justify-center">
         <button
           onClick={() => {
-            setTooglePricing(false);
-            toogleShowUpgradeModal(true);
             navigate("/dashboard");
           }}
           className="rounded-full cursor-pointer bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-3 text-sm font-medium transition"

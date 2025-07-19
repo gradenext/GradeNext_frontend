@@ -1,5 +1,5 @@
 import { Rocket } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import InfoModal from "../components/infoModal";
 import DashboardProgress from "../components/dashboard/DashboardProgress";
@@ -7,9 +7,21 @@ import DashboardHeader from "../components/dashboard/DashboardHeader";
 import DashboardSubject from "../components/dashboard/DashboardSubject";
 import DashboardActivity from "../components/dashboard/DashboardActivity";
 import StartButton from "../components/dashboard/StartButton";
+import useStore from "../store/store";
 
 const Dashboard = () => {
   const [showInfoModal, setShowInfoModal] = useState(true);
+  const plan_type = useStore((state) => state?.user?.subscription?.plan_type);
+  const valid_for = useStore((state) => state?.user?.subscription?.valid_for);
+  const toogleShowUpgradeModal = useStore(
+    (state) => state.toogleShowUpgradeModal
+  );
+
+  useEffect(() => {
+    if (plan_type === "trial" && valid_for > 0) {
+      toogleShowUpgradeModal(true);
+    }
+  }, [plan_type, toogleShowUpgradeModal, valid_for]);
 
   return (
     <>
