@@ -7,7 +7,7 @@ export default function PlanRestriction() {
   const toogleShowUpgradeModal = useStore(
     (state) => state.toogleShowUpgradeModal
   );
-  const valid_for = useStore((state) => state?.user?.subscription?.valid_for);
+  const trial_expired_in_days = useStore((state) => state?.user?.trial_expired_in_days);
 
   return (
     <motion.div
@@ -22,7 +22,7 @@ export default function PlanRestriction() {
         </h2>
         <p className="text-gray-600 mb-4">
           You have{" "}
-          <span className="font-semibold text-gray-800">{valid_for}</span> left
+          <span className="font-semibold text-gray-800">{trial_expired_in_days}</span> left
           in your free trial. Upgrade now to continue enjoying premium features
           without interruption.
         </p>

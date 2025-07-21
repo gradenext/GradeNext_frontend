@@ -23,7 +23,7 @@ function App() {
   const isOpen = useStore((state) => state.showUpgradeModal);
   const subscription = useStore((state) => state?.user?.subscription);
   const plan_type = useStore((state) => state?.user?.subscription?.plan_type);
-  const valid_for = useStore((state) => state?.user?.subscription?.valid_for);
+  const trial_expired_in_days = useStore((state) => state?.user?.trial_expired_in_days);
   const toogleShowUpgradeModal = useStore(
     (state) => state.toogleShowUpgradeModal
   );
@@ -73,7 +73,7 @@ function App() {
           title={"Upgrade you plan"}
           onClose={() => toogleShowUpgradeModal(false)}
           allowClose={
-            subscription !== null || (plan_type === "trial" && valid_for > 0)
+            subscription !== null || (plan_type === "trial" && trial_expired_in_days > 0)
           }
         >
           <PlanRestriction />

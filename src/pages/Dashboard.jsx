@@ -13,7 +13,6 @@ const Dashboard = () => {
   const [showInfoModal, setShowInfoModal] = useState(true);
   const subscription = useStore((state) => state?.user?.subscription);
   const plan_type = useStore((state) => state?.user?.subscription?.plan_type);
-  const valid_for = useStore((state) => state?.user?.subscription?.valid_for);
   const toogleShowUpgradeModal = useStore(
     (state) => state.toogleShowUpgradeModal
   );

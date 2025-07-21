@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import useStore from "../../store/store";
 import { useNavigate } from "react-router-dom";
+import CancelModal from "./CancelModal";
+import Modal from "../Modal";
+import ChangePlanModal from "./ChangePlanModal";
 
 const colors = {
   primary: "#6366f1",
@@ -20,9 +23,13 @@ function formatReadableDate(dateStr) {
 const SubscriptionPage = () => {
   const navigate = useNavigate();
   const user = useStore((state) => state.user);
+
+  const [showCancel, setShowCancel] = useState(false);
+  const [showChange, setShowChange] = useState(false);
+
   if (!user || !user.subscription) return null;
 
-  const isTrial = user.subscription.plan_type === "trial";
+  const isTrial = user.subscription.plan_type !== "trial";
 
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-10">
@@ -115,7 +122,10 @@ const SubscriptionPage = () => {
               You can switch to a different plan at any time to better suit your
               learning needs.
             </p>
-            <button className="bg-indigo-600 cursor-pointer text-white hover:bg-indigo-700 rounded-xl px-4 py-2 font-semibold transition">
+            <button
+              onClick={() => setShowChange(true)}
+              className="bg-indigo-600 cursor-pointer text-white hover:bg-indigo-700 rounded-xl px-4 py-2 font-semibold transition"
+            >
               Change Plan
             </button>
           </div>
@@ -128,7 +138,10 @@ const SubscriptionPage = () => {
               Canceling will stop future payments, but you’ll still have access
               until the end of your billing period.
             </p>
-            <button className="bg-red-600 cursor-pointer text-white hover:bg-red-700 rounded-xl px-4 py-2 font-semibold transition">
+            <button
+              onClick={() => setShowCancel(true)}
+              className="bg-red-600 cursor-pointer text-white hover:bg-red-700 rounded-xl px-4 py-2 font-semibold transition"
+            >
               Cancel Plan
             </button>
           </div>
@@ -143,9 +156,7 @@ const SubscriptionPage = () => {
         className="bg-white rounded-2xl shadow-md p-6 border space-y-4"
         style={{ borderColor: `${colors.success}20` }}
       >
-        <h3 className="text-2xl font-bold text-gray-800 mb-4">
-          Plan Details (Raw Data)
-        </h3>
+        <h3 className="text-2xl font-bold text-gray-800 mb-4">Plan Details</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-gray-700 text-base">
           <div>
             <span className="font-semibold">Plan Type:</span>
@@ -186,6 +197,21 @@ const SubscriptionPage = () => {
           </div>
         </div>
       </motion.div>
+
+      <Modal
+        isOpen={showCancel}
+        title={"Cancel you plan"}
+        onClose={() => setShowCancel(false)}
+      >
+        <CancelModal onClose={() => setShowCancel(false)} />
+      </Modal>
+      <Modal
+        isOpen={showChange}
+        title={"Change you plan"}
+        onClose={() => setShowChange(false)}
+      >
+        <ChangePlanModal onClose={() => setShowChange(false)} />
+      </Modal>
     </div>
   );
 };
