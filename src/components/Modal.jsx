@@ -7,6 +7,7 @@ const Modal = ({
   children,
   title,
   closeOnOutsideClick = true,
+  allowClose = true,
 }) => {
   const modalRef = useRef(null);
 
@@ -14,6 +15,7 @@ const Modal = ({
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
+        allowClose &&
         closeOnOutsideClick &&
         modalRef.current &&
         !modalRef.current.contains(event.target)
@@ -53,14 +55,18 @@ const Modal = ({
       >
         {title && (
           <div className="flex justify-between items-center p-3 sm:p-4 border-b">
-            <h3 className="text-base sm:text-lg font-medium capitalize">{title}</h3>
-            <button
-              onClick={onClose}
-              className="text-gray-500 hover:text-gray-700 transition-colors cursor-pointer p-1"
-              aria-label="Close modal"
-            >
-              <X className="w-5 h-5" />
-            </button>
+            <h3 className="text-base sm:text-lg font-medium capitalize">
+              {title}
+            </h3>
+            {allowClose && (
+              <button
+                onClick={onClose}
+                className="text-gray-500 hover:text-gray-700 transition-colors cursor-pointer p-1"
+                aria-label="Close modal"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            )}
           </div>
         )}
         <div className="p-4 sm:p-6">{children}</div>

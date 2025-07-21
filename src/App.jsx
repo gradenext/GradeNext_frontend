@@ -21,6 +21,7 @@ import Subscription from "./components/user/Subscription";
 function App() {
   const token = useStore((state) => state.token);
   const isOpen = useStore((state) => state.showUpgradeModal);
+  const subscription = useStore((state) => state?.user?.subscription);
   const plan_type = useStore((state) => state?.user?.subscription?.plan_type);
   const valid_for = useStore((state) => state?.user?.subscription?.valid_for);
   const toogleShowUpgradeModal = useStore(
@@ -70,11 +71,10 @@ function App() {
         <Modal
           isOpen={isOpen}
           title={"Upgrade you plan"}
-          onClose={() => {
-            if (plan_type === "trial" && valid_for > 0)
-              toogleShowUpgradeModal(false);
-          }}
-          closeOnOutsideClick={false}
+          onClose={() => toogleShowUpgradeModal(false)}
+          allowClose={
+            subscription !== null || (plan_type === "trial" && valid_for > 0)
+          }
         >
           <PlanRestriction />
         </Modal>
