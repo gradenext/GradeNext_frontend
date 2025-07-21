@@ -17,13 +17,16 @@ import Pricing from "./pages/Pricing";
 import StripeResult from "./pages/StripeResult";
 import PricingSuccess from "./pages/PricingSuccess";
 import Subscription from "./components/user/Subscription";
+import PricingFailure from "./pages/PricingFailure";
 
 function App() {
   const token = useStore((state) => state.token);
   const isOpen = useStore((state) => state.showUpgradeModal);
   const subscription = useStore((state) => state?.user?.subscription);
   const plan_type = useStore((state) => state?.user?.subscription?.plan_type);
-  const trial_expired_in_days = useStore((state) => state?.user?.trial_expired_in_days);
+  const trial_expired_in_days = useStore(
+    (state) => state?.user?.trial_expired_in_days
+  );
   const toogleShowUpgradeModal = useStore(
     (state) => state.toogleShowUpgradeModal
   );
@@ -44,6 +47,7 @@ function App() {
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/stripe-result" element={<StripeResult />} />
             <Route path="/pricing-success" element={<PricingSuccess />} />
+            <Route path="/pricing-cancel" element={<PricingFailure />} />
 
             <Route path="/user" element={<User />}>
               <Route path="profile" element={<UserProfile />} />
@@ -73,7 +77,8 @@ function App() {
           title={"Upgrade you plan"}
           onClose={() => toogleShowUpgradeModal(false)}
           allowClose={
-            subscription !== null || (plan_type === "trial" && trial_expired_in_days > 0)
+            subscription !== null ||
+            (plan_type === "trial" && trial_expired_in_days > 0)
           }
         >
           <PlanRestriction />
