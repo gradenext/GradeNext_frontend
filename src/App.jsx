@@ -10,7 +10,6 @@ import ForgotPassword from "./pages/ForgotPassword";
 import UserProfile from "./components/user/UserProfile";
 import UserStats from "./components/user/UserStats";
 import QuizReport from "./components/quiz/QuizReport";
-import PlanRestriction from "./components/PlanRestriction";
 import Modal from "./components/Modal";
 import toast from "react-hot-toast";
 import Pricing from "./pages/Pricing";
@@ -18,6 +17,10 @@ import StripeResult from "./pages/StripeResult";
 import PricingSuccess from "./pages/PricingSuccess";
 import Subscription from "./components/user/Subscription";
 import PricingFailure from "./pages/PricingFailure";
+import PlanRestriction from "./components/modals/PlanRestriction";
+import PlanExpiredNotice from "./components/modals/PlanExpiredNotice";
+import PlanCancelledNotice from "./components/modals/PlanCancelledNotice";
+import PlanNotice from "./components/modals/PlanNotice";
 
 function App() {
   const token = useStore((state) => state.token);
@@ -30,6 +33,18 @@ function App() {
   const toogleShowUpgradeModal = useStore(
     (state) => state.toogleShowUpgradeModal
   );
+
+  const getNotice = () => {
+    if (
+      subscription === null ||
+      (plan_type === "trial" && trial_expired_in_days > 0)
+    )
+      return <PlanRestriction />;
+    else if (subscription?.status === "expired") return <PlanExpiredNotice />;
+    else if (subscription?.status === "cancelled")
+      return <PlanCancelledNotice />;
+    else if (subscription?.status === "active") return <PlanNotice />;
+  };
 
   try {
     return (
@@ -77,11 +92,12 @@ function App() {
           title={"Upgrade you plan"}
           onClose={() => toogleShowUpgradeModal(false)}
           allowClose={
-            subscription !== null ||
-            (plan_type === "trial" && trial_expired_in_days > 0)
+            subscription === null ||
+            (plan_type === "trial" && trial_expired_in_days > 0) ||
+            subscription?.status === "active"
           }
         >
-          <PlanRestriction />
+          {getNotice()}
         </Modal>
       </div>
     );

@@ -1,6 +1,1 @@
-Button1 - cancel plan ----
-api add
-Button 2 - change plan -----
-api add
-
-whenever those api hit refetch profile.
+Cancelled and expired plan, restriction modal

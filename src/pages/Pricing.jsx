@@ -6,25 +6,35 @@ import { createCheckoutSession } from "../services/stripe";
 import toast from "react-hot-toast";
 import { AnimatePresence, motion } from "framer-motion";
 import plans from "../constants/plan";
-import CheckoutModal from "../components/CheckoutModal";
+import CheckoutModal from "../components/modals/CheckoutModal";
 
 const Pricing = () => {
   const navigate = useNavigate();
+  const subscription = useStore((state) => state?.user?.subscription);
+  const plan_type = useStore((state) => state?.user?.subscription?.plan_type);
   const [selectedCycle, setSelectedCycle] = useState("monthly");
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handlePlanSelect = (plan) => {
     setSelectedPlan(plan);
     setModalOpen(true);
   };
 
+  const platform_fee_applied = subscription === null || plan_type === "trial";
   const handleCheckout = async () => {
     if (!selectedPlan) return;
     const duration =
-      selectedCycle === "monthly" ? 1 : selectedCycle === "quarterly" ? 3 : 12;
-    const platform_fee_applied = true;
+      selectedCycle === "monthly"
+        ? 1
+        : selectedCycle === "quarterly"
+        ? 3
+        : selectedCycle === "half-yearly"
+        ? 6
+        : 12;
 
+    setLoading(true);
     try {
       const res = await createCheckoutSession({
         plan: selectedPlan.id,
@@ -40,6 +50,8 @@ const Pricing = () => {
     } catch (err) {
       console.error(err);
       toast.error("Payment error");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -110,6 +122,8 @@ const Pricing = () => {
         selectedPlan={selectedPlan}
         selectedCycle={selectedCycle}
         handleCheckout={handleCheckout}
+        platformFee={platform_fee_applied}
+        loading={loading}
       />
     </div>
   );

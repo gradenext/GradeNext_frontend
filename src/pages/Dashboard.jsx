@@ -18,7 +18,12 @@ const Dashboard = () => {
   );
 
   useEffect(() => {
-    if (subscription === null || plan_type === "trial") {
+    if (
+      subscription === null ||
+      plan_type === "trial" ||
+      subscription?.status === "expired" ||
+      subscription?.status === "cancelled"
+    ) {
       toogleShowUpgradeModal(true);
     }
   }, [plan_type, toogleShowUpgradeModal, subscription]);

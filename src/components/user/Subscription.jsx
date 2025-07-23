@@ -90,7 +90,7 @@ const SubscriptionPage = () => {
           )}
         </p>
 
-        {isTrial && (
+        {!isTrial && (
           <button
             onClick={() => navigate("/pricing")}
             className="bg-gradient-to-r cursor-pointer my-4 from-purple-500 to-orange-400 text-white px-6 py-2 rounded-xl font-semibold hover:scale-105 transition"
@@ -107,7 +107,7 @@ const SubscriptionPage = () => {
       </motion.div>
 
       {/* CTA Banners */}
-      {!isTrial && (
+      {isTrial && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -208,7 +208,8 @@ const SubscriptionPage = () => {
       <Modal
         isOpen={showChange}
         title={"Change you plan"}
-        onClose={() => setShowChange(false)}
+        // onClose={() => setShowChange(false)}
+        onClose={() => {}}
       >
         <ChangePlanModal onClose={() => setShowChange(false)} />
       </Modal>

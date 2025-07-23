@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import useStore from "../../store/store";
 import { cancelPlan } from "../../services/stripe";
 import toast from "react-hot-toast";
+import { profile } from "../../services/auth";
+import { useNavigate } from "react-router-dom";
 
 function formatReadableDate(dateStr) {
   const options = { year: "numeric", month: "long", day: "numeric" };
@@ -10,11 +12,16 @@ function formatReadableDate(dateStr) {
 }
 
 export default function CancelModal({ onClose }) {
+  const navigate = useNavigate();
   const endDate = useStore((state) => state.user.subscription.end_date);
+  const setUserData = useStore((state) => state?.setUserData);
 
   const handleCancel = async () => {
     try {
       await cancelPlan();
+      const user = await profile();
+      setUserData(user?.user, user?.user_stats);
+      navigate("/dashboard");
     } catch (error) {
       toast.error(error?.response?.data?.error);
     }

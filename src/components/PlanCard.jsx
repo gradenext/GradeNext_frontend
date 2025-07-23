@@ -97,7 +97,7 @@ const PlanCard = ({ plan, onClick }) => {
       {/* CTA Button */}
       <button
         onClick={onClick}
-        className={`mt-8 w-full text-sm font-semibold text-white py-2.5 rounded-lg transition ${style.button}`}
+        className={`mt-8 w-full cursor-pointer text-sm font-semibold text-white py-2.5 rounded-lg transition ${style.button}`}
       >
         Choose {plan.name}
       </button>

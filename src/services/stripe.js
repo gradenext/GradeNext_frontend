@@ -1,11 +1,15 @@
 import api from "./api";
 
 // Takes planId ("pro", "basic", etc.) and duration (1, 3, 12)
-export const createCheckoutSession = async ({ plan, duration }) => {
+export const createCheckoutSession = async ({
+  plan,
+  duration,
+  platform_fee_applied,
+}) => {
   const response = await api.post("stripe/create-checkout-session/", {
     plan,
     duration,
-    platform_fee_applied: true,
+    platform_fee_applied,
   });
   return response.data;
 };
