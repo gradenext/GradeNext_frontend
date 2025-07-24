@@ -147,7 +147,7 @@ const ChangePlan = () => {
                       </div>
 
                       <div className="text-5xl font-extrabold">
-                        ₹{(plan.amount / 100).toFixed(0)}
+                        ${(plan.amount / 100).toFixed(0)}
                       </div>
 
                       <p className="text-sm text-gray-600">
@@ -170,14 +170,26 @@ const ChangePlan = () => {
         </motion.div>
       </AnimatePresence>
 
+      {selectedPlanId && selectedCycle && (
+        <div className="mt-8 flex justify-center">
+          <button
+            onClick={() => setShowChange(true)}
+            className="px-6 py-3 bg-indigo-600 cursor-pointer text-white rounded-lg font-medium shadow hover:bg-indigo-700 transition"
+          >
+            Continue with Selected Plan
+          </button>
+        </div>
+      )}
+
+      {/* Modal */}
       <Modal
-        isOpen={!showChange}
-        title={"Cancel you plan"}
+        isOpen={showChange}
+        title="Confirm Plan Change"
         onClose={() => setShowChange(false)}
       >
         <ChangePlanModal
           selectedCycle={selectedCycle}
-          selectedPlan={selectedPlanId}
+          selectedPlanId={selectedPlanId}
           onClose={() => setShowChange(false)}
         />
       </Modal>
