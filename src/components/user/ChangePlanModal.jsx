@@ -4,15 +4,18 @@ import toast from "react-hot-toast";
 import { changePlan } from "../../services/stripe";
 import { useState } from "react";
 
-const plans = ["Basic", "Pro", "Advanced"];
-const cycles = [1, 3, 6, 12];
+const cycleLabel = {
+  1: "Monthly",
+  3: "Quarterly",
+  6: "Half-Yearly",
+  12: "Yearly",
+};
 
-export default function ChangePlanModal({ onClose }) {
-  const user = useStore((state) => state.user);
-  const [selectedPlan, setSelectedPlan] = useState(user?.subscription?.plan);
-  const [selectedCycle, setSelectedCycle] = useState(
-    user?.subscription?.duration / 30 || 1
-  );
+export default function ChangePlanModal({
+  onClose,
+  selectedPlan,
+  selectedCycle,
+}) {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
@@ -32,63 +35,36 @@ export default function ChangePlanModal({ onClose }) {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="max-w-md mx-auto mt-12 p-6 bg-white rounded-xl shadow-lg"
+      className="max-w-md mx-auto mt-12 p-6 bg-white rounded-xl shadow-xl border"
     >
-      <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">
-          Change Your Plan
+      <div className="text-center space-y-4">
+        <h2 className="text-2xl font-bold text-gray-800">
+          Confirm Plan Change
         </h2>
-        <p className="text-gray-600 mb-6">
-          Choose a new plan and billing cycle below.
+        <p className="text-gray-600">You are about to switch to:</p>
+
+        <div className="bg-gray-100 p-4 rounded-lg text-left">
+          <p className="text-gray-700 mb-2">
+            <span className="font-semibold">Plan:</span>{" "}
+            <span className="capitalize">{selectedPlan}</span>
+          </p>
+          <p className="text-gray-700">
+            <span className="font-semibold">Billing Cycle:</span>{" "}
+            {cycleLabel[selectedCycle] || `${selectedCycle} months`}
+          </p>
+        </div>
+
+        <p className="text-sm text-gray-500 mt-2">
+          You will be redirected to complete payment (if applicable).
         </p>
 
-        <div className="mb-6">
-          <p className="text-gray-700 mb-2 font-medium">Choose a Plan:</p>
-          <div className="flex justify-center flex-wrap gap-3">
-            {plans.map((plan) => (
-              <button
-                key={plan}
-                onClick={() => setSelectedPlan(plan)}
-                className={`px-4 py-2 rounded-full border ${
-                  selectedPlan === plan
-                    ? "bg-blue-600 text-white border-blue-600"
-                    : "bg-white text-gray-800 border-gray-300"
-                } hover:bg-blue-50 transition`}
-              >
-                {plan}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="mb-6">
-          <p className="text-gray-700 mb-2 font-medium">
-            Billing Cycle (in months):
-          </p>
-          <div className="flex justify-center flex-wrap gap-3">
-            {cycles.map((cycle) => (
-              <button
-                key={cycle}
-                onClick={() => setSelectedCycle(cycle)}
-                className={`px-4 py-2 rounded-full border ${
-                  selectedCycle === cycle
-                    ? "bg-green-600 text-white border-green-600"
-                    : "bg-white text-gray-800 border-gray-300"
-                } hover:bg-green-50 transition`}
-              >
-                {cycle} {cycle === 1 ? "month" : "months"}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="flex justify-center gap-4">
+        <div className="flex justify-center gap-4 mt-6">
           <button
             onClick={handleSubmit}
             disabled={loading}
-            className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition disabled:opacity-50"
+            className="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition disabled:opacity-50"
           >
-            {loading ? "Updating..." : "Confirm Change"}
+            {loading ? "Updating..." : "Confirm & Continue"}
           </button>
           <button
             onClick={onClose}

@@ -138,15 +138,6 @@ const UserProfile = () => {
         </div>
       </motion.div>
 
-      <div
-        className={`text-3xl font-semibold my-4 mx-auto text-white px-4 py-2 w-fit rounded-2xl`}
-        style={{
-          backgroundColor: colors.secondary,
-        }}
-      >
-        {user.plan}
-      </div>
-
       {/* Enhanced Profile Info Cards */}
       <motion.div
         initial={{ opacity: 0 }}

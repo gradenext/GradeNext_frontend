@@ -52,8 +52,6 @@ const PlanCard = ({ plan, onClick }) => {
   const price = plan.amount;
   const features = PLAN_FEATURES[plan.id] || [];
   const style = PLAN_STYLE[plan.id] || PLAN_STYLE.basic;
-  const isFree = price === 0;
-  const isContact = typeof price !== "number";
 
   return (
     <div

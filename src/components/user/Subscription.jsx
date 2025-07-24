@@ -23,13 +23,16 @@ function formatReadableDate(dateStr) {
 const SubscriptionPage = () => {
   const navigate = useNavigate();
   const user = useStore((state) => state.user);
+  const plan = useStore((state) => state?.user?.subscription?.plan);
+  const duration = Math.floor(
+    useStore((state) => state?.user?.subscription?.valid_for) / 30
+  );
 
   const [showCancel, setShowCancel] = useState(false);
-  const [showChange, setShowChange] = useState(false);
 
   if (!user || !user.subscription) return null;
 
-  const isTrial = user.subscription.plan_type !== "trial";
+  const isTrial = user.subscription.plan_type === "trial";
 
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-10">
@@ -60,54 +63,84 @@ const SubscriptionPage = () => {
         ></div>
       </motion.div>
 
-      {/* Subscription Status Box */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="bg-white p-6 rounded-2xl shadow-lg border text-center"
+        className="rounded-2xl shadow-xl border p-6 sm:p-8 bg-gradient-to-br from-white to-gray-50 space-y-6"
         style={{
           borderColor: `${colors.accent}30`,
-          background: `linear-gradient(to bottom right, ${colors.background}, white)`,
-          boxShadow: `0 4px 16px ${colors.accent}20`,
+          boxShadow: `0 8px 24px ${colors.accent}20`,
         }}
       >
-        <h2 className="text-2xl font-bold mb-2 text-gray-800">
-          {isTrial ? "You're on a Trial Plan" : `Current Plan: ${user.plan}`}
-        </h2>
-        <p className="text-gray-600 mb-4">
-          {isTrial ? (
-            <>
-              Your trial ends in
-              <span className="font-semibold text-orange-500">
-                {" "}
-                {user.trial_expired_in_days} days
-              </span>
-              . Upgrade now to avoid losing access.
-            </>
-          ) : (
-            <>You're enjoying full access to all premium features.</>
-          )}
-        </p>
+        {/* Header: Plan & Trial */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="space-y-1">
+            <h2 className="text-2xl font-bold text-gray-800">
+              You're on a{" "}
+              <span className="uppercase font-extrabold text-transparent bg-clip-text bg-gradient-to-r cursor-pointer from-purple-500 to-orange-400">
+                {plan}
+              </span>{" "}
+              Plan
+            </h2>
+            <p className="text-sm sm:text-base text-gray-600">
+              {isTrial ? (
+                <>
+                  Trial ends in{" "}
+                  <span className="font-semibold text-orange-500">
+                    {user.trial_expired_in_days} days
+                  </span>
+                  . Upgrade now to continue access.
+                </>
+              ) : (
+                "You have full access to premium features."
+              )}
+            </p>
+          </div>
 
-        {!isTrial && (
-          <button
-            onClick={() => navigate("/pricing")}
-            className="bg-gradient-to-r cursor-pointer my-4 from-purple-500 to-orange-400 text-white px-6 py-2 rounded-xl font-semibold hover:scale-105 transition"
-          >
-            Subscribe Now
-          </button>
-        )}
-        <p className="text-sm text-gray-500">
-          Plan valid till{" "}
-          <span className="font-medium text-gray-700">
-            {formatReadableDate(user.subscription.end_date)}
-          </span>
-        </p>
+          {isTrial && (
+            <button
+              onClick={() => navigate("/pricing")}
+              className="bg-gradient-to-r cursor-pointer from-purple-500 to-orange-400 text-white px-6 py-2 rounded-xl font-semibold hover:scale-105 transition duration-200"
+            >
+              Upgrade Plan
+            </button>
+          )}
+        </div>
+
+        {/* Details Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-gray-700 text-sm sm:text-base">
+          <div className="flex flex-col">
+            <span className="text-gray-500 font-medium">
+              Subscription Status
+            </span>
+            <span
+              className={`text-lg font-semibold capitalize ${
+                user.subscription.status === "active"
+                  ? "text-green-600"
+                  : "text-red-500"
+              }`}
+            >
+              {user.subscription.status}
+            </span>
+          </div>
+          <div className="flex flex-col">
+            <span className="text-gray-500 font-medium">Start of Billing</span>
+            <span className="text-lg font-semibold text-gray-800">
+              {formatReadableDate(user.subscription.start_date)}
+            </span>
+          </div>
+          <div className="flex flex-col">
+            <span className="text-gray-500 font-medium">Next Billing Date</span>
+            <span className="text-lg font-semibold text-gray-800">
+              {formatReadableDate(user.subscription.end_date)}
+            </span>
+          </div>
+        </div>
       </motion.div>
 
       {/* CTA Banners */}
-      {isTrial && (
+      {!isTrial && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -123,7 +156,7 @@ const SubscriptionPage = () => {
               learning needs.
             </p>
             <button
-              onClick={() => setShowChange(true)}
+              onClick={() => navigate(`/user/plan/${duration}/${plan}`)}
               className="bg-indigo-600 cursor-pointer text-white hover:bg-indigo-700 rounded-xl px-4 py-2 font-semibold transition"
             >
               Change Plan
@@ -148,70 +181,12 @@ const SubscriptionPage = () => {
         </motion.div>
       )}
 
-      {/* Detailed Raw Info */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.6 }}
-        className="bg-white rounded-2xl shadow-md p-6 border space-y-4"
-        style={{ borderColor: `${colors.success}20` }}
-      >
-        <h3 className="text-2xl font-bold text-gray-800 mb-4">Plan Details</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-gray-700 text-base">
-          <div>
-            <span className="font-semibold">Plan Type:</span>
-            <span className="text-xl font-bold text-indigo-600 block capitalize">
-              {user.subscription.plan_type}
-            </span>
-          </div>
-          <div>
-            <span className="font-semibold">Days Left in Trial:</span>
-            <span className="text-xl font-bold text-orange-500 block">
-              {user.trial_expired_in_days}
-            </span>
-          </div>
-          <div>
-            <span className="font-semibold">Trial Expired:</span>
-            <span className="text-xl font-bold text-red-500 block capitalize">
-              {user.is_trial_expired ? "Yes" : "No"}
-            </span>
-          </div>
-
-          <div>
-            <span className="font-semibold">Subscription Status:</span>
-            <span className="text-xl font-bold text-green-600 block capitalize">
-              {user.subscription.status}
-            </span>
-          </div>
-          <div>
-            <span className="font-semibold">Start Date:</span>
-            <span className="block">
-              {formatReadableDate(user.subscription.start_date)}
-            </span>
-          </div>
-          <div>
-            <span className="font-semibold">End Date:</span>
-            <span className="block">
-              {formatReadableDate(user.subscription.end_date)}
-            </span>
-          </div>
-        </div>
-      </motion.div>
-
       <Modal
         isOpen={showCancel}
         title={"Cancel you plan"}
         onClose={() => setShowCancel(false)}
       >
         <CancelModal onClose={() => setShowCancel(false)} />
-      </Modal>
-      <Modal
-        isOpen={showChange}
-        title={"Change you plan"}
-        // onClose={() => setShowChange(false)}
-        onClose={() => {}}
-      >
-        <ChangePlanModal onClose={() => setShowChange(false)} />
       </Modal>
     </div>
   );

@@ -1,7 +1,7 @@
 import { AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { useStore } from "zustand";
+import useStore from "../../store/store";
 
 export default function PlanNotice() {
   const toogleShowUpgradeModal = useStore(

@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { BarChart2, LayoutDashboard, User, Loader2, Wallet } from "lucide-react";
+import { BarChart2, LayoutDashboard, User, Loader2, Wallet, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { profile } from "../services/auth";
