@@ -8,6 +8,8 @@ import DashboardSubject from "../components/dashboard/DashboardSubject";
 import DashboardActivity from "../components/dashboard/DashboardActivity";
 import StartButton from "../components/dashboard/StartButton";
 import useStore from "../store/store";
+import { profile } from "../services/auth";
+import toast from "react-hot-toast";
 
 const Dashboard = () => {
   const [showInfoModal, setShowInfoModal] = useState(true);
@@ -16,6 +18,21 @@ const Dashboard = () => {
   const toogleShowUpgradeModal = useStore(
     (state) => state.toogleShowUpgradeModal
   );
+  const setUserData = useStore((state) => state?.setUserData);
+
+  const fetchUser = async () => {
+    try {
+      const user = await profile();
+      setUserData(user?.user, user?.user_stats);
+    } catch (err) {
+      console.error("Failed to fetch user:", err);
+      toast.error("Oops!! Something went wrong");
+    }
+  };
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
 
   useEffect(() => {
     if (
