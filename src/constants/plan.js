@@ -13,7 +13,7 @@ const plans = {
       name: "Pro",
       description: "Practice + Time Travel access",
       amount: 4900,
-      stripe_price_id: "price_1RlxaUGb17a8LOzTQyhxORgb",
+      stripe_price_id: "price_1RkUWjGb17a8LOzTZITqbxrU",
     },
     {
       id: "advanced",
@@ -43,7 +43,7 @@ const plans = {
       name: "Advanced",
       description: "Full access: Practice, Time Travel & Treasure Hunt",
       amount: 27000,
-      stripe_price_id: "price_1_quarter_advanced",
+      stripe_price_id: "price_1Ro76uGb17a8LOzTSECpf00R",
     },
   ],
   "half-yearly": [
@@ -75,7 +75,7 @@ const plans = {
       name: "Basic",
       description: "Access to Practice Quest",
       amount: 19000,
-      stripe_price_id: "price_1RkLjPGb17a8LOzTal2EdaXF",
+      stripe_price_id: "price_1Ro77VGb17a8LOzTO6j3Te2c",
     },
     {
       id: "pro",
