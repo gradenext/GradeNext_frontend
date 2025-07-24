@@ -20,19 +20,18 @@ const Dashboard = () => {
   );
   const setUserData = useStore((state) => state?.setUserData);
 
-  const fetchUser = async () => {
-    try {
-      const user = await profile();
-      setUserData(user?.user, user?.user_stats);
-    } catch (err) {
-      console.error("Failed to fetch user:", err);
-      toast.error("Oops!! Something went wrong");
-    }
-  };
-
   useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const user = await profile();
+        setUserData(user?.user, user?.user_stats);
+      } catch (err) {
+        console.error("Failed to fetch user:", err);
+        toast.error("Oops!! Something went wrong");
+      }
+    };
     fetchUser();
-  }, []);
+  }, [setUserData]);
 
   useEffect(() => {
     if (
