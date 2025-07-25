@@ -1,26 +1,61 @@
-import { motion } from "framer-motion";
-import useStore from "../../store/store";
+import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
+import { profile } from "../../services/auth";
+import useStore from "../../store/store";
+import { useNavigate } from "react-router-dom";
 import { changePlan } from "../../services/stripe";
-import { useState } from "react";
+import plans from "../../constants/plan";
+import { Loader2 } from "lucide-react";
 
-const plans = ["Basic", "Pro", "Advanced"];
-const cycles = [1, 3, 6, 12];
-
-export default function ChangePlanModal({ onClose }) {
-  const user = useStore((state) => state.user);
-  const [selectedPlan, setSelectedPlan] = useState(user?.subscription?.plan);
-  const [selectedCycle, setSelectedCycle] = useState(
-    user?.subscription?.duration / 30 || 1
-  );
+export default function ChangePlanModal({
+  onClose,
+  selectedPlanId,
+  selectedCycle,
+}) {
   const [loading, setLoading] = useState(false);
+  const setUserData = useStore((state) => state.setUserData);
+  const navigate = useNavigate();
+  const [price, setPrice] = useState(null);
+  const [planName, setPlanName] = useState("");
+  const [durationNumeric, setDurationNumeric] = useState(null);
+
+  const durationLabels = {
+    monthly: "1 month",
+    quarterly: "3 months",
+    "half-yearly": "6 months",
+    yearly: "12 months",
+  };
+
+  const durationNumericMap = {
+    monthly: 1,
+    quarterly: 3,
+    "half-yearly": 6,
+    yearly: 12,
+  };
+
+  useEffect(() => {
+    const planData = plans[selectedCycle]?.find((p) => p.id === selectedPlanId);
+
+    if (planData) {
+      setPrice((planData.amount / 100).toFixed(0));
+      setPlanName(planData.name);
+      setDurationNumeric(durationNumericMap[selectedCycle]);
+    }
+  }, [selectedPlanId, selectedCycle]);
 
   const handleSubmit = async () => {
     try {
       setLoading(true);
-      await changePlan({ plan: selectedPlan, duration: selectedCycle });
+      await changePlan({
+        plan: planName,
+        duration: durationNumeric,
+      });
       toast.success("Plan updated successfully");
-      onClose(); // Close modal on success
+      onClose();
+
+      const user = await profile();
+      setUserData(user?.user, user?.user_stats);
+      navigate("/dashboard");
     } catch (error) {
       toast.error(error?.response?.data?.error || "Something went wrong");
     } finally {
@@ -29,76 +64,62 @@ export default function ChangePlanModal({ onClose }) {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="max-w-md mx-auto mt-12 p-6 bg-white rounded-xl shadow-lg"
-    >
-      <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">
-          Change Your Plan
-        </h2>
-        <p className="text-gray-600 mb-6">
-          Choose a new plan and billing cycle below.
-        </p>
+    <div className="max-w-xl mx-auto p-6 md:p-8 bg-white rounded-xl shadow-lg text-center">
+      <h2 className="text-xl md:text-2xl font-semibold text-gray-800 mb-4">
+        Confirm Your Plan Change
+      </h2>
 
-        <div className="mb-6">
-          <p className="text-gray-700 mb-2 font-medium">Choose a Plan:</p>
-          <div className="flex justify-center flex-wrap gap-3">
-            {plans.map((plan) => (
-              <button
-                key={plan}
-                onClick={() => setSelectedPlan(plan)}
-                className={`px-4 py-2 rounded-full border ${
-                  selectedPlan === plan
-                    ? "bg-blue-600 text-white border-blue-600"
-                    : "bg-white text-gray-800 border-gray-300"
-                } hover:bg-blue-50 transition`}
-              >
-                {plan}
-              </button>
-            ))}
-          </div>
-        </div>
+      <p className="text-sm md:text-base text-gray-700 mb-2">
+        You're switching to the{" "}
+        <span className="font-bold text-indigo-600">{planName}</span> plan.
+      </p>
 
-        <div className="mb-6">
-          <p className="text-gray-700 mb-2 font-medium">
-            Billing Cycle (in months):
+      <p className="text-sm md:text-base text-gray-700 mb-4">
+        This will be billed for a duration of{" "}
+        <span className="capitalize font-semibold">
+          {durationLabels[selectedCycle]}
+        </span>
+        .
+      </p>
+
+      {price && (
+        <div className="bg-gray-50 rounded-lg p-4 mb-6">
+          <p className="text-gray-600 text-sm">Total amount payable</p>
+          <p className="text-3xl font-bold text-indigo-700 mt-1 mb-1">
+            ${price}
           </p>
-          <div className="flex justify-center flex-wrap gap-3">
-            {cycles.map((cycle) => (
-              <button
-                key={cycle}
-                onClick={() => setSelectedCycle(cycle)}
-                className={`px-4 py-2 rounded-full border ${
-                  selectedCycle === cycle
-                    ? "bg-green-600 text-white border-green-600"
-                    : "bg-white text-gray-800 border-gray-300"
-                } hover:bg-green-50 transition`}
-              >
-                {cycle} {cycle === 1 ? "month" : "months"}
-              </button>
-            ))}
-          </div>
+          <p className="text-gray-500 text-sm">
+            Covers {durationLabels[selectedCycle]} of full access.
+          </p>
         </div>
+      )}
 
-        <div className="flex justify-center gap-4">
-          <button
-            onClick={handleSubmit}
-            disabled={loading}
-            className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition disabled:opacity-50"
-          >
-            {loading ? "Updating..." : "Confirm Change"}
-          </button>
-          <button
-            onClick={onClose}
-            disabled={loading}
-            className="px-6 py-2 border border-gray-300 text-gray-700 hover:bg-gray-100 rounded-lg transition"
-          >
-            Cancel
-          </button>
-        </div>
+      <p className="text-xs text-gray-500 mb-6 max-w-md mx-auto">
+        By confirming, your current subscription will be replaced immediately.
+        The next billing will reflect your new cycle and plan.
+      </p>
+
+      <div className="flex justify-center gap-4">
+        <button
+          onClick={onClose}
+          disabled={loading}
+          className="px-5 py-2 border cursor-pointer border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition text-sm md:text-base"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleSubmit}
+          disabled={loading}
+          className={`px-5 py-2 rounded-lg flex justify-center items-center gap-x-3 cursor-pointer text-white font-medium transition text-sm md:text-base ${
+            loading
+              ? "bg-indigo-400 cursor-not-allowed"
+              : "bg-indigo-600 hover:bg-indigo-700"
+          }`}
+        >
+          {loading && <Loader2 className=" animate-spin h-4 w-4" />}
+          {loading ? "Updating" : "Confirm"}
+        </button>
       </div>
-    </motion.div>
+    </div>
   );
 }
