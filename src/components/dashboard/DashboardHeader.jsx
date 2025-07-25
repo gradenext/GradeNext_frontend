@@ -90,7 +90,7 @@ const DashboardHeader = () => {
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.97 }}
             onClick={() => navigate("/user/profile")}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl shadow-md bg-gradient-to-r from-sky-400 to-blue-400 text-white focus:outline-none"
+            className="flex cursor-pointer items-center gap-2 px-4 py-2 rounded-xl shadow-md bg-gradient-to-r from-sky-400 to-blue-400 text-white focus:outline-none"
           >
             <img
               src="https://api.dicebear.com/9.x/adventurer/svg?seed=Nolan"

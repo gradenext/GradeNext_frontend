@@ -78,7 +78,7 @@ const BookTutorModal = ({ isOpen, onClose }) => {
       onClose();
     } catch (error) {
       console.error("EmailJS Error:", error);
-      toast.error("❌ Something went wrong. Please try again.");
+      toast.error("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -192,7 +192,7 @@ const BookTutorModal = ({ isOpen, onClose }) => {
                 !form.grade.trim() ||
                 form.subjects.length === 0
               }
-              className="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full py-3 cursor-pointer bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <>
@@ -209,7 +209,7 @@ const BookTutorModal = ({ isOpen, onClose }) => {
             <button
               type="button"
               onClick={onClose}
-              className="w-full mt-3 py-2 text-blue-700 hover:text-blue-900 text-sm"
+              className="w-full cursor-pointer mt-3 py-2 text-blue-700 hover:text-blue-900 text-sm"
               disabled={loading}
             >
               Cancel

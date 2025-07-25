@@ -132,7 +132,7 @@ const RaiseTicketModal = ({ isOpen, onClose }) => {
                 !form.subject.trim() ||
                 !form.description.trim()
               }
-              className="w-full py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full py-3 cursor-pointer bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <>
@@ -148,7 +148,7 @@ const RaiseTicketModal = ({ isOpen, onClose }) => {
             <button
               type="button"
               onClick={onClose}
-              className="w-full mt-3 py-2 text-purple-700 hover:text-purple-900 text-sm"
+              className="w-full cursor-pointer mt-3 py-2 text-purple-700 hover:text-purple-900 text-sm"
               disabled={loading}
             >
               Cancel
