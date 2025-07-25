@@ -1,13 +1,22 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { Rocket, LifeBuoy, BookOpen, ChevronDown, List, Ellipsis } from "lucide-react";
+import {
+  Rocket,
+  LifeBuoy,
+  BookOpen,
+  ChevronDown,
+  List,
+  Ellipsis,
+} from "lucide-react";
 import LogoutModal from "../modals/LogoutModal";
+import RaiseTicketModal from "../modals/RaiseTicketModal";
 
 const DashboardHeader = () => {
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showRaiseTicket, setShowRaiseTicket] = useState(false);
 
   const ACTION_BUTTONS = [
     {
@@ -18,7 +27,7 @@ const DashboardHeader = () => {
     },
     {
       label: "Raise a Ticket",
-      onClick: () => console.log("Raise a Ticket clicked"),
+      onClick: () => setShowRaiseTicket(true),
       icon: <LifeBuoy className="w-4 h-4 text-white animate-bounce" />,
       gradient: "from-yellow-400 to-orange-400",
     },
@@ -97,7 +106,7 @@ const DashboardHeader = () => {
               onClick={() => setIsDropdownOpen((prev) => !prev)}
               className="flex items-center cursor-pointer gap-2 px-4 py-2 rounded-xl shadow-md bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-sm sm:text-base focus:outline-none"
             >
-            <Ellipsis/>  Actions
+              <Ellipsis /> Actions
               <ChevronDown
                 className={`w-4 h-4 transition-transform ${
                   isDropdownOpen ? "rotate-180" : ""
@@ -141,6 +150,10 @@ const DashboardHeader = () => {
       <LogoutModal
         onClose={() => setShowLogoutModal(false)}
         isOpen={showLogoutModal}
+      />
+      <RaiseTicketModal
+        onClose={() => setShowRaiseTicket(false)}
+        isOpen={showRaiseTicket}
       />
     </motion.div>
   );
