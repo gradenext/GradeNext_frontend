@@ -43,7 +43,7 @@ const Modal = ({
 
   return (
     <div
-      className={`fixed inset-0 z-50 h-screen w-screen bg-black/80 flex items-center justify-center transition-opacity duration-300 p-4 ${
+      className={`fixed inset-0 z-50 h-screen w-screen overflow-y-auto bg-black/80 flex items-center justify-center transition-opacity duration-300 p-4 ${
         isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
       }`}
     >

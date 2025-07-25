@@ -11,17 +11,19 @@ import {
 } from "lucide-react";
 import LogoutModal from "../modals/LogoutModal";
 import RaiseTicketModal from "../modals/RaiseTicketModal";
+import BookTutorModal from "../modals/BookTutorModal";
 
 const DashboardHeader = () => {
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showRaiseTicket, setShowRaiseTicket] = useState(false);
+  const [showBookTutorModal, setShowBookTutorModal] = useState(false);
 
   const ACTION_BUTTONS = [
     {
       label: "Book Tutor",
-      onClick: () => console.log("Book Tutor clicked"),
+      onClick: () => setShowBookTutorModal(true),
       icon: <BookOpen className="w-4 h-4 text-white animate-bounce" />,
       gradient: "from-green-400 to-emerald-500",
     },
@@ -155,6 +157,7 @@ const DashboardHeader = () => {
         onClose={() => setShowRaiseTicket(false)}
         isOpen={showRaiseTicket}
       />
+      <BookTutorModal isOpen={showBookTutorModal} onClose={() => setShowBookTutorModal(false)} />
     </motion.div>
   );
 };
