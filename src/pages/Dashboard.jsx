@@ -49,7 +49,7 @@ const Dashboard = () => {
       {/* {showInfoModal && <InfoModal onClose={() => setShowInfoModal(false)} />} */}
       <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 relative">
         <DashboardHeader />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 pt-28">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 pt-48 md:pt-28">
           {/* Animated Header */}
           <motion.div
             className="text-center mb-4"
