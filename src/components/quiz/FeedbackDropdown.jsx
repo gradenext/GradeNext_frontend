@@ -19,9 +19,9 @@ const FEEDBACK_OPTIONS = [
   { value: "other", label: "Other issue" },
 ];
 
-const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+const SERVICE_ID = import.meta.env.VITE_EMAILJS_NEXTGRADE_SERVICE_ID;
 const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_FEEDBACK_TEMPLATE_ID;
-const USER_ID = import.meta.env.VITE_EMAILJS_USER_ID;
+const USER_ID = import.meta.env.VITE_EMAILJS_NEXTGRADE_USER_ID;
 
 const FeedbackModal = () => {
   const question = useStore((state) => state.quizQuestion);

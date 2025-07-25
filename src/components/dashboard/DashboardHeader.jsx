@@ -63,7 +63,7 @@ const DashboardHeader = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: [0, 0.5, 1], scale: [0.98, 1.02, 1] }}
           transition={{ duration: 2 }}
-          className="text-base font-semibold text-center bg-gradient-to-r from-indigo-500 via-blue-500 to-purple-600 bg-clip-text text-transparent"
+          className="text-xl font-semibold text-center bg-gradient-to-r from-indigo-500 via-blue-500 to-purple-600 bg-clip-text text-transparent"
         >
           We're actively improving this platform — exciting updates coming soon!
         </motion.h2>

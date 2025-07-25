@@ -95,9 +95,9 @@ export default function ChangePlanModal({
       )}
 
       <p className="text-xs text-gray-500 mb-6 max-w-md mx-auto">
-        By confirming, your current subscription will be replaced immediately.
-        The next billing will reflect your new cycle and plan.
+        By confirming this change, your current subscription will be updated immediately. A prorated amount will be applied to your account based on the remaining period. Your next billing cycle will reflect the new plan and pricing.
       </p>
+
 
       <div className="flex justify-center gap-4">
         <button
@@ -110,11 +110,10 @@ export default function ChangePlanModal({
         <button
           onClick={handleSubmit}
           disabled={loading}
-          className={`px-5 py-2 rounded-lg flex justify-center items-center gap-x-3 cursor-pointer text-white font-medium transition text-sm md:text-base ${
-            loading
+          className={`px-5 py-2 rounded-lg flex justify-center items-center gap-x-3 cursor-pointer text-white font-medium transition text-sm md:text-base ${loading
               ? "bg-indigo-400 cursor-not-allowed"
               : "bg-indigo-600 hover:bg-indigo-700"
-          }`}
+            }`}
         >
           {loading && <Loader2 className=" animate-spin h-4 w-4" />}
           {loading ? "Updating" : "Confirm"}

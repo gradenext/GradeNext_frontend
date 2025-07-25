@@ -49,12 +49,12 @@ export default function CancelModal({ onClose }) {
           premium features.
         </p>
         <p className="text-gray-700 mb-2">
-          Your subscription will be cancelled at the end of the billing cycle:
+          Your subscription will be cancelled immediately.
         </p>
-        <p className="text-lg font-semibold text-gray-900 mb-4">
+        {/* <p className="text-lg font-semibold text-gray-900 mb-4">
           {" "}
           {formatReadableDate(endDate)}
-        </p>
+        </p> */}
 
         <div className="flex justify-center gap-4">
           <button
