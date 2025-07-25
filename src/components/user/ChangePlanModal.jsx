@@ -47,8 +47,8 @@ export default function ChangePlanModal({
     try {
       setLoading(true);
       await changePlan({
-        plan: planName,
-        duration: durationNumeric,
+        plan: planName.toLowerCase(),
+        duration: `${durationNumeric}`,
       });
       toast.success("Plan updated successfully");
       onClose();

@@ -49,6 +49,67 @@ import toast from "react-hot-toast";
 //   },
 // ];
 
+// function PlanAccordion({ formData, setFormData }) {
+//   const [openId, setOpenId] = useState(null);
+
+//   const toggleAccordion = (id) => {
+//     setOpenId((prev) => (prev === id ? null : id));
+//     setFormData((prev) => ({ ...prev, plan: id }));
+//   };
+
+//   return (
+//     <div className="space-y-4">
+//       {plans.map((plan) => (
+//         <motion.div
+//           key={plan.id}
+//           whileHover={{ scale: 1.01 }}
+//           className={`cursor-pointer p-4 rounded-2xl border transition-all duration-300 shadow-sm ${
+//             formData.plan === plan.id
+//               ? "border-purple-500 bg-purple-50"
+//               : "border-purple-200 bg-white"
+//           }`}
+//           onClick={() => toggleAccordion(plan.id)}
+//         >
+//           <div className="flex justify-center items-center gap-2 ms:items-center">
+//             <div className="w-full flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+//               <h3 className="text-lg font-semibold text-purple-800">
+//                 {plan.title}
+//               </h3>
+//               <p className="text-xl font-bold text-purple-600">{plan.price}</p>
+//             </div>
+//             <ChevronDown
+//               className={`text-purple-600 transition-transform duration-300 ${
+//                 openId === plan.id ? "rotate-180" : "rotate-0"
+//               }`}
+//             />
+//           </div>
+
+//           <AnimatePresence>
+//             {openId === plan.id && (
+//               <motion.ul
+//                 className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-4 text-purple-700"
+//                 initial={{ height: 0, opacity: 0 }}
+//                 animate={{ height: "auto", opacity: 1 }}
+//                 exit={{ height: 0, opacity: 0 }}
+//                 transition={{ duration: 0.3 }}
+//               >
+//                 {plan.features.map((feature) => (
+//                   <li
+//                     key={feature}
+//                     className="flex items-start gap-2 text-sm sm:text-base"
+//                   >
+//                     <span className="text-green-600">✔️</span>
+//                     <span>{feature}</span>
+//                   </li>
+//                 ))}
+//               </motion.ul>
+//             )}
+//           </AnimatePresence>
+//         </motion.div>
+//       ))}
+//     </div>
+//   );
+// }
 const availableCourses = [
   { id: "mathematics", label: "Mathematics", emoji: "🧮" },
   { id: "english", label: "English", emoji: "📚" },
@@ -74,67 +135,7 @@ const getStepTitle = (step) => {
   }
 };
 
-function PlanAccordion({ formData, setFormData }) {
-  const [openId, setOpenId] = useState(null);
 
-  const toggleAccordion = (id) => {
-    setOpenId((prev) => (prev === id ? null : id));
-    setFormData((prev) => ({ ...prev, plan: id }));
-  };
-
-  return (
-    <div className="space-y-4">
-      {plans.map((plan) => (
-        <motion.div
-          key={plan.id}
-          whileHover={{ scale: 1.01 }}
-          className={`cursor-pointer p-4 rounded-2xl border transition-all duration-300 shadow-sm ${
-            formData.plan === plan.id
-              ? "border-purple-500 bg-purple-50"
-              : "border-purple-200 bg-white"
-          }`}
-          onClick={() => toggleAccordion(plan.id)}
-        >
-          <div className="flex justify-center items-center gap-2 ms:items-center">
-            <div className="w-full flex flex-col sm:flex-row justify-between sm:items-center gap-3">
-              <h3 className="text-lg font-semibold text-purple-800">
-                {plan.title}
-              </h3>
-              <p className="text-xl font-bold text-purple-600">{plan.price}</p>
-            </div>
-            <ChevronDown
-              className={`text-purple-600 transition-transform duration-300 ${
-                openId === plan.id ? "rotate-180" : "rotate-0"
-              }`}
-            />
-          </div>
-
-          <AnimatePresence>
-            {openId === plan.id && (
-              <motion.ul
-                className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-4 text-purple-700"
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                {plan.features.map((feature) => (
-                  <li
-                    key={feature}
-                    className="flex items-start gap-2 text-sm sm:text-base"
-                  >
-                    <span className="text-green-600">✔️</span>
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </motion.ul>
-            )}
-          </AnimatePresence>
-        </motion.div>
-      ))}
-    </div>
-  );
-}
 
 const Signup = () => {
   const navigate = useNavigate();

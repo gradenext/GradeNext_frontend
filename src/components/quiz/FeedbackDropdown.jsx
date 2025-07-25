@@ -19,6 +19,10 @@ const FEEDBACK_OPTIONS = [
   { value: "other", label: "Other issue" },
 ];
 
+const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_FEEDBACK_TEMPLATE_ID;
+const USER_ID = import.meta.env.VITE_EMAILJS_USER_ID;
+
 const FeedbackModal = () => {
   const question = useStore((state) => state.quizQuestion);
   const [isOpen, setIsOpen] = useState(false);
@@ -40,12 +44,7 @@ const FeedbackModal = () => {
     };
 
     emailjs
-      .send(
-        "service_mo597zf",
-        "template_uzl8dzv",
-        templateParams,
-        "lm8671wRuXNu8poP5"
-      )
+      .send(SERVICE_ID, TEMPLATE_ID, templateParams, USER_ID)
       .then(() => {
         setIsOpen(false);
         setSelectedFeedback("");
