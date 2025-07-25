@@ -16,7 +16,7 @@ const plans = {
       stripe_price_id: "price_1RkLjoGb17a8LOzTVkryXYZd",
     },
     {
-      id: "enterprise",
+      id: "advanced",
       name: "Advanced",
       description: "Full access: Practice, Time Travel & Treasure Hunt",
       amount: 9900,
@@ -39,7 +39,7 @@ const plans = {
       stripe_price_id: "price_1RkLkEGb17a8LOzTp852tcXQ",
     },
     {
-      id: "enterprise",
+      id: "advanced",
       name: "Advanced",
       description: "Full access: Practice, Time Travel & Treasure Hunt",
       amount: 29700,
@@ -62,7 +62,7 @@ const plans = {
       stripe_price_id: "price_1RkLkcGb17a8LOzTFALlCndd",
     },
     {
-      id: "enterprise",
+      id: "advanced",
       name: "Advanced",
       description: "Full access: Practice, Time Travel & Treasure Hunt",
       amount: 59400,
@@ -85,7 +85,7 @@ const plans = {
       stripe_price_id: "price_1RkLlNGb17a8LOzTHXaQVhTg",
     },
     {
-      id: "enterprise",
+      id: "advanced",
       name: "Advanced",
       description: "Full access: Practice, Time Travel & Treasure Hunt",
       amount: 118800,

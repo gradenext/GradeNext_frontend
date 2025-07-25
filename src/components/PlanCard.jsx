@@ -3,26 +3,26 @@ import { CheckCircle, Globe, Zap, FileText } from "lucide-react";
 
 const PLAN_FEATURES = {
   basic: [
-    "Access to foundational courses",
-    "Limited practice & revision exercises",
+    "Access to common core syllabus",
+    "Limited Math+English practice only",
     "Progress tracking dashboard",
     "Interactive learning activities",
+    "No tutor support",
     "Email support",
-    "Mobile-friendly learning",
   ],
   pro: [
     "Access to all Basic features",
-    "1:1 tutor support on additional nominal cost",
-    "Topic wise unlimited practice & revision exercises",
-    "Weekly test to track performance",
-    "Personalized learning insights",
+    "Covers Math, English & Science subjects",
+    "Access to Common core + State syllabus",
+    "1:1 tutor support in additional $5 per class.",
+    "Unlimited practice & revision exercises",
   ],
   advanced: [
     "All Pro features access",
+    "Includes Pro syllabus and advanced courses",
     "Competitive exam-focused plan",
-    "Dedicated personalized 1:1 tutor support",
+    "Dedicated personalized 1:1 tutor support (Free 1 hour class per week)",
     "Advanced analytics, goal tracking & reports",
-    "Goal-based exam planning",
     "Priority support & onboarding",
   ],
 };
