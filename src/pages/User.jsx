@@ -161,7 +161,7 @@ export default function Dashboard() {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="px-6 py-2 rounded-lg font-medium text-white"
+                    className="px-6 py-2 rounded-lg cursor-pointer font-medium text-white"
                     style={{
                       backgroundColor: colors.primary,
                     }}

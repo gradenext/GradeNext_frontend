@@ -55,7 +55,13 @@ const useStore = create(
         set({
           user: {
             ...user,
-            plan: user.plan || "basic",
+            subscription: {
+              ...user?.subscription,
+              plan:
+                user?.subscription?.plan === "enterprise"
+                  ? "advanced"
+                  : user?.subscription?.plan,
+            },
           },
           user_stats,
         });
