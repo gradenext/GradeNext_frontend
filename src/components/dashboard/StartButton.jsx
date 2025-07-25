@@ -24,14 +24,14 @@ const StartButton = () => {
     if (!selectedSubject || !selectedMode) return;
 
     if (
-      plan === "Basic" &&
+      plan === "basic" &&
       (selectedMode === "revision" || selectedMode === "topic")
     ) {
       toogleShowUpgradeModal(true);
       return;
     }
 
-    if (plan === "Pro" && selectedMode === "topic") {
+    if (plan === "pro" && selectedMode === "topic") {
       toogleShowUpgradeModal(true);
       return;
     }

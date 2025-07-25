@@ -18,7 +18,7 @@ export default function PlanNotice() {
       <div className="text-center">
         <AlertCircle className="h-16 w-16 text-blue-500 mx-auto mb-4" />
         <h2 className="text-2xl font-bold text-gray-800 mb-2">
-          You're on the {plan} Plan
+          You're on the <span className="capitalize underline font-extrabold">{plan}</span> Plan
         </h2>
         <p className="text-gray-600 mb-4">
           Unlock powerful premium features such as advanced analytics, enhanced
