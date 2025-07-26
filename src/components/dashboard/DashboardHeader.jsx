@@ -12,6 +12,7 @@ import {
 import LogoutModal from "../modals/LogoutModal";
 import RaiseTicketModal from "../modals/RaiseTicketModal";
 import BookTutorModal from "../modals/BookTutorModal";
+import useStore from "../../store/store";
 
 const DashboardHeader = () => {
   const navigate = useNavigate();
@@ -19,6 +20,9 @@ const DashboardHeader = () => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showRaiseTicket, setShowRaiseTicket] = useState(false);
   const [showBookTutorModal, setShowBookTutorModal] = useState(false);
+
+
+  const student_name = useStore((state) => state?.user?.student_name);
 
   const ACTION_BUTTONS = [
     {
@@ -48,7 +52,7 @@ const DashboardHeader = () => {
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ type: "spring", stiffness: 60, damping: 10 }}
-        className=" px-4 py-2 flex justify-center items-center gap-2"
+        className=" px-4 py-2 hidden md:flex justify-center items-center gap-2"
       >
         <motion.span
           initial={{ rotate: -10 }}
@@ -99,7 +103,14 @@ const DashboardHeader = () => {
             />
             <span className="hidden sm:inline font-medium">Profile</span>
           </motion.button>
-
+        <motion.h2
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0, 0.5, 1], scale: [0.98, 1.02, 1] }}
+          transition={{ duration: 2 }}
+          className="text-2xl font-bold uppercase text-center bg-gradient-to-r from-orange-500 via-yellow-500 to-purple-600 bg-clip-text text-transparent hidden md:block"
+        >
+          Welcome  {student_name || "Adventurer"}!
+        </motion.h2>
           {/* Actions Dropdown */}
           <div className="relative">
             <motion.button

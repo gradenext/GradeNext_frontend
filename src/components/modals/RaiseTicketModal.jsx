@@ -30,6 +30,7 @@ const RaiseTicketModal = ({ isOpen, onClose }) => {
       await emailjs.send(SERVICE_ID, TEMPLATE_ID, form, USER_ID);
       setForm({ user_email: "", subject: "", description: "" });
       toast.success("🎉 Ticket submitted successfully!");
+      onClose();
     } catch (error) {
       console.error("EmailJS Error:", error);
       toast.error("Something went wrong. Please try again.");

@@ -19,7 +19,6 @@ const SUBJECT_OPTIONS = [
 ];
 
 const GRADES = [
-  "Kindergarten",
   "Grade 1",
   "Grade 2",
   "Grade 3",
@@ -90,7 +89,7 @@ const BookTutorModal = ({ isOpen, onClose }) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Book a Tutor">
+    <Modal isOpen={isOpen} onClose={() => { onClose(); setUpgrade(false) }} title="Book a Tutor">
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -188,7 +187,7 @@ const BookTutorModal = ({ isOpen, onClose }) => {
 
           {/* Submit */}
           <motion.div className="w-full">
-            {upgrade ? (
+            {!upgrade ? (
               <div>
                 {/* Book Tutor Button */}
                 <button
@@ -232,9 +231,8 @@ const BookTutorModal = ({ isOpen, onClose }) => {
                 <NavLink to={`/user/plan/${duration}/${plan}`}>
                   <button
                     onClick={onClose}
-                    className={`block w-full h-full text-center px-6 py-3 bg-gradient-to-r from-blue-600 to-teal-500 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-teal-600 transition-all ${
-                      loading ? "opacity-50 pointer-events-none" : ""
-                    }`}
+                    className={`block w-full h-full text-center px-6 py-3 bg-gradient-to-r from-blue-600 to-teal-500 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-teal-600 transition-all ${loading ? "opacity-50 pointer-events-none" : ""
+                      }`}
                   >
                     Upgrade Now
                   </button>

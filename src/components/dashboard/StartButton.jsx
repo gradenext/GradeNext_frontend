@@ -9,7 +9,7 @@ import { Sparkles } from "lucide-react";
 
 const StartButton = () => {
   const navigate = useNavigate();
-  const plan = useStore((state) => state.user.plan);
+  const plan = useStore((state) => state.user.subscription.plan);
   const setSession = useStore((state) => state.setSession);
   const selectedSubject = useStore((state) => state.selectedSubject);
   const selectedMode = useStore((state) => state.selectedMode);

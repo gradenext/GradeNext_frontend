@@ -53,8 +53,8 @@ export default function ChangePlanModal({
       toast.success("Plan updated successfully");
       onClose();
 
-      const user = await profile();
-      setUserData(user?.user, user?.user_stats);
+      // const user = await profile();
+      // setUserData(user?.user, user?.user_stats);
       navigate("/dashboard");
     } catch (error) {
       toast.error(error?.response?.data?.error || "Something went wrong");
