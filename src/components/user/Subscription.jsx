@@ -32,7 +32,7 @@ const SubscriptionPage = () => {
 
   if (!user || !user.subscription) return null;
 
-  const isTrial = user.subscription.plan_type === "trial";
+  const isTrial = user?.subscription?.plan_type === "trial";
 
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-10">
