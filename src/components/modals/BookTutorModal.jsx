@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Mail, Phone, GraduationCap, BookOpen, Send } from "lucide-react";
+import { Mail, Phone, GraduationCap, BookOpen, Send, Link } from "lucide-react";
 import Modal from "../Modal";
 import emailjs from "emailjs-com";
 import toast from "react-hot-toast";
 import useStore from "../../store/store";
+import { NavLink } from "react-router-dom";
 
 const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
 const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TUTOR_TEMPLATE_ID;
@@ -15,7 +16,6 @@ const SUBJECT_OPTIONS = [
   "Science",
   "English",
   "Computer Programming",
-
 ];
 
 const GRADES = [
@@ -32,6 +32,10 @@ const GRADES = [
 
 const BookTutorModal = ({ isOpen, onClose }) => {
   const userId = useStore((state) => state.user?.account_id);
+  const plan = useStore((state) => state?.user?.subscription?.plan);
+  const duration = Math.floor(
+    useStore((state) => state?.user?.subscription?.valid_for) / 30
+  );
 
   const [form, setForm] = useState({
     email: "",
@@ -41,6 +45,7 @@ const BookTutorModal = ({ isOpen, onClose }) => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [upgrade, setUpgrade] = useState(false);
 
   const handleChange = (e) =>
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -56,6 +61,13 @@ const BookTutorModal = ({ isOpen, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (plan === "basic") {
+      toast.error("You're on Basic plan, Please upgrade");
+      setUpgrade(true);
+      return;
+    }
+
     setLoading(true);
 
     const data = {
@@ -175,38 +187,60 @@ const BookTutorModal = ({ isOpen, onClose }) => {
           </div>
 
           {/* Submit */}
-          <motion.div>
-            <button
-              type="submit"
-              disabled={
-                loading ||
-                !form.email.trim() ||
-                !form.phone.trim() ||
-                !form.grade.trim() ||
-                form.subjects.length === 0
-              }
-              className="w-full py-3 cursor-pointer bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
-            >
-              {loading ? (
-                <>
-                  <span className="animate-spin">⏳</span> Booking...
-                </>
-              ) : (
-                <>
-                  <Send className="h-5 w-5" />
-                  Book Tutor
-                </>
-              )}
-            </button>
+          <motion.div className="w-full">
+            {upgrade ? (
+              <div>
+                {/* Book Tutor Button */}
+                <button
+                  type="submit"
+                  disabled={
+                    loading ||
+                    !form.email.trim() ||
+                    !form.phone.trim() ||
+                    !form.grade.trim() ||
+                    form.subjects.length === 0
+                  }
+                  className="w-full py-3 cursor-pointer bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {loading ? (
+                    <>
+                      <span className="animate-spin">⏳</span> Booking...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="h-5 w-5" />
+                      Book Tutor
+                    </>
+                  )}
+                </button>
 
-            <button
-              type="button"
-              onClick={onClose}
-              className="w-full cursor-pointer mt-3 py-2 text-blue-700 hover:text-blue-900 text-sm"
-              disabled={loading}
-            >
-              Cancel
-            </button>
+                {/* Cancel Button */}
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="w-full cursor-pointer mt-3 py-2 text-blue-700 hover:text-blue-900 text-sm"
+                  disabled={loading}
+                >
+                  Cancel
+                </button>
+              </div>
+            ) : (
+              <div className="w-full">
+                <div className="text-center text-sm font-semibold text-red-500 my-1">
+                  You're on Basic plan, Upgarde now to access tutor support
+                </div>
+                <NavLink to={`/user/plan/${duration}/${plan}`}>
+                  <button
+                    onClick={onClose}
+                    className={`block w-full h-full text-center px-6 py-3 bg-gradient-to-r from-blue-600 to-teal-500 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-teal-600 transition-all ${
+                      loading ? "opacity-50 pointer-events-none" : ""
+                    }`}
+                  >
+                    Upgrade Now
+                  </button>
+                </NavLink>
+              </div>
+            )}
           </motion.div>
         </form>
       </motion.div>
