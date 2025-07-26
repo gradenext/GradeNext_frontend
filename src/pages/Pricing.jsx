@@ -37,7 +37,7 @@ const Pricing = () => {
     setLoading(true);
     try {
       const res = await createCheckoutSession({
-        plan: selectedPlan.id,
+        plan: selectedPlan.id === "advanced" ? "enterprise" : selectedPlan.id,
         duration,
         platform_fee_applied,
       });

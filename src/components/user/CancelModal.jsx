@@ -22,8 +22,6 @@ export default function CancelModal({ onClose }) {
     setLoading(true);
     try {
       await cancelPlan();
-      const user = await profile();
-      setUserData(user?.user, user?.user_stats);
       navigate("/dashboard");
     } catch (error) {
       toast.error(error?.response?.data?.error);
