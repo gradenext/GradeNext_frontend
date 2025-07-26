@@ -58,16 +58,10 @@ const ExitModal = () => {
       ) : (
         <div>
           <div className="text-center">
-            Are you sure you want to exit quiz??
+            You will be redirected to your report automatically.
           </div>
           <div className="text-center text-red-900 text-xs">
-            This action can't be undone
-          </div>
-          <div className="text-center">
-            You will be redirected to your report automatically
-          </div>
-          <div className="text-center text-red-900 text-xs">
-            If not redirected, then click the red button
+            If not redirected, then click the red button.
           </div>
 
           <div className="mt-6 flex justify-end gap-3">
