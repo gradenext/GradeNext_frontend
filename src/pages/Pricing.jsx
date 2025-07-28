@@ -29,10 +29,10 @@ const Pricing = () => {
       selectedCycle === "monthly"
         ? 1
         : selectedCycle === "quarterly"
-        ? 3
-        : selectedCycle === "half-yearly"
-        ? 6
-        : 12;
+          ? 3
+          : selectedCycle === "half-yearly"
+            ? 6
+            : 12;
 
     setLoading(true);
     try {
@@ -66,11 +66,10 @@ const Pricing = () => {
           <button
             key={cycle}
             onClick={() => setSelectedCycle(cycle)}
-            className={`px-5 py-2 rounded-full capitalize border text-sm md:text-base font-medium transition cursor-pointer ${
-              selectedCycle === cycle
+            className={`px-5 py-2 rounded-full capitalize border text-sm md:text-base font-medium transition cursor-pointer ${selectedCycle === cycle
                 ? "bg-indigo-600 text-white border-indigo-600 shadow"
                 : "bg-white text-gray-800 border-gray-300 hover:bg-gray-100"
-            }`}
+              }`}
           >
             {cycle.charAt(0).toUpperCase() + cycle.slice(1)}
           </button>
@@ -91,8 +90,18 @@ const Pricing = () => {
               key={plan.id}
               whileHover={{ scale: 1.03 }}
               transition={{ duration: 0.2 }}
-              className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 md:p-8"
+              className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 md:p-8 relative"
             >
+              {/* Discount Banner */}
+              {selectedCycle !== "monthly" && (
+                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 px-3 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full shadow-sm border border-green-300">
+                  {selectedCycle === "quarterly" && "Save 5% (Auto Applied)"}
+                  {selectedCycle === "half-yearly" && "Save 10% (Auto Applied)"}
+                  {selectedCycle === "yearly" && "Save 15% (Auto Applied)"}
+                </div>
+              )}
+
+              {/* Plan Card */}
               <PlanCard
                 plan={plan}
                 selectedCycle={selectedCycle}
@@ -100,6 +109,7 @@ const Pricing = () => {
               />
             </motion.div>
           ))}
+
         </motion.div>
       </AnimatePresence>
 
