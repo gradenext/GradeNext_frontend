@@ -93,16 +93,14 @@ const ChangePlan = () => {
           <div>
             {currentPlanDetails && (
               <div
-                className={`rounded-2xl p-6 border-2 shadow bg-white h-full flex flex-col justify-between ${
-                  PLAN_STYLE[currentPlanDetails.id]?.bg || "bg-gray-100"
-                }`}
+                className={`rounded-2xl p-6 border-2 shadow bg-white h-full flex flex-col justify-between ${PLAN_STYLE[currentPlanDetails.id]?.bg || "bg-gray-100"
+                  }`}
               >
                 <div className="flex items-center gap-2">
                   {PLAN_STYLE[currentPlanDetails.id]?.icon}
                   <h3
-                    className={`text-xl font-bold capitalize ${
-                      PLAN_STYLE[currentPlanDetails.id]?.text
-                    }`}
+                    className={`text-xl font-bold capitalize ${PLAN_STYLE[currentPlanDetails.id]?.text
+                      }`}
                   >
                     Current Plan: {currentPlanDetails.name}
                   </h3>
@@ -126,11 +124,10 @@ const ChangePlan = () => {
                 <button
                   key={cycle}
                   onClick={() => setSelectedCycle(cycle)}
-                  className={`px-4 py-2 rounded-full capitalize border text-sm font-medium transition cursor-pointer ${
-                    selectedCycle === cycle
+                  className={`px-4 py-2 rounded-full capitalize border text-sm font-medium transition cursor-pointer ${selectedCycle === cycle
                       ? "bg-indigo-600 text-white border-indigo-600 shadow"
                       : "bg-white text-gray-800 border-gray-300 hover:bg-gray-100"
-                  }`}
+                    }`}
                 >
                   {cycle.replace("-", " ")}
                 </button>
@@ -143,10 +140,10 @@ const ChangePlan = () => {
               {...(animationDone
                 ? {}
                 : {
-                    initial: { opacity: 0, y: 30 },
-                    animate: { opacity: 1, y: 0 },
-                    transition: { duration: 0.3 },
-                  })}
+                  initial: { opacity: 0, y: 30 },
+                  animate: { opacity: 1, y: 0 },
+                  transition: { duration: 0.3 },
+                })}
             >
               {[
                 ...new Map(
@@ -166,11 +163,10 @@ const ChangePlan = () => {
                     whileHover={{ scale: 1.02 }}
                     transition={{ duration: 0.2 }}
                     onClick={() => setSelectedPlanId(plan.id)}
-                    className={`cursor-pointer border-2 rounded-xl p-4 w-full sm:w-[200px] transition-all ${
-                      isSelected
+                    className={`cursor-pointer border-2 rounded-xl p-4 w-full sm:w-[200px] transition-all ${isSelected
                         ? "border-indigo-600 shadow-md"
                         : "border-gray-200 hover:border-gray-400"
-                    }`}
+                      }`}
                   >
                     <div className="flex items-center gap-2 mb-2">
                       {style.icon}
@@ -204,10 +200,9 @@ const ChangePlan = () => {
                         {PLAN_STYLE[selectedPlanDetails.id]?.icon}
                       </div>
                       <h3
-                        className={`text-2xl md:text-3xl font-bold tracking-tight ${
-                          PLAN_STYLE[selectedPlanDetails.id]?.text ||
+                        className={`text-2xl md:text-3xl font-bold tracking-tight ${PLAN_STYLE[selectedPlanDetails.id]?.text ||
                           "text-gray-800"
-                        }`}
+                          }`}
                       >
                         {selectedPlanDetails.name} Plan
                       </h3>
@@ -215,12 +210,10 @@ const ChangePlan = () => {
 
                     {/* Plan Badge */}
                     <span
-                      className={`px-3 py-1 text-xl font-semibold rounded-full capitalize ${
-                        PLAN_STYLE[selectedPlanDetails.id]?.bg || "bg-gray-100"
-                      } ${
-                        PLAN_STYLE[selectedPlanDetails.id]?.text ||
+                      className={`px-3 py-1 text-xl font-semibold rounded-full capitalize ${PLAN_STYLE[selectedPlanDetails.id]?.bg || "bg-gray-100"
+                        } ${PLAN_STYLE[selectedPlanDetails.id]?.text ||
                         "text-gray-800"
-                      }`}
+                        }`}
                     >
                       {selectedCycle.replace("-", " ")}
                     </span>
@@ -231,10 +224,24 @@ const ChangePlan = () => {
                     <span className="text-5xl font-extrabold text-gray-900 block leading-none">
                       ${Number(selectedPlanDetails.amount / 100).toFixed(0)}
                     </span>
-                    <span className=" text-gray-500 mt-1 block text-lg underline font-bold">
+                    <span className="text-gray-500 mt-1 block text-lg underline font-bold">
                       Billed {selectedCycle.replace("-", " ")}
                     </span>
+
+                    {/* Discount Message */}
+                    {selectedCycle !== "monthly" && (
+                      <p className="mt-2 text-sm text-green-600 font-medium bg-green-50 border border-green-100 px-3 py-1 rounded-lg inline-block">
+                        {
+                          {
+                            "quarterly": "Includes 5% auto applied discount",
+                            "half-yearly": "Includes 10% auto applied discount",
+                            "yearly": "Includes 15% auto applied discount",
+                          }[selectedCycle]
+                        }
+                      </p>
+                    )}
                   </div>
+
 
                   {/* Features */}
                   <div className="mt-4">
@@ -270,11 +277,10 @@ const ChangePlan = () => {
         <button
           onClick={() => setShowChange(true)}
           disabled={isSameAsCurrent}
-          className={`px-6 py-3 rounded-xl cursor-pointer font-semibold transition shadow-md min-w-[220px] text-base ${
-            isSameAsCurrent
+          className={`px-6 py-3 rounded-xl cursor-pointer font-semibold transition shadow-md min-w-[220px] text-base ${isSameAsCurrent
               ? "bg-gray-300 text-gray-500 cursor-not-allowed"
               : "bg-indigo-600 text-white hover:bg-indigo-700"
-          }`}
+            }`}
         >
           Continue
         </button>

@@ -67,8 +67,8 @@ const Pricing = () => {
             key={cycle}
             onClick={() => setSelectedCycle(cycle)}
             className={`px-5 py-2 rounded-full capitalize border text-sm md:text-base font-medium transition cursor-pointer ${selectedCycle === cycle
-                ? "bg-indigo-600 text-white border-indigo-600 shadow"
-                : "bg-white text-gray-800 border-gray-300 hover:bg-gray-100"
+              ? "bg-indigo-600 text-white border-indigo-600 shadow"
+              : "bg-white text-gray-800 border-gray-300 hover:bg-gray-100"
               }`}
           >
             {cycle.charAt(0).toUpperCase() + cycle.slice(1)}
@@ -112,6 +112,17 @@ const Pricing = () => {
 
         </motion.div>
       </AnimatePresence>
+
+      {/* Coupon Note */}
+      {selectedCycle !== "monthly" && (
+        <div className="text-center mt-6 px-4">
+          <p className="text-sm text-gray-600 bg-yellow-50 border border-yellow-200 rounded-md inline-block px-4 py-2 shadow-sm">
+            Additional discounts can be applied using a valid{" "}
+            <span className="font-semibold text-yellow-700">coupon code</span> at checkout.
+          </p>
+        </div>
+      )}
+
 
       <div className="mt-16 flex justify-center">
         <button
