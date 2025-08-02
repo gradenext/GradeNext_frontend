@@ -10,6 +10,7 @@ import StartButton from "../components/dashboard/StartButton";
 import useStore from "../store/store";
 import { profile } from "../services/auth";
 import toast from "react-hot-toast";
+import Sidebar from "../components/dashboard/Sidebar";
 
 const Dashboard = () => {
   const [showInfoModal, setShowInfoModal] = useState(true);
@@ -47,48 +48,51 @@ const Dashboard = () => {
   return (
     <>
       {/* {showInfoModal && <InfoModal onClose={() => setShowInfoModal(false)} />} */}
-      <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 relative">
-        <DashboardHeader />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 pt-48 md:pt-28">
-          {/* Animated Header */}
-          <motion.div
-            className="text-center mb-4"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
+      <div className="min-h-screen flex justify-between bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 relative">
+        <Sidebar />
+        <div className="w-full">
+          <DashboardHeader />
+          <div className="mx-auto pr-6 pl-20 pb-8 pt-16">
+            {/* Animated Header */}
             <motion.div
-              animate={{ rotate: [0, 15, -15, 0] }}
-              transition={{ repeat: Infinity, duration: 4 }}
-              className="inline-block mb-4"
+              className="text-center mb-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
             >
-              <Rocket className="w-16 h-16 text-yellow-600" />
+              <motion.div
+                animate={{ rotate: [0, 15, -15, 0] }}
+                transition={{ repeat: Infinity, duration: 4 }}
+                className="inline-block mb-4"
+              >
+                <Rocket className="w-16 h-16 text-yellow-600" />
+              </motion.div>
+              <h1 className="text-4xl md:text-5xl font-bold pb-2 bg-gradient-to-r from-yellow-700 via-pink-300 to-cyan-300 text-transparent bg-clip-text">
+                Learning Wonderland!
+              </h1>
+              <p className="text-xl text-gray-900">
+                Choose your adventure and start learning!
+              </p>
             </motion.div>
-            <h1 className="text-4xl md:text-5xl font-bold pb-2 bg-gradient-to-r from-yellow-700 via-pink-300 to-cyan-300 text-transparent bg-clip-text">
-              Learning Wonderland!
-            </h1>
-            <p className="text-xl text-gray-900">
-              Choose your adventure and start learning!
-            </p>
-          </motion.div>
 
-          {/* Main Content */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Left Column */}
-            <div className="lg:col-span-2 space-y-8">
-              {/* Subject Selection */}
-              <DashboardSubject />
-              {/* Activity Selection */}
-              <DashboardActivity />
-            </div>
+            {/* Main Content */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Left Column */}
+              <div className="lg:col-span-2 space-y-8">
+                {/* Subject Selection */}
+                <DashboardSubject />
+                {/* Activity Selection */}
+                <DashboardActivity />
+              </div>
 
-            {/* Right Column */}
-            <div className="space-y-2">
-              {/* Progress Stats */}
-              <DashboardProgress />
+              {/* Right Column */}
+              <div className="space-y-2">
+                {/* Progress Stats */}
+                <DashboardProgress />
 
-              {/* Start Button */}
-              <StartButton />
+                {/* Start Button */}
+                <StartButton />
+              </div>
             </div>
           </div>
         </div>

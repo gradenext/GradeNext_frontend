@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import PlanCard from "../components/PlanCard";
 import useStore from "../store/store";
 import { createCheckoutSession } from "../services/stripe";
 import toast from "react-hot-toast";
 import { AnimatePresence, motion } from "framer-motion";
 import plans from "../constants/plan";
 import CheckoutModal from "../components/modals/CheckoutModal";
+import PlanCard from "../components/user/PlanCard";
 
 const Pricing = () => {
   const navigate = useNavigate();

@@ -22,6 +22,7 @@ import PlanExpiredNotice from "./components/modals/PlanExpiredNotice";
 import PlanCancelledNotice from "./components/modals/PlanCancelledNotice";
 import PlanNotice from "./components/modals/PlanNotice";
 import ChangePlan from "./components/user/ChangePlan";
+import LeaderBoard from "./components/user/LeaderBoard";
 
 function App() {
   const token = useStore((state) => state.token);
@@ -68,6 +69,7 @@ function App() {
             <Route path="/user" element={<User />}>
               <Route path="profile" element={<UserProfile />} />
               <Route path="stats" element={<UserStats />} />
+              <Route path="leaderboard" element={<LeaderBoard />} />
               <Route path="plan" element={<Subscription />} />
               <Route path="plan/:duration/:plan" element={<ChangePlan />} />
               <Route

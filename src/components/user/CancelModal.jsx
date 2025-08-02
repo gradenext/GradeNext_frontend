@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import useStore from "../../store/store";
 import { cancelPlan } from "../../services/stripe";
 import toast from "react-hot-toast";
-import { profile } from "../../services/auth";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
@@ -16,7 +15,6 @@ export default function CancelModal({ onClose }) {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const endDate = useStore((state) => state.user.subscription.end_date);
-  const setUserData = useStore((state) => state?.setUserData);
 
   const handleCancel = async () => {
     setLoading(true);

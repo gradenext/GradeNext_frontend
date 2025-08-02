@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
-import { profile } from "../../services/auth";
-import useStore from "../../store/store";
 import { useNavigate } from "react-router-dom";
 import { changePlan } from "../../services/stripe";
 import plans from "../../constants/plan";
@@ -13,7 +11,6 @@ export default function ChangePlanModal({
   selectedCycle,
 }) {
   const [loading, setLoading] = useState(false);
-  const setUserData = useStore((state) => state.setUserData);
   const navigate = useNavigate();
   const [price, setPrice] = useState(null);
   const [planName, setPlanName] = useState("");

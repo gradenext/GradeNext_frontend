@@ -1,5 +1,13 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { BarChart2, LayoutDashboard, User, Loader2, Wallet, XCircle } from "lucide-react";
+import {
+  BarChart2,
+  LayoutDashboard,
+  User,
+  Loader2,
+  Wallet,
+  XCircle,
+  Trophy,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { profile } from "../services/auth";
@@ -60,6 +68,12 @@ export default function Dashboard() {
       label: "Subscription",
       icon: <Wallet className="w-5 h-5 flex-shrink-0" />,
       path: "/user/plan",
+    },
+    {
+      name: "leaderboard",
+      label: "Leaderboard",
+      icon: <Trophy className="w-5 h-5 flex-shrink-0" />,
+      path: "/user/leaderboard",
     },
   ];
 

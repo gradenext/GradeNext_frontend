@@ -48,6 +48,18 @@ export const profile = async () => {
   }
 };
 
+export const leaderBoard = async () => {
+  try {
+    const response = await api.get("leaderboard/");
+    return response.data;
+  } catch (error) {
+    if (error.response?.data) {
+      throw error.response.data;
+    }
+    throw { error: "Network error" };
+  }
+};
+
 export const forgetPassword = async (email) => {
   try {
     const response = await api.post("auth/forgot-password/", {
