@@ -104,7 +104,7 @@ const TreasureHuntTopics = () => {
 
   return (
     <motion.div
-      className="mx-auto py-6 px-12 bg-gradient-to-br from-emerald-600 via-teal-600 to-cyan-700"
+      className="mx-auto min-h-screen py-6 px-12 bg-gradient-to-br from-emerald-600 via-teal-600 to-cyan-700"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}

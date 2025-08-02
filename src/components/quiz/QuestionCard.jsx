@@ -125,7 +125,6 @@ export const QuestionCard = () => {
           </div>
         </div>
 
-
         {/* Main content area with flexible height */}
         <div className="flex flex-col gap-3 sm:gap-4 flex-1">
           {/* Question section */}
